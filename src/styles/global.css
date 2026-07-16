@@ -1,0 +1,73 @@
+@import url("https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400;1,500;1,600&display=swap");
+@import "@chinese-fonts/lxgwwenkai/dist/LXGWWenKai-Regular/result.css";
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --bg-primary: #fdf8f0;
+    --bg-secondary: #faf1e0;
+    --text-primary: #1a1814;
+    --text-secondary: #5d5648;
+    --accent: #d49a1a;
+    --accent-light: #f2d994;
+    --border: #e0ddd5;
+    --card-bg: #ffffff;
+    --nav-bg: rgba(253, 248, 240, 0.8);
+  }
+  .dark {
+    --bg-primary: #1a1814;
+    --bg-secondary: #26231d;
+    --text-primary: #f5f5f0;
+    --text-secondary: #a39c8c;
+    --accent: #ebc45c;
+    --accent-light: #936011;
+    --border: #37322a;
+    --card-bg: #26231d;
+    --nav-bg: rgba(26, 24, 20, 0.8);
+  }
+  html { scroll-behavior: smooth; }
+  body {
+    background-color: var(--bg-primary);
+    color: var(--text-primary);
+    font-family: "LXGW WenKai", "Playfair Display", serif;
+    transition: background-color 0.3s ease, color 0.3s ease;
+  }
+  ::selection {
+    background-color: var(--accent-light);
+    color: var(--bg-primary);
+  }
+  ::-webkit-scrollbar { width: 6px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb {
+    background: var(--accent);
+    border-radius: 3px;
+    opacity: 0.3;
+  }
+}
+
+@layer components {
+  .container-page {
+    @apply max-w-4xl mx-auto px-6;
+  }
+  .card-warm {
+    background-color: var(--card-bg);
+    border: 1px solid var(--border);
+    @apply rounded-2xl p-6 transition-all duration-300;
+  }
+  .card-warm:hover {
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.06);
+    transform: translateY(-2px);
+  }
+  .reading-progress {
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 2px;
+    background: linear-gradient(90deg, var(--accent), var(--accent-light));
+    z-index: 100;
+    transition: width 0.1s linear;
+  }
+}
