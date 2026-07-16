@@ -23,7 +23,7 @@ const categories = [...new Set(posts.map(p => p.data.category))];
         <!-- 诗意签名 - 打字机效果 -->
         <h1 class="mb-8">
           <span class="text-4xl md:text-6xl lg:text-7xl font-bold tracking-wider" style="color:#f7f3e8; font-family: &apos;Ma Shan Zheng&apos;, &apos;Noto Serif SC&apos;, cursive; text-shadow: 0 4px 30px rgba(0,0,0,0.3); line-height: 1.4;">
-            <span id="typewriter"></span><span id="cursor" style="font-weight:100; opacity:0; color:#c73e3a;">|</span>
+            <span id="typewriter"></span>
           </span>
         </h1>
         <!-- 副标题淡入 -->
@@ -148,7 +148,7 @@ const categories = [...new Set(posts.map(p => p.data.category))];
         i++;
         setTimeout(type, 100);
       } else {
-        if (cursor) cursor.style.opacity = "1";
+        
       }
     }
     type();
@@ -182,6 +182,7 @@ const categories = [...new Set(posts.map(p => p.data.category))];
     }, 2200);
   })();
 </script>
+
 
 
 
