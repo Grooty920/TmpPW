@@ -1,99 +1,57 @@
----
+﻿---
 import Layout from "../layouts/Layout.astro";
 ---
 
-<Layout title="LoveAlwaysHere ??" description="????????">
+<Layout title="LoveAlwaysHere 首页" description="个人博客与工具集">
   <div class="container-page">
-    <!-- Hero -->
     <section class="pt-16 pb-12 text-center">
-      <div
-        class="inline-block px-4 py-1.5 rounded-full text-xs tracking-widest mb-8 animate-fade-in"
-        style="background-color:var(--accent-light);color:var(--bg-primary)"
-      >
-        ???? ? ???? ? ????
+      <div class="inline-block px-4 py-1.5 rounded-full text-xs tracking-widest mb-8 animate-fade-in" style="background-color:var(--accent-light);color:var(--bg-primary)">
+        个人空间 · 技术博客 · 实用工具
       </div>
-
-      <h1
-        class="text-4xl md:text-6xl font-serif font-bold tracking-tight leading-tight animate-fade-up"
-        style="animation-delay:0.1s;animation-fill-mode:both"
-      >
-        <span style="color:var(--accent)">??</span>
-        <span class="mx-3" style="color:var(--text-secondary)">?</span>
-        <span style="color:var(--text-primary)">??</span>
-        <span class="mx-3" style="color:var(--text-secondary)">?</span>
-        <span style="color:var(--accent)">??</span>
+      <h1 class="text-4xl md:text-6xl font-serif font-bold tracking-tight leading-tight animate-fade-up" style="animation-delay:0.1s;animation-fill-mode:both">
+        <span style="color:var(--accent)">探索</span>
+        <span class="mx-3" style="color:var(--text-secondary)">·</span>
+        <span style="color:var(--text-primary)">创造</span>
+        <span class="mx-3" style="color:var(--text-secondary)">·</span>
+        <span style="color:var(--accent)">分享</span>
       </h1>
-
-      <p
-        class="mt-6 text-lg max-w-xl mx-auto leading-relaxed"
-        style="color:var(--text-secondary)"
-      >
-        ??????????????
-        <br />
-        ???????????????????
+      <p class="mt-6 text-lg max-w-xl mx-auto leading-relaxed" style="color:var(--text-secondary)">
+        记录技术思考，分享实用工具。<br />
+        在代码与创造之间，寻找属于自己的节奏。
       </p>
-
-      <div
-        class="mt-10 flex flex-wrap gap-4 justify-center animate-fade-up"
-        style="animation-delay:0.3s;animation-fill-mode:both"
-      >
-        <a
-          href="/blog"
-          class="px-8 py-3 rounded-full text-sm font-medium transition-all duration-300 hover:scale-105"
-          style="background-color:var(--accent);color:#fff"
-        >
-          ???? &#8594;
-        </a>
-        <a
-          href="/tools"
-          class="px-8 py-3 rounded-full text-sm font-medium transition-all duration-300 hover:scale-105"
-          style="border:1px solid var(--border);color:var(--text-secondary)"
-        >
-          ????
-        </a>
+      <div class="mt-10 flex flex-wrap gap-4 justify-center animate-fade-up" style="animation-delay:0.3s;animation-fill-mode:both">
+        <a href="/blog" class="px-8 py-3 rounded-full text-sm font-medium transition-all duration-300 hover:scale-105" style="background-color:var(--accent);color:#fff">浏览随笔 →</a>
+        <a href="/tools" class="px-8 py-3 rounded-full text-sm font-medium transition-all duration-300 hover:scale-105" style="border:1px solid var(--border);color:var(--text-secondary)">实用工具</a>
       </div>
     </section>
 
-    <!-- ???? -->
     <section class="py-12 grid md:grid-cols-3 gap-6">
-      {[
-        { icon: "&#9997;", title: "????", desc: "?????????????????????????????", accent: "var(--accent)" },
-        { icon: "&#128295;", title: "????", desc: "??????????????????????????", accent: "var(--accent)" },
-        { icon: "&#127793;", title: "????", desc: "???????????????????????", accent: "var(--accent)" },
-      ].map((card, i) => (
-        <div
-          class="card-warm animate-fade-up group"
-          style={{ animationDelay: `${0.4 + i * 0.1}s`, animationFillMode: "both" }}
-        >
-          <div
-            class="w-12 h-12 rounded-xl flex items-center justify-center text-xl mb-5 transition-all duration-500 group-hover:scale-110 group-hover:-translate-y-1"
-            style="background-color:var(--accent-light)"
-          >
-            <span set:html={card.icon}></span>
-          </div>
-          <h3
-            class="text-lg font-serif font-semibold mb-3 transition-colors duration-300"
-            style="color:var(--text-primary)"
-          >
-            {card.title}
-          </h3>
-          <p class="text-sm leading-relaxed" style="color:var(--text-secondary)">
-            {card.desc}
-          </p>
-        </div>
-      ))}
+      <div class="card-warm animate-fade-up group" style="animation-delay:0.4s;animation-fill-mode:both">
+        <div class="w-12 h-12 rounded-xl flex items-center justify-center text-xl mb-5 transition-all duration-500 group-hover:scale-110 group-hover:-translate-y-1" style="background-color:var(--accent-light)">✍️</div>
+        <h3 class="text-lg font-serif font-semibold mb-3 transition-colors duration-300" style="color:var(--text-primary)">技术随笔</h3>
+        <p class="text-sm leading-relaxed" style="color:var(--text-secondary)">记录前端、全栈开发中的踩坑与思考，分享技术心得与最佳实践。</p>
+      </div>
+      <div class="card-warm animate-fade-up group" style="animation-delay:0.5s;animation-fill-mode:both">
+        <div class="w-12 h-12 rounded-xl flex items-center justify-center text-xl mb-5 transition-all duration-500 group-hover:scale-110 group-hover:-translate-y-1" style="background-color:var(--accent-light)">🔧</div>
+        <h3 class="text-lg font-serif font-semibold mb-3 transition-colors duration-300" style="color:var(--text-primary)">实用工具</h3>
+        <p class="text-sm leading-relaxed" style="color:var(--text-secondary)">日常开发和生活所需的在线小工具，开箱即用，持续更新。</p>
+      </div>
+      <div class="card-warm animate-fade-up group" style="animation-delay:0.6s;animation-fill-mode:both">
+        <div class="w-12 h-12 rounded-xl flex items-center justify-center text-xl mb-5 transition-all duration-500 group-hover:scale-110 group-hover:-translate-y-1" style="background-color:var(--accent-light)">🌱</div>
+        <h3 class="text-lg font-serif font-semibold mb-3 transition-colors duration-300" style="color:var(--text-primary)">持续进化</h3>
+        <p class="text-sm leading-relaxed" style="color:var(--text-secondary)">不断迭代优化，让这个小小的数字花园越来越丰富。</p>
+      </div>
     </section>
 
-    <!-- ???? -->
     <section class="py-12 text-center">
       <div class="flex items-center gap-3 mb-10">
         <div class="h-px flex-1" style="background:linear-gradient(to right, transparent, var(--border), transparent)"></div>
-        <span class="text-xs tracking-widest" style="color:var(--text-secondary)">????</span>
+        <span class="text-xs tracking-widest" style="color:var(--text-secondary)">最新动态</span>
         <div class="h-px flex-1" style="background:linear-gradient(to right, transparent, var(--border), transparent)"></div>
       </div>
       <div class="py-12">
-        <div class="text-4xl mb-4" style="color:var(--accent)">&#10024;</div>
-        <p style="color:var(--text-secondary)">?????????????...</p>
+        <div class="text-4xl mb-4" style="color:var(--accent)">✨</div>
+        <p style="color:var(--text-secondary)">博客文章正在路上，敬请期待...</p>
       </div>
     </section>
   </div>

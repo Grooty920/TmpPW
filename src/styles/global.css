@@ -1,3 +1,5 @@
+@import url("https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;500;600;700&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;500;600;700&display=swap");
 @import url("https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400;1,500;1,600&display=swap");
 @import "@chinese-fonts/lxgwwenkai/dist/LXGWWenKai-Regular/result.css";
 
@@ -32,7 +34,7 @@
   body {
     background-color: var(--bg-primary);
     color: var(--text-primary);
-    font-family: "LXGW WenKai", "Playfair Display", serif;
+    font-family: "Noto Serif SC", "Playfair Display", serif;
     transition: background-color 0.3s ease, color 0.3s ease;
   }
   ::selection {

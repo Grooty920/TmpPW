@@ -22,8 +22,8 @@ export default {
         },
       },
       fontFamily: {
-        serif: ['"Playfair Display"', '"LXGW WenKai"', "serif"],
-        sans: ['"LXGW WenKai"', "system-ui", "sans-serif"],
+        serif: ['"Playfair Display"', '"Noto Serif SC"', "serif"],
+        sans: ['"Noto Serif SC"', "system-ui", "sans-serif"],
       },
       animation: {
         "fade-in": "fadeIn 0.8s ease-out forwards",
