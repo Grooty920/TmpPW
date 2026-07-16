@@ -4,7 +4,7 @@ backend:
   name: github
   repo: Grooty920/TmpPW
   branch: master
-  base_url: https://api.github.com
+  auth_type: simple
 
 publish_mode: editorial_workflow
 media_folder: "public/uploads"
@@ -96,3 +96,5 @@ collections:
                   - { label: "链接", name: "url", widget: "string", required: true }
                   - { label: "图标", name: "icon", widget: "select", options: ["lock", "package", "grid", "chrome", "zap", "file", "file-plus", "music", "book", "message", "monitor", "link", "tool", "star"], default: "link" }
                   - { label: "本站页面", name: "isLocal", widget: "boolean", default: false, hint: "是否本站内部链接" }
+
+
