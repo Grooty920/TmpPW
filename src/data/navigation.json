@@ -1,0 +1,20 @@
+﻿{
+  "brand": "小杨王子",
+  "items": [
+    {
+      "label": "首页",
+      "url": "/",
+      "children": []
+    },
+    {
+      "label": "随笔",
+      "url": "/blog",
+      "children": []
+    },
+    {
+      "label": "工具",
+      "url": "/tools",
+      "children": []
+    }
+  ]
+}

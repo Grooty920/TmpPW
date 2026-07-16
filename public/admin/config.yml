@@ -1,0 +1,98 @@
+﻿# Decap CMS 配置 - 小杨王子博客管理后台
+
+backend:
+  name: github
+  repo: Grooty920/TmpPW
+  branch: master
+  base_url: https://api.github.com
+
+publish_mode: editorial_workflow
+media_folder: "public/uploads"
+public_folder: "/uploads"
+locale: "zh_Hans"
+
+collections:
+  # ===== 文章管理 =====
+  - name: "posts"
+    label: "📝 文章"
+    label_singular: "文章"
+    folder: "src/content/posts"
+    create: true
+    delete: true
+    format: "frontmatter"
+    extension: mdx
+    slug: "{{slug}}"
+    preview_path: "blog/{{slug}}"
+    fields:
+      - { label: "标题", name: "title", widget: "string", required: true }
+      - { label: "描述", name: "description", widget: "text", required: true }
+      - { label: "发布日期", name: "date", widget: "datetime", required: true }
+      - { label: "分类", name: "category", widget: "string", default: "随笔", required: true }
+      - { label: "标签", name: "tags", widget: "list", default: ["随笔"], required: true }
+      - { label: "封面图", name: "coverImage", widget: "image", required: false }
+      - { label: "阅读时间(分)", name: "readingTime", widget: "number", default: 5, value_type: "int", required: false }
+      - { label: "草稿", name: "draft", widget: "boolean", default: false, required: false }
+      - { label: "正文", name: "body", widget: "markdown", required: true }
+
+  # ===== 导航栏管理 =====
+  - name: "navigation"
+    label: "🧭 导航栏"
+    delete: false
+    editor:
+      preview: false
+    files:
+      - label: "导航配置"
+        name: "nav"
+        file: "src/data/navigation.json"
+        fields:
+          - label: "站点名称"
+            name: "brand"
+            widget: "string"
+            required: true
+          - label: "导航项"
+            name: "items"
+            widget: "list"
+            required: true
+            hint: "管理顶部导航栏的菜单项"
+            fields:
+              - { label: "名称", name: "label", widget: "string", required: true }
+              - { label: "链接", name: "url", widget: "string", required: true }
+              - label: "子菜单"
+                name: "children"
+                widget: "list"
+                required: false
+                fields:
+                  - { label: "名称", name: "label", widget: "string", required: true }
+                  - { label: "链接", name: "url", widget: "string", required: true }
+
+  # ===== 工具管理 =====
+  - name: "tools"
+    label: "🔧 工具管理"
+    delete: false
+    editor:
+      preview: false
+    files:
+      - label: "工具配置"
+        name: "tools-data"
+        file: "src/data/tools.json"
+        fields:
+          - label: "分类列表"
+            name: "categories"
+            widget: "list"
+            required: true
+            hint: "管理工具页面的分类和链接"
+            fields:
+              - { label: "分类ID", name: "id", widget: "string", required: true, hint: "英文唯一标识，如 software" }
+              - { label: "分类名称", name: "name", widget: "string", required: true, hint: "如：器用、羽翼、百宝" }
+              - { label: "副标题", name: "subtitle", widget: "string", required: false, hint: "可选，如 —— 自家笔墨 ——" }
+              - { label: "强调色CSS变量", name: "accentColor", widget: "string", default: "var(--accent)", hint: "如 var(--accent) 或 var(--stone)" }
+              - label: "工具列表"
+                name: "items"
+                widget: "list"
+                required: true
+                fields:
+                  - { label: "名称", name: "title", widget: "string", required: true }
+                  - { label: "描述", name: "description", widget: "string", required: true }
+                  - { label: "链接", name: "url", widget: "string", required: true }
+                  - { label: "图标", name: "icon", widget: "select", options: ["lock", "package", "grid", "chrome", "zap", "file", "file-plus", "music", "book", "message", "monitor", "link", "tool", "star"], default: "link" }
+                  - { label: "本站页面", name: "isLocal", widget: "boolean", default: false, hint: "是否本站内部链接" }

@@ -1,0 +1,148 @@
+﻿{
+  "categories": [
+    {
+      "id": "masterpiece",
+      "name": "匠心",
+      "subtitle": "—— 自家笔墨 ——",
+      "accentColor": "var(--accent)",
+      "items": [
+        {
+          "title": "门锁密码分配系统",
+          "description": "施工队智能门锁密码分配工具",
+          "url": "/tools/password",
+          "icon": "lock",
+          "isLocal": true
+        }
+      ]
+    },
+    {
+      "id": "software",
+      "name": "器用",
+      "subtitle": null,
+      "accentColor": "var(--accent-light)",
+      "items": [
+        {
+          "title": "MAC软件",
+          "description": "mac.macxz.com",
+          "url": "https://mac.macxz.com/?id=MjAzMDkzNQ%3D%3D",
+          "icon": "package",
+          "isLocal": false
+        },
+        {
+          "title": "ISO镜像",
+          "description": "massgrave.dev",
+          "url": "https://massgrave.dev/windows_11_links",
+          "icon": "grid",
+          "isLocal": false
+        },
+        {
+          "title": "Chrome",
+          "description": "安卓/MAC/PC",
+          "url": "https://www.chrome64.com/",
+          "icon": "chrome",
+          "isLocal": false
+        },
+        {
+          "title": "凭据密码查看",
+          "description": "nirsoft.net",
+          "url": "https://www.nirsoft.net/utils/network_password_recovery.html",
+          "icon": "lock",
+          "isLocal": false
+        }
+      ]
+    },
+    {
+      "id": "plugins",
+      "name": "羽翼",
+      "subtitle": null,
+      "accentColor": "var(--stone)",
+      "items": [
+        {
+          "title": "Torch库",
+          "description": "download.pytorch.org",
+          "url": "https://download.pytorch.org/whl",
+          "icon": "package",
+          "isLocal": false
+        },
+        {
+          "title": "USB串口驱动",
+          "description": "wch.cn",
+          "url": "https://www.wch.cn/downloads/CH341SER_EXE.html",
+          "icon": "zap",
+          "isLocal": false
+        },
+        {
+          "title": "DLL库",
+          "description": "dll-files.com",
+          "url": "https://www.dll-files.com/",
+          "icon": "file",
+          "isLocal": false
+        },
+        {
+          "title": "DLL修复",
+          "description": "ijinshan.com",
+          "url": "https://www.ijinshan.com/filerepair/dll/",
+          "icon": "file-plus",
+          "isLocal": false
+        }
+      ]
+    },
+    {
+      "id": "gadgets",
+      "name": "百宝",
+      "subtitle": null,
+      "accentColor": "var(--accent-light)",
+      "items": [
+        {
+          "title": "音频转换",
+          "description": "耳聆 · tool.ear0.com",
+          "url": "https://tool.ear0.com/convert",
+          "icon": "music",
+          "isLocal": false
+        },
+        {
+          "title": "音频处理",
+          "description": "123apps.com",
+          "url": "https://123apps.com/",
+          "icon": "music",
+          "isLocal": false
+        },
+        {
+          "title": "OCR文字识别",
+          "description": "白描 · baimiaoapp.com",
+          "url": "https://web.baimiaoapp.com/",
+          "icon": "book",
+          "isLocal": false
+        },
+        {
+          "title": "音频合成",
+          "description": "audio-joiner.com",
+          "url": "https://audio-joiner.com/cn/",
+          "icon": "music",
+          "isLocal": false
+        },
+        {
+          "title": "提词器",
+          "description": "tttci.com",
+          "url": "https://www.tttci.com/",
+          "icon": "message",
+          "isLocal": false
+        },
+        {
+          "title": "Password Tools",
+          "description": "nirsoft.net",
+          "url": "https://www.nirsoft.net/",
+          "icon": "lock",
+          "isLocal": false
+        },
+        {
+          "title": "监考系统",
+          "description": "safeexambrowser.org",
+          "url": "https://safeexambrowser.org/download_en.html",
+          "icon": "monitor",
+          "isLocal": false
+        }
+      ]
+    }
+  ]
+}
