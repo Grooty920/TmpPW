@@ -1,105 +1,300 @@
 ﻿<!doctype html>
 <html lang="zh-CN">
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>后台管理 · 小杨王子</title>
-  <style>
-    * { margin: 0; padding: 0; box-sizing: border-box; }
-    body {
-      min-height: 100vh;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-family: "Noto Serif SC", "LXGW WenKai", serif;
-      background: #f7f3e8;
-    }
-    .login-box {
-      background: #fefcf5;
-      border: 1px solid #d4c494;
-      padding: 48px 40px;
-      max-width: 380px;
-      width: 90%;
-      text-align: center;
-      box-shadow: 0 4px 24px rgba(28,28,18,0.08);
-    }
-    .login-box h1 {
-      font-size: 20px;
-      color: #1c1c1c;
-      margin-bottom: 8px;
-      letter-spacing: 0.1em;
-    }
-    .login-box p {
-      font-size: 13px;
-      color: #6b5f45;
-      margin-bottom: 28px;
-    }
-    .login-box input {
-      width: 100%;
-      padding: 12px 16px;
-      border: 1px solid #d4c494;
-      background: #f7f3e8;
-      font-size: 14px;
-      text-align: center;
-      outline: none;
-      color: #1c1c1c;
-      font-family: inherit;
-      transition: border-color 0.3s;
-    }
-    .login-box input:focus { border-color: #c73e3a; }
-    .login-box button {
-      width: 100%;
-      padding: 12px;
-      margin-top: 16px;
-      border: none;
-      background: #c73e3a;
-      color: #f7f3e8;
-      font-size: 14px;
-      font-family: inherit;
-      letter-spacing: 0.1em;
-      cursor: pointer;
-      transition: background 0.3s;
-    }
-    .login-box button:hover { background: #a8302c; }
-    .error { color: #c73e3a; font-size: 12px; margin-top: 12px; display: none; }
-  </style>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>后台管理 · 小杨王子</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{min-height:100vh;display:flex;align-items:center;justify-content:center;font-family:"Noto Serif SC","LXGW WenKai",serif;background:#f7f3e8;color:#1c1c1c}
+.login-box{background:#fefcf5;border:1px solid #d4c494;padding:48px 40px;max-width:400px;width:90%;text-align:center;box-shadow:0 4px 24px rgba(28,28,18,0.08)}
+.login-box h1{font-size:20px;margin-bottom:8px;letter-spacing:0.1em}
+.login-box p{font-size:13px;color:#6b5f45;margin-bottom:28px}
+.login-box input{width:100%;padding:12px 16px;border:1px solid #d4c494;background:#f7f3e8;font-size:14px;text-align:center;outline:none;color:#1c1c1c;font-family:inherit;transition:border-color 0.3s}
+.login-box input:focus{border-color:#c73e3a}
+.login-box button{width:100%;padding:12px;margin-top:16px;border:none;background:#c73e3a;color:#f7f3e8;font-size:14px;font-family:inherit;letter-spacing:0.1em;cursor:pointer;transition:background 0.3s}
+.login-box button:hover{background:#a8302c}
+.error{color:#c73e3a;font-size:12px;margin-top:12px;display:none}
+.hidden{display:none}
+</style>
 </head>
 <body>
-  <div id="login-screen" class="login-box">
-    <h1>🔐 后台管理</h1>
-    <p>小杨王子 · 水墨博客</p>
-    <input id="password-input" type="password" placeholder="输入管理密码" autocomplete="off">
-    <button id="login-btn">进入</button>
-    <div id="error-msg" class="error">密码错误</div>
+<div id="login-screen" class="login-box">
+  <h1>🔐 后台管理</h1>
+  <p>小杨王子 · 水墨博客</p>
+  <input id="pwd-input" type="password" placeholder="输入管理密码" autocomplete="off">
+  <button id="login-btn">进入</button>
+  <div id="error-msg" class="error">密码错误</div>
+</div>
+
+<div id="admin-screen" class="hidden" style="width:100%;min-height:100vh;padding:24px;max-width:800px;margin:0 auto">
+  <div style="text-align:center;margin-bottom:32px">
+    <h1 style="font-size:22px;letter-spacing:0.1em">后台管理</h1>
+    <p style="font-size:13px;color:#6b5f45;margin-top:8px">小杨王子 · 水墨博客</p>
   </div>
 
-  <script>
-    var PASSWORD = "Grooty920";
-    var loaded = false;
+  <!-- Token 输入 -->
+  <div id="token-section" class="login-box" style="margin:0 auto">
+    <h1>🔑 GitHub 授权</h1>
+    <p>输入 Personal Access Token 以读写仓库</p>
+    <input id="token-input" type="password" placeholder="ghp_xxxxxxxxxxxxxxxxxxxx" autocomplete="off">
+    <button id="token-btn">连接 GitHub</button>
+    <div id="token-error" class="error" style="display:none"></div>
+    <div style="margin-top:16px;font-size:12px;color:#6b5f45">
+      <a href="https://github.com/settings/tokens" target="_blank" style="color:#c73e3a">生成 Token →</a>
+      <br><span style="font-size:11px">需勾选 repo 权限</span>
+    </div>
+  </div>
 
-    function checkPassword() {
-      var input = document.getElementById("password-input").value;
-      if (input === PASSWORD) {
-        document.getElementById("login-screen").style.display = "none";
-        // 加载 Decap CMS
-        if (!loaded) {
-          loaded = true;
-          var script = document.createElement("script");
-          script.src = "https://unpkg.com/decap-cms@^3.0.0/dist/decap-cms.js";
-          document.body.appendChild(script);
-        }
-      } else {
-        document.getElementById("error-msg").style.display = "block";
-        document.getElementById("password-input").value = "";
-        document.getElementById("password-input").focus();
+  <!-- 管理面板 -->
+  <div id="panel-section" class="hidden">
+    <div style="display:flex;gap:12px;margin-bottom:24px;flex-wrap:wrap">
+      <button class="tab-btn active" data-tab="tools" style="flex:1;padding:12px;border:1px solid #d4c494;background:#c73e3a;color:#f7f3e8;font-family:inherit;font-size:14px;cursor:pointer;letter-spacing:0.05em">🔧 工具管理</button>
+      <button class="tab-btn" data-tab="nav" style="flex:1;padding:12px;border:1px solid #d4c494;background:#fefcf5;color:#1c1c1c;font-family:inherit;font-size:14px;cursor:pointer;letter-spacing:0.05em">🧭 导航栏</button>
+      <button class="tab-btn" data-tab="posts" style="flex:1;padding:12px;border:1px solid #d4c494;background:#fefcf5;color:#1c1c1c;font-family:inherit;font-size:14px;cursor:pointer;letter-spacing:0.05em">📝 文章</button>
+    </div>
+
+    <div id="tab-tools" class="tab-content"></div>
+    <div id="tab-nav" class="tab-content hidden"></div>
+    <div id="tab-posts" class="tab-content hidden"></div>
+  </div>
+</div>
+
+<script>
+const PASSWORD = "Grooty920";
+const REPO = "Grooty920/TmpPW";
+const BRANCH = "master";
+let TOKEN = "";
+
+// 登录
+document.getElementById("login-btn").onclick = () => {
+  if (document.getElementById("pwd-input").value === PASSWORD) {
+    document.getElementById("login-screen").classList.add("hidden");
+    document.getElementById("admin-screen").classList.remove("hidden");
+    // 检查是否已有 token
+    const saved = sessionStorage.getItem("gh_token");
+    if (saved) { TOKEN = saved; connectGitHub(); }
+  } else {
+    document.getElementById("error-msg").style.display = "block";
+  }
+};
+document.getElementById("pwd-input").addEventListener("keydown", e => { if(e.key==="Enter") document.getElementById("login-btn").click(); });
+
+// GitHub 连接
+document.getElementById("token-btn").onclick = connectGitHub;
+document.getElementById("token-input").addEventListener("keydown", e => { if(e.key==="Enter") connectGitHub(); });
+
+async function connectGitHub() {
+  const input = document.getElementById("token-input");
+  const err = document.getElementById("token-error");
+  const token = input.value || sessionStorage.getItem("gh_token");
+  if (!token) { err.textContent = "请输入 Token"; err.style.display = "block"; return; }
+  
+  // 验证 token
+  try {
+    const res = await fetch("https://api.github.com/user", { headers: { "Authorization": "Bearer " + token } });
+    if (!res.ok) throw new Error("Token 无效");
+    TOKEN = token;
+    sessionStorage.setItem("gh_token", token);
+    document.getElementById("token-section").classList.add("hidden");
+    document.getElementById("panel-section").classList.remove("hidden");
+    loadAllData();
+  } catch(e) {
+    err.textContent = "Token 无效或网络错误";
+    err.style.display = "block";
+  }
+}
+
+// Tab 切换
+document.querySelectorAll(".tab-btn").forEach(btn => {
+  btn.onclick = () => {
+    document.querySelectorAll(".tab-btn").forEach(b => {
+      b.style.background = "#fefcf5"; b.style.color = "#1c1c1c";
+    });
+    btn.style.background = "#c73e3a"; btn.style.color = "#f7f3e8";
+    document.querySelectorAll(".tab-content").forEach(t => t.classList.add("hidden"));
+    document.getElementById("tab-" + btn.dataset.tab).classList.remove("hidden");
+  };
+});
+
+// GitHub API 工具函数
+async function ghGet(path) {
+  const r = await fetch("https://api.github.com/repos/" + REPO + "/contents/" + path + "?ref=" + BRANCH, {
+    headers: { "Authorization": "Bearer " + TOKEN, "Accept": "application/vnd.github.v3+json" }
+  });
+  if (!r.ok) throw new Error("GET " + path + " failed: " + r.status);
+  const data = await r.json();
+  return { content: JSON.parse(atob(data.content)), sha: data.sha };
+}
+
+async function ghPut(path, content, sha) {
+  const r = await fetch("https://api.github.com/repos/" + REPO + "/contents/" + path, {
+    method: "PUT",
+    headers: { "Authorization": "Bearer " + TOKEN, "Content-Type": "application/json" },
+    body: JSON.stringify({ message: "update: " + path, content: btoa(unescape(encodeURIComponent(JSON.stringify(content, null, 2)))), sha: sha, branch: BRANCH })
+  });
+  if (!r.ok) throw new Error("PUT " + path + " failed: " + r.status + " " + (await r.text()));
+  return await r.json();
+}
+
+// 加载数据
+let toolsData = null, navData = null, toolsSha = null, navSha = null;
+
+async function loadAllData() {
+  try {
+    const t = await ghGet("src/data/tools.json");
+    toolsData = t.content; toolsSha = t.sha;
+    const n = await ghGet("src/data/navigation.json");
+    navData = n.content; navSha = n.sha;
+    renderTools();
+    renderNav();
+    renderPosts();
+  } catch(e) {
+    document.getElementById("tab-tools").innerHTML = "<p style='color:#c73e3a'>加载失败: " + e.message + "</p>";
+  }
+}
+
+// ===== 工具管理 =====
+function renderTools() {
+  const el = document.getElementById("tab-tools");
+  let html = "<div style='margin-bottom:16px;display:flex;gap:8px'><button onclick='addCategory()' style='padding:8px 16px;border:1px solid #c73e3a;background:#c73e3a;color:#fff;cursor:pointer;font-family:inherit'>+ 添加分类</button><button onclick='saveTools()' style='padding:8px 16px;border:1px solid #4a6741;background:#4a6741;color:#fff;cursor:pointer;font-family:inherit'>💾 保存到 GitHub</button></div>";
+  html += "<div id='save-tools-msg' style='font-size:12px;margin-bottom:12px;color:#4a6741'></div>";
+  
+  toolsData.categories.forEach((cat, ci) => {
+    html += "<div style='border:1px solid #d4c494;padding:16px;margin-bottom:16px;background:#fefcf5'>";
+    html += "<div style='display:flex;gap:8px;align-items:center;margin-bottom:12px'>";
+    html += "<input value='" + cat.name + "' onchange='editCategory(" + ci + ",\"name\",this.value)' style='padding:6px 10px;border:1px solid #d4c494;font-size:14px;font-family:inherit;width:100px'>";
+    html += "<input value='" + (cat.subtitle||"") + "' onchange='editCategory(" + ci + ",\"subtitle\",this.value)' style='padding:6px 10px;border:1px solid #d4c494;font-size:12px;font-family:inherit;width:160px' placeholder='副标题'>";
+    html += "<button onclick='deleteCategory(" + ci + ")' style='padding:4px 10px;border:1px solid #c73e3a;color:#c73e3a;background:transparent;cursor:pointer;font-size:12px'>删除</button>";
+    html += "</div>";
+    
+    html += "<div style='display:grid;grid-template-columns:1fr 1fr;gap:8px'>";
+    cat.items.forEach((item, ii) => {
+      html += "<div style='border:1px solid #e8e0cc;padding:10px;background:#f7f3e8'>";
+      html += "<input value='" + item.title + "' onchange='editItem(" + ci + "," + ii + ",\"title\",this.value)' style='width:100%;padding:4px 6px;border:1px solid #d4c494;font-size:13px;font-family:inherit;margin-bottom:4px'>";
+      html += "<input value='" + (item.description||"") + "' onchange='editItem(" + ci + "," + ii + ",\"description\",this.value)' style='width:100%;padding:4px 6px;border:1px solid #d4c494;font-size:12px;font-family:inherit;margin-bottom:4px'>";
+      html += "<input value='" + item.url + "' onchange='editItem(" + ci + "," + ii + ",\"url\",this.value)' style='width:100%;padding:4px 6px;border:1px solid #d4c494;font-size:12px;font-family:inherit'>";
+      html += "<div style='margin-top:4px;display:flex;gap:4px'><button onclick='deleteItem(" + ci + "," + ii + ")' style='padding:2px 8px;border:1px solid #c73e3a;color:#c73e3a;background:transparent;cursor:pointer;font-size:11px'>删除</button></div>";
+      html += "</div>";
+    });
+    html += "</div>";
+    html += "<button onclick='addItem(" + ci + ")' style='margin-top:8px;padding:4px 12px;border:1px solid #d4c494;background:transparent;cursor:pointer;font-size:12px;font-family:inherit'>+ 添加工具</button>";
+    html += "</div>";
+  });
+  
+  el.innerHTML = html;
+}
+
+function editCategory(ci, field, val) {
+  if (field === "name") toolsData.categories[ci].name = val;
+  if (field === "subtitle") toolsData.categories[ci].subtitle = val || null;
+}
+function editItem(ci, ii, field, val) {
+  toolsData.categories[ci].items[ii][field] = val;
+}
+function addCategory() {
+  toolsData.categories.push({ id: "new", name: "新分类", subtitle: null, accentColor: "var(--accent)", items: [] });
+  renderTools();
+}
+function deleteCategory(ci) {
+  if (!confirm("确定删除该分类？")) return;
+  toolsData.categories.splice(ci, 1);
+  renderTools();
+}
+function addItem(ci) {
+  toolsData.categories[ci].items.push({ title: "新工具", description: "描述", url: "https://", icon: "link", isLocal: false });
+  renderTools();
+}
+function deleteItem(ci, ii) {
+  toolsData.categories[ci].items.splice(ii, 1);
+  renderTools();
+}
+
+async function saveTools() {
+  const msg = document.getElementById("save-tools-msg");
+  try {
+    const r = await ghPut("src/data/tools.json", toolsData, toolsSha);
+    toolsSha = r.content.sha;
+    msg.textContent = "✅ 工具数据已保存到 GitHub！";
+    setTimeout(() => msg.textContent = "", 3000);
+  } catch(e) {
+    msg.textContent = "❌ 保存失败: " + e.message;
+  }
+}
+
+// ===== 导航管理 =====
+function renderNav() {
+  const el = document.getElementById("tab-nav");
+  let html = "<div style='margin-bottom:16px'><button onclick='saveNav()' style='padding:8px 16px;border:1px solid #4a6741;background:#4a6741;color:#fff;cursor:pointer;font-family:inherit'>💾 保存到 GitHub</button></div>";
+  html += "<div id='save-nav-msg' style='font-size:12px;margin-bottom:12px;color:#4a6741'></div>";
+  
+  html += "<div style='border:1px solid #d4c494;padding:16px;background:#fefcf5;margin-bottom:12px'>";
+  html += "<label style='font-size:13px;display:block;margin-bottom:6px'>站点名称</label>";
+  html += "<input value='" + navData.brand + "' onchange='navData.brand=this.value' style='width:100%;padding:8px 10px;border:1px solid #d4c494;font-size:14px;font-family:inherit'>";
+  html += "</div>";
+  
+  html += "<div style='border:1px solid #d4c494;padding:16px;background:#fefcf5'>";
+  html += "<label style='font-size:13px;display:block;margin-bottom:8px'>导航项</label>";
+  navData.items.forEach((item, i) => {
+    html += "<div style='display:flex;gap:8px;margin-bottom:8px;align-items:center'>";
+    html += "<input value='" + item.label + "' onchange='navData.items[" + i + "].label=this.value' style='padding:6px 10px;border:1px solid #d4c494;font-size:13px;font-family:inherit;width:100px'>";
+    html += "<input value='" + item.url + "' onchange='navData.items[" + i + "].url=this.value' style='padding:6px 10px;border:1px solid #d4c494;font-size:13px;font-family:inherit;flex:1'>";
+    html += "<button onclick='deleteNavItem(" + i + ")' style='padding:4px 10px;border:1px solid #c73e3a;color:#c73e3a;background:transparent;cursor:pointer;font-size:12px'>删除</button>";
+    html += "</div>";
+  });
+  html += "<button onclick='addNavItem()' style='margin-top:4px;padding:6px 14px;border:1px solid #d4c494;background:transparent;cursor:pointer;font-size:12px;font-family:inherit'>+ 添加导航项</button>";
+  html += "</div>";
+  
+  el.innerHTML = html;
+}
+
+function addNavItem() {
+  navData.items.push({ label: "新页面", url: "/", children: [] });
+  renderNav();
+}
+function deleteNavItem(i) {
+  navData.items.splice(i, 1);
+  renderNav();
+}
+
+async function saveNav() {
+  const msg = document.getElementById("save-nav-msg");
+  try {
+    const r = await ghPut("src/data/navigation.json", navData, navSha);
+    navSha = r.content.sha;
+    msg.textContent = "✅ 导航数据已保存到 GitHub！";
+    setTimeout(() => msg.textContent = "", 3000);
+  } catch(e) {
+    msg.textContent = "❌ 保存失败: " + e.message;
+  }
+}
+
+// ===== 文章管理 =====
+async function renderPosts() {
+  const el = document.getElementById("tab-posts");
+  el.innerHTML = "<p style='color:#6b5f45'>加载中...</p>";
+  try {
+    const r = await fetch("https://api.github.com/repos/" + REPO + "/contents/src/content/posts?ref=" + BRANCH, {
+      headers: { "Authorization": "Bearer " + TOKEN, "Accept": "application/vnd.github.v3+json" }
+    });
+    if (!r.ok) throw new Error("获取文章列表失败");
+    const files = await r.json();
+    let html = "<div style='margin-bottom:16px;font-size:13px;color:#6b5f45'>文章需通过 GitHub 直接编辑 MDX 文件</div>";
+    html += "<div style='display:grid;gap:8px'>";
+    for (const f of files) {
+      if (f.name.endsWith(".mdx") || f.name.endsWith(".md")) {
+        html += "<div style='border:1px solid #d4c494;padding:12px;background:#fefcf5;display:flex;justify-content:space-between;align-items:center'>";
+        html += "<span style='font-size:14px'>" + f.name + "</span>";
+        html += "<a href='https://github.com/" + REPO + "/edit/" + BRANCH + "/src/content/posts/" + f.name + "' target='_blank' style='padding:6px 14px;border:1px solid #c73e3a;color:#c73e3a;text-decoration:none;font-size:12px'>编辑 →</a>";
+        html += "</div>";
       }
     }
-
-    document.getElementById("login-btn").addEventListener("click", checkPassword);
-    document.getElementById("password-input").addEventListener("keydown", function(e) {
-      if (e.key === "Enter") checkPassword();
-    });
-    document.getElementById("password-input").focus();
-  </script>
+    html += "</div>";
+    el.innerHTML = html;
+  } catch(e) {
+    el.innerHTML = "<p style='color:#c73e3a'>加载失败: " + e.message + "</p>";
+  }
+}
+</script>
 </body>
 </html>
