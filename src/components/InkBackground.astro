@@ -1,0 +1,281 @@
+﻿---
+// 水墨背景层：江湖侠客水墨动画
+// 宣纸纹理 + 动态水墨晕染 + 侠客剪影 + 云雾飘动
+---
+
+<div class="ink-wrapper">
+  <!-- 宣纸纹理 -->
+  <div class="ink-rice-paper" aria-hidden="true"></div>
+  
+  <!-- 江湖侠客水墨动画画布 -->
+  <canvas id="ink-bg-canvas" aria-hidden="true"></canvas>
+  
+  <!-- 静态山水层叠 -->
+  <div class="ink-mountains" aria-hidden="true">
+    <div class="m-mountain m-m-left">
+      <div class="m-m-layer m-l-base"></div>
+      <div class="m-m-layer m-l-mid"></div>
+      <div class="m-m-layer m-l-front"></div>
+      <div class="m-m-layer m-l-front-2"></div>
+    </div>
+    <div class="m-mountain m-m-right">
+      <div class="m-m-layer m-r-base"></div>
+      <div class="m-m-layer m-r-mid"></div>
+      <div class="m-m-layer m-r-front"></div>
+      <div class="m-m-layer m-r-front-2"></div>
+    </div>
+  </div>
+</div>
+
+<style is:global>
+  .ink-wrapper {
+    position: fixed;
+    inset: 0;
+    z-index: -1;
+    overflow: hidden;
+    pointer-events: none;
+  }
+  
+  .ink-rice-paper {
+    position: absolute;
+    inset: 0;
+    background-image: url("/ink/rice-paper.webp");
+    background-repeat: repeat;
+    background-size: 512px 512px;
+    opacity: 0.5;
+    mix-blend-mode: multiply;
+  }
+  .dark .ink-rice-paper {
+    background-image: url("/ink/rice-paper-warm.webp");
+    opacity: 0.2;
+    mix-blend-mode: screen;
+  }
+
+  #ink-bg-canvas {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    opacity: 0.4;
+    pointer-events: none;
+  }
+  .dark #ink-bg-canvas {
+    opacity: 0.18;
+  }
+
+  .ink-mountains { position: absolute; inset: 0; }
+  .m-mountain { position: absolute; bottom: 0; width: 100%; height: 100%; pointer-events: none; }
+  .m-m-left { left: 0; width: 50%; }
+  .m-m-right { right: 0; width: 55%; }
+  .m-m-layer { position: absolute; background-size: contain; background-repeat: no-repeat; background-position: bottom; opacity: 0.12; transition: opacity 0.5s ease; }
+  .dark .m-m-layer { opacity: 0.06; }
+
+  .m-l-base { width: 100%; aspect-ratio: 1772 / 601; bottom: 0; left: -5%; background-image: url("/ink/mountains/l-base.webp"); }
+  .dark .m-l-base { background-image: url("/ink/mountains/d-l-base.webp"); }
+  .m-l-mid { width: 65%; aspect-ratio: 1162 / 358; bottom: 2%; left: 2%; background-image: url("/ink/mountains/l-mid.webp"); }
+  .dark .m-l-mid { background-image: url("/ink/mountains/d-l-mid.webp"); }
+  .m-l-front { width: 30%; aspect-ratio: 510 / 282; bottom: 3%; left: 5%; background-image: url("/ink/mountains/l-front.webp"); }
+  .dark .m-l-front { background-image: url("/ink/mountains/d-l-front.webp"); }
+  .m-l-front-2 { width: 45%; aspect-ratio: 833 / 304; bottom: 2%; left: 28%; background-image: url("/ink/mountains/l-front-2.webp"); }
+  .dark .m-l-front-2 { background-image: url("/ink/mountains/d-l-front-2.webp"); }
+
+  .m-r-base { width: 100%; aspect-ratio: 2273 / 773; bottom: 0; right: -5%; background-image: url("/ink/mountains/r-base.webp"); }
+  .dark .m-r-base { background-image: url("/ink/mountains/d-r-base.webp"); }
+  .m-r-mid { width: 55%; aspect-ratio: 1250 / 708; bottom: 15%; right: 2%; background-image: url("/ink/mountains/r-mid.webp"); }
+  .dark .m-r-mid { background-image: url("/ink/mountains/d-r-mid.webp"); }
+  .m-r-front { width: 45%; aspect-ratio: 1001 / 381; bottom: 15%; right: 30%; background-image: url("/ink/mountains/r-front.webp"); }
+  .dark .m-r-front { background-image: url("/ink/mountains/d-r-front.webp"); }
+  .m-r-front-2 { width: 28%; aspect-ratio: 629 / 359; bottom: 15%; right: 2%; background-image: url("/ink/mountains/r-front-2.webp"); }
+  .dark .m-r-front-2 { background-image: url("/ink/mountains/d-r-front-2.webp"); }
+
+  @media (max-width: 768px) {
+    .m-m-layer { opacity: 0.08; }
+    .dark .m-m-layer { opacity: 0.04; }
+    .m-r-mid, .m-r-front, .m-r-front-2 { display: none; }
+  }
+</style>
+
+<script>
+(function() {
+  'use strict';
+
+  var canvas = document.getElementById('ink-bg-canvas');
+  if (!canvas) return;
+  var ctx = canvas.getContext('2d');
+  var W, H, particles = [], frame = null;
+  var time = 0;
+
+  function resize() {
+    W = canvas.width = window.innerWidth;
+    H = canvas.height = window.innerHeight;
+  }
+
+
+
+  // ===== 绘制墨竹 =====
+  function drawBamboo(x, y, height, alpha) {
+    ctx.save();
+    ctx.globalAlpha = alpha;
+    ctx.strokeStyle = 'rgba(28, 28, 28, 0.2)';
+    ctx.lineWidth = 2;
+    ctx.lineCap = 'round';
+    
+    // 竹竿
+    ctx.beginPath();
+    ctx.moveTo(x, y);
+    ctx.lineTo(x, y - height);
+    ctx.stroke();
+    
+    // 竹节
+    var segments = Math.floor(height / 20);
+    for (var i = 1; i < segments; i++) {
+      var sy = y - i * 20;
+      ctx.beginPath();
+      ctx.moveTo(x - 3, sy);
+      ctx.lineTo(x + 3, sy);
+      ctx.stroke();
+    }
+    
+    // 竹叶
+    var leaves = [[x - 8, y - height + 10, -15, -5], [x + 8, y - height + 15, 15, -3], [x - 6, y - height + 30, -12, -8]];
+    for (var l = 0; l < leaves.length; l++) {
+      ctx.beginPath();
+      ctx.moveTo(leaves[l][0], leaves[l][1]);
+      ctx.quadraticCurveTo(leaves[l][0] + leaves[l][2], leaves[l][1] + leaves[l][3], leaves[l][0] + leaves[l][2] * 1.5, leaves[l][1] + leaves[l][3] * 0.5);
+      ctx.stroke();
+    }
+    
+    ctx.restore();
+  }
+
+  // ===== 绘制云雾 =====
+  function drawMist() {
+    var count = 5;
+    for (var i = 0; i < count; i++) {
+      var mx = (Math.sin(time * 0.0003 + i * 1.5) * 0.3 + 0.5) * W;
+      var my = H * (0.2 + i * 0.12);
+      var mw = 200 + Math.sin(time * 0.0005 + i) * 80;
+      var alpha = 0.015 + Math.sin(time * 0.0004 + i * 0.7) * 0.008;
+      alpha = Math.max(0.005, alpha);
+      
+      var grad = ctx.createRadialGradient(mx, my, 0, mx, my, mw);
+      grad.addColorStop(0, 'rgba(28, 28, 28, ' + (alpha * 2) + ')');
+      grad.addColorStop(0.5, 'rgba(28, 28, 28, ' + alpha + ')');
+      grad.addColorStop(1, 'rgba(28, 28, 28, 0)');
+      ctx.fillStyle = grad;
+      ctx.beginPath();
+      ctx.arc(mx, my, mw, 0, Math.PI * 2);
+      ctx.fill();
+    }
+  }
+
+  // ===== 墨滴粒子 =====
+  function createParticles() {
+    var p = [];
+    for (var i = 0; i < 12; i++) {
+      p.push({
+        x: Math.random() * W,
+        y: Math.random() * H,
+        size: Math.random() * 2.5 + 0.5,
+        vx: (Math.random() - 0.5) * 0.05,
+        vy: -(Math.random() * 0.1 + 0.02),
+        alpha: Math.random() * 0.06 + 0.02,
+        phase: Math.random() * Math.PI * 2,
+        speed: Math.random() * 0.005 + 0.002
+      });
+    }
+    return p;
+  }
+
+  function drawParticles() {
+    for (var i = 0; i < particles.length; i++) {
+      var p = particles[i];
+      p.phase += p.speed;
+      var a = p.alpha + Math.sin(p.phase) * 0.015;
+      a = Math.max(0.01, Math.min(0.08, a));
+      ctx.beginPath();
+      ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+      ctx.fillStyle = 'rgba(28, 28, 28, ' + a + ')';
+      ctx.fill();
+      p.x += p.vx;
+      p.y += p.vy;
+      if (p.y < -10) { p.y = H + 10; p.x = Math.random() * W; }
+      if (p.x < -10) p.x = W + 10;
+      if (p.x > W + 10) p.x = -10;
+    }
+  }
+
+  // ===== 墨迹飞溅 =====
+  var splashes = [];
+  function addSplash() {
+    if (Math.random() > 0.005) return;
+    splashes.push({
+      x: Math.random() * W,
+      y: H * 0.3 + Math.random() * H * 0.4,
+      size: 0,
+      maxSize: 5 + Math.random() * 15,
+      alpha: 0.3 + Math.random() * 0.2,
+      life: 0,
+      maxLife: 60 + Math.random() * 40
+    });
+  }
+  function drawSplashes() {
+    for (var i = splashes.length - 1; i >= 0; i--) {
+      var s = splashes[i];
+      s.life++;
+      s.size = (s.life / s.maxLife) * s.maxSize;
+      var a = s.alpha * (1 - s.life / s.maxLife);
+      ctx.beginPath();
+      ctx.arc(s.x, s.y, s.size, 0, Math.PI * 2);
+      ctx.fillStyle = 'rgba(28, 28, 28, ' + (a * 0.3) + ')';
+      ctx.fill();
+      if (s.life >= s.maxLife) splashes.splice(i, 1);
+    }
+  }
+
+  function loop() {
+    ctx.clearRect(0, 0, W, H);
+    time++;
+    
+    // 云雾
+    drawMist();
+    
+    // 墨竹 - 左侧
+    drawBamboo(W * 0.08, H * 0.85, H * 0.5, 0.15);
+    drawBamboo(W * 0.12, H * 0.88, H * 0.35, 0.1);
+    
+
+    // 墨竹 - 右侧
+    drawBamboo(W * 0.85, H * 0.82, H * 0.45, 0.12);
+    drawBamboo(W * 0.9, H * 0.86, H * 0.3, 0.08);
+    
+    // 墨滴粒子
+    drawParticles();
+    
+    // 墨迹飞溅
+    addSplash();
+    drawSplashes();
+    
+    frame = requestAnimationFrame(loop);
+  }
+
+  function init() {
+    if (frame) { cancelAnimationFrame(frame); frame = null; }
+    resize();
+    particles = createParticles();
+    loop();
+  }
+
+  function runInkBg() {
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', init);
+    } else {
+      init();
+    }
+  }
+  runInkBg();
+  document.addEventListener('astro:page-load', runInkBg);
+  window.addEventListener('resize', resize);
+})();
+</script>
+

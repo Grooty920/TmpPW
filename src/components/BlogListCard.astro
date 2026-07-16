@@ -1,0 +1,45 @@
+﻿---
+export interface Props {
+  title: string;
+  description: string;
+  date: Date;
+  slug: string;
+  category: string;
+  coverImage?: string;
+  readingTime?: number;
+}
+
+const { title, description, date, slug, category, coverImage, readingTime = 5 } = Astro.props;
+---
+
+<a
+  href={"/blog/" + slug}
+  class="group flex flex-col md:flex-row gap-6 p-6 card-ink transition-all duration-300 hover:scale-[1.01]"
+  style="background-color:var(--card-bg);border:1px solid var(--border)"
+>
+  {coverImage && (
+    <div class="shrink-0 w-full md:w-48 h-32 rounded-xl overflow-hidden">
+      <img
+        src={coverImage}
+        alt={title}
+        class="w-full h-full object-cover transition-all duration-500 group-hover:scale-110"
+      />
+    </div>
+  )}
+  <div class="flex-1 min-w-0">
+    <span class="inline-block px-2 py-0.5 text-xs mb-2 ink-btn rounded-sm" style="background-color:var(--accent-light);color:var(--bg-primary)">
+      {category}
+    </span>
+    <h2 class="text-xl font-serif font-semibold mb-2 transition-colors duration-300 group-hover:gold-link" style="color:var(--text-primary)">
+      {title}
+    </h2>
+    <p class="text-sm leading-relaxed line-clamp-2 mb-3" style="color:var(--text-secondary)">
+      {description}
+    </p>
+    <div class="flex items-center gap-4 text-xs" style="color:var(--text-secondary)">
+      <span>{date.toLocaleDateString("zh-CN")}</span>
+      <span>·</span>
+      <span>{readingTime} 分</span>
+    </div>
+  </div>
+</a>

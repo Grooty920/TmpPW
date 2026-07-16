@@ -1,0 +1,44 @@
+﻿---
+export interface Props {
+  title: string;
+  description: string;
+  date: Date;
+  slug: string;
+  category: string;
+  coverImage?: string;
+  readingTime?: number;
+  index?: number;
+}
+
+const { title, description, date, slug, category, coverImage, readingTime, index = 0 } = Astro.props;
+---
+
+<a
+  href={"/blog/" + slug}
+  class="group card-ink overflow-hidden"
+  style={"animation-delay:" + (0.2 + index * 0.1) + "s;animation-fill-mode:both"}
+>
+  <div class="relative -mx-6 -mt-6 mb-5 overflow-hidden h-48">
+    {coverImage ? (
+      <img src={coverImage} alt={title} class="w-full h-full object-cover transition-all duration-500 group-hover:scale-110" />
+    ) : (
+      <div class="w-full h-full flex items-center justify-center" style="background-color:var(--accent-light)">
+        <span class="text-3xl">📝</span>
+      </div>
+    )}
+    <div class="absolute inset-0 bg-gradient-to-t from-black/30 to-transparent"></div>
+  </div>
+  <span class="inline-block px-2 py-0.5 text-xs mb-3 ink-btn rounded-sm" style="background-color:var(--accent-light);color:var(--bg-primary)">
+    {category}
+  </span>
+  <h3 class="text-lg font-serif font-semibold mb-2 line-clamp-2 transition-colors duration-300" style="color:var(--text-primary)">
+    {title}
+  </h3>
+  <p class="text-sm leading-relaxed line-clamp-2 mb-4" style="color:var(--text-secondary)">
+    {description}
+  </p>
+  <div class="flex items-center justify-between text-xs" style="color:var(--text-secondary)">
+    <span>{date.toLocaleDateString("zh-CN")}</span>
+    <span>{readingTime || 5} 分</span>
+  </div>
+</a>

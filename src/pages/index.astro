@@ -1,58 +1,196 @@
 ﻿---
 import Layout from "../layouts/Layout.astro";
+import BlogCard from "../components/BlogCard.astro";
+import AuthorCard from "../components/AuthorCard.astro";
+import { getCollection } from "astro:content";
+
+const posts = await getCollection("posts", ({ data }) => !data.draft);
+posts.sort((a, b) => b.data.date.getTime() - a.data.date.getTime());
+const latest = posts.slice(0, 4);
+const categories = [...new Set(posts.map(p => p.data.category))];
 ---
 
-<Layout title="LoveAlwaysHere 首页" description="个人博客与工具集">
-  <div class="container-page">
-    <section class="pt-16 pb-12 text-center">
-      <div class="inline-block px-4 py-1.5 rounded-full text-xs tracking-widest mb-8 animate-fade-in" style="background-color:var(--accent-light);color:var(--bg-primary)">
-        个人空间 · 技术博客 · 实用工具
+<Layout title="小杨王子 · 山海之间，自在如风" description="寄蜉蝣于天地，渺沧海之一粟 — 小杨王子的水墨博客">
+  <!-- ===== Hero 江湖水墨 - 视频背景 ===== -->
+  <section class="relative min-h-[85vh] flex items-center overflow-hidden" style="background: #0a0a0a;">
+    <video autoplay muted loop playsinline class="absolute inset-0 w-full h-full object-cover" style="filter: grayscale(100%) brightness(0.4) contrast(1.1);">
+      <source src="/hero-bg.mp4" type="video/mp4" />
+    </video>
+    <div class="absolute inset-0" style="background: linear-gradient(180deg, rgba(0,0,0,0.2) 0%, transparent 30%, transparent 70%, rgba(0,0,0,0.4) 100%);"></div>
+    <div class="relative z-10 flex flex-col items-center justify-center w-full h-full px-6">
+      <div class="max-w-3xl mx-auto text-center">
+        <p class="text-xs tracking-[0.4em] mb-6 reveal" style="color:rgba(247,243,232,0.6); font-family: &apos;LXGW WenKai&apos;, serif; animation-delay: 0.2s;">—— 山水有相逢 ——</p>
+        <!-- 诗意签名 - 打字机效果 -->
+        <h1 class="mb-8">
+          <span class="text-4xl md:text-6xl lg:text-7xl font-bold tracking-wider" style="color:#f7f3e8; font-family: &apos;Ma Shan Zheng&apos;, &apos;Noto Serif SC&apos;, cursive; text-shadow: 0 4px 30px rgba(0,0,0,0.3); line-height: 1.4;">
+            <span id="typewriter"></span><span id="cursor" style="font-weight:100; opacity:0; color:#c73e3a;">|</span>
+          </span>
+        </h1>
+        <!-- 副标题淡入 -->
+        <p id="subtitle" class="text-base md:text-lg leading-relaxed opacity-0 max-w-xl mx-auto" style="color:rgba(247,243,232,0.85); font-family: &apos;LXGW WenKai&apos;, serif; letter-spacing: 0.15em; transform: translateY(10px);">寄蜉蝣于天地，渺沧海之一粟。以笔墨为舟，渡无涯之学海。</p>
+        <!-- 分隔线 -->
+        <div class="mt-12 flex items-center justify-center gap-4 opacity-0" id="hero-divider">
+          <span class="block w-8 h-[1px]" style="background: rgba(247,243,232,0.2);"></span>
+          <span class="block w-1 h-1 rounded-full" style="background: var(--accent);"></span>
+          <span class="block w-8 h-[1px]" style="background: rgba(247,243,232,0.2);"></span>
+        </div>
+        <!-- 向下箭头 -->
+        <div class="mt-10 opacity-0" id="scroll-hint">
+          <a href="#content" class="inline-flex flex-col items-center gap-2 transition-all duration-300 hover:opacity-70" style="color:rgba(247,243,232,0.5);">
+            <span class="text-xs tracking-widest">向下卷轴</span>
+            <svg class="w-4 h-4 animate-bounce" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M7 13l5 5 5-5M7 6l5 5 5-5"/></svg>
+          </a>
+        </div>
       </div>
-      <h1 class="text-4xl md:text-6xl font-serif font-bold tracking-tight leading-tight animate-fade-up" style="animation-delay:0.1s;animation-fill-mode:both">
-        <span style="color:var(--accent)">探索</span>
-        <span class="mx-3" style="color:var(--text-secondary)">·</span>
-        <span style="color:var(--text-primary)">创造</span>
-        <span class="mx-3" style="color:var(--text-secondary)">·</span>
-        <span style="color:var(--accent)">分享</span>
-      </h1>
-      <p class="mt-6 text-lg max-w-xl mx-auto leading-relaxed" style="color:var(--text-secondary)">
-        记录技术思考，分享实用工具。<br />
-        在代码与创造之间，寻找属于自己的节奏。
-      </p>
-      <div class="mt-10 flex flex-wrap gap-4 justify-center animate-fade-up" style="animation-delay:0.3s;animation-fill-mode:both">
-        <a href="/blog" class="px-8 py-3 rounded-full text-sm font-medium transition-all duration-300 hover:scale-105" style="background-color:var(--accent);color:#fff">浏览随笔 →</a>
-        <a href="/tools" class="px-8 py-3 rounded-full text-sm font-medium transition-all duration-300 hover:scale-105" style="border:1px solid var(--border);color:var(--text-secondary)">实用工具</a>
-      </div>
-    </section>
+    </div>
+    </div>
+    <div class="absolute bottom-0 left-0 right-0 h-32" style="background: linear-gradient(to top, var(--bg-primary), transparent);"></div>
+  </section>
 
-    <section class="py-12 grid md:grid-cols-3 gap-6">
-      <div class="card-warm animate-fade-up group" style="animation-delay:0.4s;animation-fill-mode:both">
-        <div class="w-12 h-12 rounded-xl flex items-center justify-center text-xl mb-5 transition-all duration-500 group-hover:scale-110 group-hover:-translate-y-1" style="background-color:var(--accent-light)">✍️</div>
-        <h3 class="text-lg font-serif font-semibold mb-3 transition-colors duration-300" style="color:var(--text-primary)">技术随笔</h3>
-        <p class="text-sm leading-relaxed" style="color:var(--text-secondary)">记录前端、全栈开发中的踩坑与思考，分享技术心得与最佳实践。</p>
+  <!-- ===== 内容区域 ===== -->
+  <div id="content" class="container-page py-16 md:py-20">
+    <!-- 最新文章 -->
+    <div class="mb-16">
+      <div class="flex items-center gap-3 mb-10 reveal">
+        <span class="w-1 h-6" style="background-color:var(--accent);"></span>
+        <div>
+          <h2 class="text-xl font-serif font-bold" style="color:var(--text-primary)">笔墨随笔</h2>
+          <p class="text-xs mt-0.5" style="color:var(--text-secondary)">—— 近墨迹 ——</p>
+        </div>
       </div>
-      <div class="card-warm animate-fade-up group" style="animation-delay:0.5s;animation-fill-mode:both">
-        <div class="w-12 h-12 rounded-xl flex items-center justify-center text-xl mb-5 transition-all duration-500 group-hover:scale-110 group-hover:-translate-y-1" style="background-color:var(--accent-light)">🔧</div>
-        <h3 class="text-lg font-serif font-semibold mb-3 transition-colors duration-300" style="color:var(--text-primary)">实用工具</h3>
-        <p class="text-sm leading-relaxed" style="color:var(--text-secondary)">日常开发和生活所需的在线小工具，开箱即用，持续更新。</p>
-      </div>
-      <div class="card-warm animate-fade-up group" style="animation-delay:0.6s;animation-fill-mode:both">
-        <div class="w-12 h-12 rounded-xl flex items-center justify-center text-xl mb-5 transition-all duration-500 group-hover:scale-110 group-hover:-translate-y-1" style="background-color:var(--accent-light)">🌱</div>
-        <h3 class="text-lg font-serif font-semibold mb-3 transition-colors duration-300" style="color:var(--text-primary)">持续进化</h3>
-        <p class="text-sm leading-relaxed" style="color:var(--text-secondary)">不断迭代优化，让这个小小的数字花园越来越丰富。</p>
-      </div>
-    </section>
 
-    <section class="py-12 text-center">
-      <div class="flex items-center gap-3 mb-10">
-        <div class="h-px flex-1" style="background:linear-gradient(to right, transparent, var(--border), transparent)"></div>
-        <span class="text-xs tracking-widest" style="color:var(--text-secondary)">最新动态</span>
-        <div class="h-px flex-1" style="background:linear-gradient(to right, transparent, var(--border), transparent)"></div>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+        {latest.length > 0 ? latest.map((post, i) => (
+        <a
+          href={"/blog/" + post.slug}
+          class="group card-ink p-6 transition-all duration-300 hover:scale-[1.01] reveal"
+          style={"animation-delay: " + (0.1 + i * 0.1) + "s; border-left: 3px solid var(--accent);"}
+        >
+          {post.data.coverImage && (
+          <div class="mb-4 h-40 overflow-hidden rounded-sm">
+            <img src={post.data.coverImage} alt={post.data.title} class="w-full h-full object-cover transition-all duration-500 group-hover:scale-110" />
+          </div>
+          )}
+          <span class="inline-block px-2 py-0.5 text-xs mb-2 ink-tag" style="font-size:0.65rem;">{post.data.category}</span>
+          <h3 class="text-base font-serif font-semibold mb-1.5 line-clamp-1 transition-colors duration-300 group-hover:text-gradient" style="color:var(--text-primary)">{post.data.title}</h3>
+          <p class="text-xs leading-relaxed line-clamp-2 mb-3" style="color:var(--text-secondary)">{post.data.description}</p>
+          <div class="flex items-center gap-3 text-xs" style="color:var(--text-secondary)">
+            <span>{post.data.date.toLocaleDateString("zh-CN")}</span>
+            <span>·</span>
+            <span>{post.data.readingTime || 5} 分</span>
+          </div>
+        </a>
+        )) : (
+        <div class="col-span-2 text-center py-16">
+          <p class="text-sm" style="color:var(--text-secondary)">笔墨未干，且待来日</p>
+        </div>
+        )}
       </div>
-      <div class="py-12">
-        <div class="text-4xl mb-4" style="color:var(--accent)">✨</div>
-        <p style="color:var(--text-secondary)">博客文章正在路上，敬请期待...</p>
+
+      {latest.length > 0 && (
+      <div class="mt-10 text-center reveal">
+        <a href="/blog" class="ink-btn px-6 py-2.5 text-sm" style="border:1px solid var(--accent);color:var(--accent);">
+          阅全文 →
+        </a>
       </div>
-    </section>
+      )}
+    </div>
+
+    <!-- 分隔线 -->
+    <div class="divider-ink my-16"></div>
+
+    <!-- 博主简介 + 分类 -->
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+      <!-- 博主卡片 -->
+      <div class="lg:col-span-2 reveal">
+        <AuthorCard />
+      </div>
+      <!-- 分类 -->
+      <div class="reveal">
+        <div class="card-ink p-6">
+          <h4 class="text-xs font-semibold mb-4 tracking-wider" style="color:var(--text-secondary); letter-spacing: 0.2em;">文章分类</h4>
+          <div class="flex flex-wrap gap-2">
+            {categories.length > 0 ? categories.map(cat => (
+            <span class="ink-tag px-3 py-1 text-xs cursor-pointer" style="border:1px solid var(--border);color:var(--text-secondary);">
+              {cat}
+            </span>
+            )) : (
+            <span class="text-xs" style="color:var(--text-secondary)">暂无分类</span>
+            )}
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 寄语 -->
+    <div class="mt-20 text-center reveal">
+      <div class="max-w-lg mx-auto">
+        <div class="w-12 h-[1px] mx-auto mb-6" style="background:var(--border);"></div>
+        <p class="text-sm leading-relaxed" style="color:var(--text-secondary); font-family: &apos;LXGW WenKai&apos;, serif; letter-spacing: 0.1em;">山水有相逢，来日皆可期</p>
+        <p class="text-xs mt-3" style="color:var(--text-secondary); opacity:0.5;">丙午年 · 荷月</p>
+      </div>
+    </div>
   </div>
 </Layout>
+
+<script>
+  (function() {
+    // 打字机效果
+    var text = "山海之间，自在如风";
+    var el = document.getElementById("typewriter");
+    var cursor = document.getElementById("cursor");
+    if (!el) return;
+    el.textContent = "";
+    var i = 0;
+    function type() {
+      if (i < text.length) {
+        el.textContent += text.charAt(i);
+        i++;
+        setTimeout(type, 100);
+      } else {
+        if (cursor) cursor.style.opacity = "1";
+      }
+    }
+    type();
+
+    // 副标题淡入
+    setTimeout(function() {
+      var sub = document.getElementById("subtitle");
+      if (sub) {
+        sub.style.transition = "opacity 1.2s ease-out, transform 1.2s ease-out";
+        sub.style.opacity = "1";
+        sub.style.transform = "translateY(0)";
+      }
+    }, 1400);
+
+    // 分隔线淡入
+    setTimeout(function() {
+      var div = document.getElementById("hero-divider");
+      if (div) {
+        div.style.transition = "opacity 1s ease-out";
+        div.style.opacity = "1";
+      }
+    }, 1800);
+
+    // 滚动提示淡入
+    setTimeout(function() {
+      var hint = document.getElementById("scroll-hint");
+      if (hint) {
+        hint.style.transition = "opacity 1s ease-out";
+        hint.style.opacity = "1";
+      }
+    }, 2200);
+  })();
+</script>
+
+
+
+
+
+
+
+
+
+
+
+

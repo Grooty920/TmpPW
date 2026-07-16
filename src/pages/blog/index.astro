@@ -1,10 +1,48 @@
 ﻿---
 import Layout from "../../layouts/Layout.astro";
+import BlogListCard from "../../components/BlogListCard.astro";
+import { getCollection } from "astro:content";
+
+const posts = await getCollection("posts", ({ data }) => !data.draft);
+posts.sort((a, b) => b.data.date.getTime() - a.data.date.getTime());
 ---
 
-<Layout title="随笔 · LoveAlwaysHere" description="随笔">
-  <div class="container-page py-16 text-center">
-    <h1 class="text-3xl font-serif font-bold" style="color:var(--accent)">随笔</h1>
-    <p class="mt-4" style="color:var(--text-secondary)">正在建设中...</p>
+<Layout title="随笔 · 小杨王子" description="沿途风景，以笔录之">
+  <div class="container-page py-16">
+    <div class="text-center mb-16 reveal">
+      <h1 class="text-3xl md:text-4xl font-serif font-bold" style="color:var(--text-primary)">随笔</h1>
+      <div class="mt-4 mx-auto w-12 h-0.5" style="background-color:var(--accent)"></div>
+      <p class="text-xs mt-4" style="color:var(--text-secondary); font-family: 'LXGW WenKai', serif; letter-spacing: 0.2em;">沿途风景，以笔录之</p>
+    </div>
+
+    {posts.length === 0 && (
+      <div class="text-center py-20 reveal">
+        <p class="text-lg" style="color:var(--text-secondary)">笔墨未干，且待来日...</p>
+      </div>
+    )}
+
+    <div class="max-w-3xl mx-auto space-y-6">
+      {posts.map((post, index) => (
+        <div class="reveal" style={"animation-delay:" + (0.1 + index * 0.08) + "s"}>
+          <BlogListCard
+            title={post.data.title}
+            description={post.data.description}
+            date={post.data.date}
+            slug={post.slug}
+            category={post.data.category}
+            coverImage={post.data.coverImage}
+            readingTime={post.data.readingTime}
+          />
+        </div>
+      ))}
+    </div>
+
+    <!-- 底部寄语 -->
+    <div class="mt-20 text-center reveal">
+      <div class="max-w-lg mx-auto">
+        <div class="w-12 h-[1px] mx-auto mb-6" style="background:var(--border);"></div>
+        <p class="text-sm" style="color:var(--text-secondary); font-family: 'LXGW WenKai', serif;">我手写我心，笔墨皆性情</p>
+      </div>
+    </div>
   </div>
 </Layout>
