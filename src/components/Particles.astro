@@ -1,0 +1,164 @@
+---
+// 粒子动画组件
+---
+<canvas id="particle-canvas"></canvas>
+
+<script>
+  (function() {
+    const canvas = document.getElementById("particle-canvas");
+    if (!canvas) return;
+    const ctx = canvas.getContext("2d");
+    let w, h;
+    let particles = [];
+    const mouse = { x: null, y: null, radius: 150 };
+
+    function resize() {
+      w = canvas.width = window.innerWidth;
+      h = canvas.height = window.innerHeight;
+    }
+    window.addEventListener("resize", resize);
+
+    canvas.addEventListener("mousemove", function(e) {
+      mouse.x = e.clientX;
+      mouse.y = e.clientY;
+    });
+    canvas.addEventListener("mouseleave", function() {
+      mouse.x = null;
+      mouse.y = null;
+    });
+
+    // 触屏支持
+    canvas.addEventListener("touchmove", function(e) {
+      const t = e.touches[0];
+      mouse.x = t.clientX;
+      mouse.y = t.clientY;
+    }, { passive: true });
+    canvas.addEventListener("touchend", function() {
+      mouse.x = null;
+      mouse.y = null;
+    });
+
+    const COUNT = 80;
+    const COLORS = ["rgba(6,182,212,", "rgba(129,140,248,", "rgba(168,85,247,", "rgba(236,72,153,"];
+
+    class Particle {
+      constructor() {
+        this.reset();
+      }
+      reset() {
+        this.x = Math.random() * w;
+        this.y = Math.random() * h;
+        this.size = Math.random() * 3 + 1;
+        this.speedX = (Math.random() - 0.5) * 0.8;
+        this.speedY = (Math.random() - 0.5) * 0.8;
+        this.opacity = Math.random() * 0.5 + 0.2;
+        this.color = COLORS[Math.floor(Math.random() * COLORS.length)];
+        this.pulse = Math.random() * Math.PI * 2;
+        this.pulseSpeed = Math.random() * 0.02 + 0.01;
+      }
+      update() {
+        // 鼠标交互
+        if (mouse.x !== null) {
+          const dx = mouse.x - this.x;
+          const dy = mouse.y - this.y;
+          const dist = Math.sqrt(dx * dx + dy * dy);
+          if (dist < mouse.radius) {
+            const force = (mouse.radius - dist) / mouse.radius;
+            const angle = Math.atan2(dy, dx);
+            this.speedX -= Math.cos(angle) * force * 0.05;
+            this.speedY -= Math.sin(angle) * force * 0.05;
+          }
+        }
+
+        this.x += this.speedX;
+        this.y += this.speedY;
+        this.pulse += this.pulseSpeed;
+
+        // 边界回弹
+        if (this.x < 0 || this.x > w) this.speedX *= -1;
+        if (this.y < 0 || this.y > h) this.speedY *= -1;
+
+        // 速度阻尼
+        this.speedX *= 0.99;
+        this.speedY *= 0.99;
+        if (Math.abs(this.speedX) < 0.01) this.speedX = (Math.random() - 0.5) * 0.8;
+        if (Math.abs(this.speedY) < 0.01) this.speedY = (Math.random() - 0.5) * 0.8;
+      }
+      draw() {
+        const pulseOpacity = this.opacity + Math.sin(this.pulse) * 0.15;
+        ctx.beginPath();
+        ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+        ctx.fillStyle = this.color + pulseOpacity + ")";
+        ctx.fill();
+
+        // 发光效果
+        ctx.beginPath();
+        ctx.arc(this.x, this.y, this.size * 2.5, 0, Math.PI * 2);
+        ctx.fillStyle = this.color + pulseOpacity * 0.15 + ")";
+        ctx.fill();
+      }
+    }
+
+    function init() {
+      particles = [];
+      for (let i = 0; i < COUNT; i++) {
+        particles.push(new Particle());
+      }
+    }
+
+    function connect() {
+      for (let i = 0; i < particles.length; i++) {
+        for (let j = i + 1; j < particles.length; j++) {
+          const dx = particles[i].x - particles[j].x;
+          const dy = particles[i].y - particles[j].y;
+          const dist = Math.sqrt(dx * dx + dy * dy);
+          const maxDist = 150;
+          if (dist < maxDist) {
+            const opacity = (1 - dist / maxDist) * 0.3;
+            ctx.beginPath();
+            ctx.moveTo(particles[i].x, particles[i].y);
+            ctx.lineTo(particles[j].x, particles[j].y);
+            ctx.strokeStyle = "rgba(6,182,212," + opacity + ")";
+            ctx.lineWidth = 0.6;
+            ctx.stroke();
+          }
+        }
+      }
+    }
+
+    function animate() {
+      ctx.clearRect(0, 0, w, h);
+      for (const p of particles) {
+        p.update();
+        p.draw();
+      }
+      connect();
+      requestAnimationFrame(animate);
+    }
+
+    resize();
+    init();
+    animate();
+
+    // 窗口大小变化时重置边界粒子
+    window.addEventListener("resize", function() {
+      resize();
+      for (const p of particles) {
+        p.x = Math.min(p.x, w);
+        p.y = Math.min(p.y, h);
+      }
+    });
+  })();
+</script>
+
+<style>
+  #particle-canvas {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    z-index: 0;
+    pointer-events: none;
+  }
+</style>
