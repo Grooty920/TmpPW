@@ -5,10 +5,114 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>后台管理 · 小杨王子</title>
   <style>
-    body { margin: 0; }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: "Noto Serif SC", "LXGW WenKai", serif;
+      background: #f7f3e8;
+    }
+    .login-box {
+      background: #fefcf5;
+      border: 1px solid #d4c494;
+      padding: 48px 40px;
+      max-width: 380px;
+      width: 90%;
+      text-align: center;
+      box-shadow: 0 4px 24px rgba(28,28,18,0.08);
+    }
+    .login-box h1 {
+      font-size: 20px;
+      color: #1c1c1c;
+      margin-bottom: 8px;
+      letter-spacing: 0.1em;
+    }
+    .login-box p {
+      font-size: 13px;
+      color: #6b5f45;
+      margin-bottom: 28px;
+    }
+    .login-box input {
+      width: 100%;
+      padding: 12px 16px;
+      border: 1px solid #d4c494;
+      background: #f7f3e8;
+      font-size: 14px;
+      text-align: center;
+      outline: none;
+      color: #1c1c1c;
+      font-family: inherit;
+      transition: border-color 0.3s;
+    }
+    .login-box input:focus {
+      border-color: #c73e3a;
+    }
+    .login-box button {
+      width: 100%;
+      padding: 12px;
+      margin-top: 16px;
+      border: none;
+      background: #c73e3a;
+      color: #f7f3e8;
+      font-size: 14px;
+      font-family: inherit;
+      letter-spacing: 0.1em;
+      cursor: pointer;
+      transition: background 0.3s;
+    }
+    .login-box button:hover {
+      background: #a8302c;
+    }
+    .error {
+      color: #c73e3a;
+      font-size: 12px;
+      margin-top: 12px;
+      display: none;
+    }
+    .admin-content {
+      display: none;
+    }
   </style>
 </head>
 <body>
-  <script src="https://unpkg.com/decap-cms@^3.0.0/dist/decap-cms.js"></script>
+  <div id="login-screen" class="login-box">
+    <h1>🔐 后台管理</h1>
+    <p>小杨王子 · 水墨博客</p>
+    <input id="password-input" type="password" placeholder="输入管理密码" autocomplete="off">
+    <button id="login-btn">进入</button>
+    <div id="error-msg" class="error">密码错误</div>
+  </div>
+
+  <div id="admin-content" class="admin-content">
+    <script src="https://unpkg.com/decap-cms@^3.0.0/dist/decap-cms.js"></script>
+  </div>
+
+  <script>
+    var PASSWORD = "Grooty920";
+
+    function checkPassword() {
+      var input = document.getElementById("password-input").value;
+      if (input === PASSWORD) {
+        document.getElementById("login-screen").style.display = "none";
+        document.getElementById("admin-content").style.display = "block";
+        // 重新加载 Decap CMS 脚本
+        var script = document.createElement("script");
+        script.src = "https://unpkg.com/decap-cms@^3.0.0/dist/decap-cms.js";
+        document.body.appendChild(script);
+      } else {
+        document.getElementById("error-msg").style.display = "block";
+        document.getElementById("password-input").value = "";
+        document.getElementById("password-input").focus();
+      }
+    }
+
+    document.getElementById("login-btn").addEventListener("click", checkPassword);
+    document.getElementById("password-input").addEventListener("keydown", function(e) {
+      if (e.key === "Enter") checkPassword();
+    });
+    document.getElementById("password-input").focus();
+  </script>
 </body>
 </html>
