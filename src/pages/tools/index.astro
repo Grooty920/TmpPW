@@ -45,9 +45,7 @@ const defaultIcon = iconMap.link;
           <div class="max-w-xl">
             {cat.items.map((item) => (
               <a href={item.url} {...(item.isLocal ? {"data-astro-reload": true} : {target: "_blank", rel: "noopener"})} class="card-ink p-5 flex items-center gap-4 group transition-all duration-300 hover:scale-[1.01]">
-                <div class="w-12 h-12 rounded-xl flex items-center justify-center shrink-0 transition-all duration-300 group-hover:rotate-12" style={"background-color:" + (cat.accentColor || "var(--accent)")}>
-                  {iconMap[item.icon] || defaultIcon}
-                </div>
+                <div class="w-12 h-12 rounded-xl flex items-center justify-center shrink-0 transition-all duration-300 group-hover:rotate-12" style={"background-color:" + (cat.accentColor || "var(--accent)")} set:html={iconMap[item.icon] || defaultIcon}></div>
                 <div class="flex-1 min-w-0">
                   <h3 class="text-base font-serif font-semibold group-hover:text-gradient" style="color:var(--text-primary)">{item.title}</h3>
                   <p class="text-sm mt-1" style="color:var(--text-secondary)">{item.description}</p>
@@ -61,9 +59,7 @@ const defaultIcon = iconMap.link;
           <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 auto-rows-fr">
             {cat.items.map((item) => (
               <a href={item.url} target="_blank" rel="noopener" class="card-ink p-4 flex items-center gap-3 group transition-all duration-300 hover:scale-[1.02] h-full">
-                <div class="w-10 h-10 rounded-lg flex items-center justify-center shrink-0" style={"background-color:" + (cat.accentColor || "var(--accent-light)")}>
-                  {iconMap[item.icon] || defaultIcon}
-                </div>
+                <div class="w-10 h-10 rounded-lg flex items-center justify-center shrink-0" style={"background-color:" + (cat.accentColor || "var(--accent-light)")} set:html={iconMap[item.icon] || defaultIcon}></div>
                 <div class="min-w-0">
                   <h3 class="text-sm font-medium truncate group-hover:text-gradient" style="color:var(--text-primary)">{item.title}</h3>
                   <p class="text-xs truncate" style="color:var(--text-secondary)">{item.description}</p>
@@ -84,3 +80,5 @@ const defaultIcon = iconMap.link;
     </div>
   </div>
 </Layout>
+
+
