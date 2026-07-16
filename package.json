@@ -9,7 +9,7 @@
     "preview": "astro preview"
   },
   "dependencies": {
-    "@astrojs/mdx": "^5.0.0",
+    "@astrojs/mdx": "^4.2.0",
     "@astrojs/tailwind": "^5.0.0",
     "@chinese-fonts/lxgwwenkai": "^3.0.0",
     "astro": "^5.0.0",
@@ -28,3 +28,5 @@
   },
   "homepage": "https://github.com/Grooty920/TmpPW#readme"
 }
+
+
