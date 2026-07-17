@@ -1,7 +1,0 @@
-﻿name = "twikoo-comments"
-main = "index.js"
-compatibility_date = "2024-09-23"
-
-[[kv_namespaces]]
-binding = "COMMENTS_KV"
-id = "10de29d7e33b45caa572db525a65c0e3"

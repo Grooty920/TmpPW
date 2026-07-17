@@ -3,7 +3,7 @@
 backend:
   name: github
   repo: Grooty920/TmpPW
-  branch: master
+  branch: main
   auth_type: simple
 
 publish_mode: editorial_workflow

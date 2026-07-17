@@ -1,10 +1,10 @@
-const CACHE_NAME = "xiaoyang-v3";
+const CACHE_NAME = "xiaoyang-v4";
 const urlsToCache = [
   "/",
-  "/about",
-  "/blog",
-  "/tools",
-  "/search",
+  "/about/",
+  "/blog/",
+  "/tools/",
+  "/search/",
 ];
 
 self.addEventListener("install", function(event) {
