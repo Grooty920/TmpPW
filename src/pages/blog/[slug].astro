@@ -1,4 +1,4 @@
-Ôªø---
+---
 import Layout from "../../layouts/Layout.astro";
 import AuthorCard from "../../components/AuthorCard.astro";
 import { getCollection } from "astro:content";
@@ -20,7 +20,7 @@ const prev = idx < sorted.length - 1 ? sorted[idx + 1] : null;
 const next = idx > 0 ? sorted[idx - 1] : null;
 ---
 
-<Layout title={post.data.title + " ¬∑ Â∞èÊù®ÁéãÂ≠ê"} description={post.data.description}>
+<Layout title={post.data.title + " °§ –°—ÓÕı◊”"} description={post.data.description}>
   {post.data.coverImage && (
     <div class="relative h-64 md:h-96 overflow-hidden">
       <div class="absolute inset-0 bg-gradient-to-b from-black/40 to-transparent z-10"></div>
@@ -36,8 +36,8 @@ const next = idx > 0 ? sorted[idx - 1] : null;
           <h1 class="text-3xl md:text-4xl font-serif font-bold leading-tight mb-4" style="color:var(--text-primary)">{post.data.title}</h1>
           <div class="flex flex-wrap items-center gap-4 text-sm" style="color:var(--text-secondary)">
             <span>{post.data.date.toLocaleDateString("zh-CN")}</span>
-            <span>¬∑</span>
-            <span>{post.data.readingTime || 5} ÂàÜÈíü</span>
+            <span>°§</span>
+            <span>{post.data.readingTime || 5} ∑÷÷”</span>
           </div>
         </header>
 
@@ -53,26 +53,17 @@ const next = idx > 0 ? sorted[idx - 1] : null;
           </div>
         )}
 
-        <div class="text-center py-10">
-          <button id="like-btn" class="inline-flex items-center gap-2 px-6 py-3 rounded-full text-sm transition-all duration-300 hover:scale-110" style="border:1px solid var(--border);color:var(--text-secondary)">
-            <svg id="heart-icon" class="w-5 h-5 transition-all duration-300" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
-            </svg>
-            <span id="like-text">ÂøÉÊúâÊàöÊàöÔºüÁÇπÊú±Á†Ç</span>
-          </button>
-        </div>
-
         <div class="flex flex-col sm:flex-row gap-4 mt-10 pt-8 reveal" style="border-top:1px solid var(--border)">
           {prev && (
             <a href={"/blog/" + prev.slug} class="flex-1 p-4 card-ink transition-all duration-300 hover:scale-105" style="background-color:var(--card-bg);border:1px solid var(--border)">
-              <span class="text-xs" style="color:var(--text-secondary)">‚Üê ‰∏ä‰∏ÄÁØá</span>
+              <span class="text-xs" style="color:var(--text-secondary)">°˚ …œ“ª∆™</span>
               <p class="text-sm font-medium mt-1 line-clamp-1" style="color:var(--text-primary)">{prev.data.title}</p>
             </a>
           )}
           <div class="flex-1"></div>
           {next && (
             <a href={"/blog/" + next.slug} class="flex-1 p-4 card-ink text-right transition-all duration-300 hover:scale-105" style="background-color:var(--card-bg);border:1px solid var(--border)">
-              <span class="text-xs" style="color:var(--text-secondary)">‰∏ã‰∏ÄÁØá ‚Üí</span>
+              <span class="text-xs" style="color:var(--text-secondary)">œ¬“ª∆™ °˙</span>
               <p class="text-sm font-medium mt-1 line-clamp-1" style="color:var(--text-primary)">{next.data.title}</p>
             </a>
           )}
@@ -82,74 +73,159 @@ const next = idx > 0 ? sorted[idx - 1] : null;
           <AuthorCard />
         </div>
 
-        <div class="mt-10 p-8 card-ink text-center" style="background-color:var(--card-bg);border:1px solid var(--border)">
-          <p class="text-sm" style="color:var(--text-secondary)">Â±±Ê∞¥ÊúâÁõ∏ÈÄ¢ÔºåÊù•Êó•ÁöÜÂèØÊúü...</p>
-        </div>
-              <!-- ËØÑËÆ∫Âå∫ - Twikoo -->
-        <div class="mt-10">
-          <div class="card-ink p-6 reveal" style="animation-delay:0.4s">
-            <h3 class="text-lg font-serif font-bold mb-6" style="color:var(--text-primary)">Á¨îÂ¢®ÁïôÁóï</h3>
+        <!-- ∆¿¬€«¯ - Twikoo -->
+        <div class="mt-10" id="comment-section">
+          <div class="card-ink p-6 md:p-8 reveal" style="animation-delay:0.4s">
+            <div class="flex items-center gap-3 mb-6">
+              <span class="w-1 h-5" style="background-color:var(--accent)"></span>
+              <h3 class="text-lg font-serif font-bold" style="color:var(--text-primary)">± ƒ´¡Ù∫€</h3>
+            </div>
             <div id="tcomment"></div>
           </div>
         </div>
-
       </article>
 
-                </div>
-</div>
-
-
-      
       <aside class="hidden lg:block w-64 shrink-0 reveal-right">
         <div class="sticky top-24">
-          <h4 class="text-xs font-semibold uppercase tracking-widest mb-4" style="color:var(--text-secondary)">ÁõÆÂΩï</h4>
+          <h4 class="text-xs font-semibold uppercase tracking-widest mb-4" style="color:var(--text-secondary)">ƒø¬º</h4>
           <nav id="toc" class="space-y-1"></nav>
         </div>
       </aside>
     </div>
   </div>
-
-    <script is:inline>
-    // Twikoo ËØÑËÆ∫ - Âä®ÊÄÅÂä†ËΩΩCDN
-    (function() {
-      var s = document.createElement('script');
-      s.src = 'https://cdn.jsdelivr.net/npm/twikoo@1.7.14/dist/twikoo.all.min.js';
-      s.onload = function() {
-        console.log('Twikoo: CDN loaded');
-        var el = document.getElementById('tcomment');
-        if (!el || el.dataset.loaded) return;
-        el.dataset.loaded = '1';
-        console.log('Twikoo: initializing...');
-        twikoo.init({
-          envId: 'https://twikoo-teal.vercel.app',
-          el: '#tcomment',
-          lang: 'zh-CN',
-        }).then(function() {
-          console.log('Twikoo: initialized successfully');
-        }).catch(function(err) {
-          console.error('Twikoo: init error:', err);
-        });
-      };
-      s.onerror = function() {
-        console.error('Twikoo: CDN failed to load');
-      };
-      document.head.appendChild(s);
-      
-      document.addEventListener('astro:page-load', function() {
-        if (typeof twikoo !== 'undefined') {
-          var el = document.getElementById('tcomment');
-          if (!el || el.dataset.loaded) return;
-          el.dataset.loaded = '1';
-          twikoo.init({
-            envId: 'https://twikoo-teal.vercel.app',
-            el: '#tcomment',
-            lang: 'zh-CN',
-          });
-        }
-      });
-    })();
-  </script>
-
 </Layout>
 
-  
+<script>
+// ∂ØÃ¨µº»Î Twikoo£¨±‹√‚¥Ú∞¸µΩ÷˜ chunk
+function initTwikoo() {
+  var el = document.getElementById("tcomment");
+  if (!el || el.dataset.loaded) return;
+  el.dataset.loaded = "1";
+  import("twikoo").then(function(twikoo) {
+    twikoo.init({
+      envId: "https://twikoo-teal.vercel.app",
+      el: "#tcomment",
+      lang: "zh-CN",
+    }).then(function() {
+      console.log("Twikoo: ≥ı ºªØ≥…π¶");
+    }).catch(function(err) {
+      console.error("Twikoo: ≥ı ºªØ ß∞‹:", err);
+    });
+  }).catch(function(err) {
+    console.error("Twikoo: º”‘ÿ ß∞‹:", err);
+  });
+}
+
+document.addEventListener("DOMContentLoaded", initTwikoo);
+document.addEventListener("astro:page-load", initTwikoo);
+</script>
+
+<style is:global>
+/* ===== Twikoo ∆¿¬€«¯ - ÀÆƒ´÷˜Ã‚ ===== */
+#tcomment {
+  --twikoo-border-color: var(--border);
+  --twikoo-bg-color: transparent;
+  --twikoo-text-color: var(--text-primary);
+  --twikoo-secondary-text-color: var(--text-secondary);
+  --twikoo-accent-color: var(--accent);
+  --twikoo-accent-hover-color: var(--accent-light);
+  --twikoo-font-family: "Noto Serif SC", "LXGW WenKai", serif;
+  --twikoo-font-size: 0.875rem;
+  --twikoo-border-radius: 4px;
+  --twikoo-input-bg-color: var(--card-bg);
+  --twikoo-input-border-color: var(--border);
+  --twikoo-input-focus-border-color: var(--accent);
+  --twikoo-button-bg-color: var(--accent);
+  --twikoo-button-text-color: #f7f3e8;
+  --twikoo-button-hover-bg-color: var(--accent-light);
+  --twikoo-tag-bg-color: rgba(199, 62, 58, 0.08);
+  --twikoo-tag-text-color: var(--accent);
+  --twikoo-comment-bg-color: var(--card-bg);
+  --twikoo-comment-border-color: var(--border);
+  --twikoo-reply-bg-color: rgba(247, 243, 232, 0.3);
+  --twikoo-code-bg-color: rgba(28, 28, 28, 0.04);
+  --twikoo-code-text-color: var(--text-primary);
+  --twikoo-success-color: var(--stone);
+  --twikoo-error-color: var(--accent);
+  --twikoo-loading-color: var(--accent);
+}
+
+#tcomment .tk-comments { margin-top: 0; }
+#tcomment .tk-submit { margin-bottom: 1.5rem; }
+#tcomment .tk-row { display: flex; align-items: center; gap: 0.75rem; }
+
+#tcomment .tk-input {
+  border: 1px solid var(--twikoo-input-border-color);
+  background: var(--twikoo-input-bg-color);
+  border-radius: 4px;
+  padding: 0.625rem 0.875rem;
+  font-family: var(--twikoo-font-family);
+  font-size: var(--twikoo-font-size);
+  color: var(--twikoo-text-color);
+  transition: border-color 0.3s ease;
+}
+#tcomment .tk-input:focus {
+  border-color: var(--twikoo-input-focus-border-color);
+  outline: none;
+  box-shadow: 0 0 0 2px rgba(199, 62, 58, 0.1);
+}
+
+#tcomment .tk-btn {
+  font-family: var(--twikoo-font-family);
+  font-size: 0.8125rem;
+  padding: 0.5rem 1.25rem;
+  border-radius: 4px;
+  border: 1px solid var(--accent);
+  background: var(--accent);
+  color: #f7f3e8;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  letter-spacing: 0.05em;
+}
+#tcomment .tk-btn:hover {
+  background: var(--accent-light);
+  border-color: var(--accent-light);
+  transform: translateY(-1px);
+  box-shadow: 0 2px 12px rgba(199, 62, 58, 0.2);
+}
+
+#tcomment .tk-comment {
+  border: 1px solid var(--twikoo-comment-border-color);
+  background: var(--twikoo-comment-bg-color);
+  border-radius: 4px;
+  padding: 1rem;
+  margin-bottom: 0.75rem;
+  transition: all 0.3s ease;
+}
+#tcomment .tk-comment:hover {
+  border-color: var(--accent);
+  box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+}
+
+#tcomment .tk-nick { font-family: "Ma Shan Zheng", "Noto Serif SC", cursive; font-size: 0.9375rem; color: var(--text-primary); }
+#tcomment .tk-time { font-size: 0.75rem; color: var(--text-secondary); }
+#tcomment .tk-content { font-size: 0.875rem; line-height: 1.7; color: var(--text-primary); }
+#tcomment .tk-tag { background: rgba(199, 62, 58, 0.08); color: var(--accent); border: none; font-size: 0.6875rem; padding: 0.125rem 0.5rem; border-radius: 2px; }
+#tcomment .tk-actions a { color: var(--text-secondary); font-size: 0.75rem; transition: color 0.3s ease; }
+#tcomment .tk-actions a:hover { color: var(--accent); }
+#tcomment .tk-preview { border: 1px dashed var(--border); background: var(--card-bg); border-radius: 4px; padding: 1rem; }
+#tcomment .tk-preview .tk-content { font-size: 0.875rem; color: var(--text-primary); }
+#tcomment .tk-emoji { max-width: 1.5rem; vertical-align: middle; }
+#tcomment .tk-owo { max-height: 200px; overflow-y: auto; border: 1px solid var(--border); background: var(--card-bg); border-radius: 4px; padding: 0.5rem; }
+#tcomment .tk-owo .tk-owo-item { cursor: pointer; transition: transform 0.2s ease; }
+#tcomment .tk-owo .tk-owo-item:hover { transform: scale(1.15); }
+#tcomment .tk-loading { display: flex; align-items: center; justify-content: center; gap: 0.5rem; padding: 2rem; color: var(--text-secondary); font-size: 0.875rem; }
+#tcomment .tk-no-comments { text-align: center; padding: 2rem; color: var(--text-secondary); font-size: 0.875rem; font-family: "LXGW WenKai", serif; }
+
+.dark #tcomment {
+  --twikoo-reply-bg-color: rgba(26, 21, 16, 0.5);
+  --twikoo-code-bg-color: rgba(247, 243, 232, 0.04);
+  --twikoo-input-bg-color: rgba(26, 21, 16, 0.5);
+  --twikoo-comment-bg-color: rgba(26, 21, 16, 0.3);
+}
+.dark #tcomment .tk-comment:hover { box-shadow: 0 2px 12px rgba(0,0,0,0.2); }
+
+@media (max-width: 640px) {
+  #tcomment .tk-row { flex-direction: column; align-items: stretch; }
+}
+</style>

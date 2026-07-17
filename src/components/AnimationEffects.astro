@@ -1,60 +1,30 @@
 ---
-// æ°´å¢¨æ„å¢ƒ - åŠ¨ç”»ä¸å¾®äº¤äº’ç³»ç»Ÿï¼ˆå¢å¼ºç‰ˆï¼‰
-// å¢¨éŸµæµåŠ¨ | ç¬”è§¦ä¹¦å†™ | æ¨±èŠ±é£˜è½ | æ˜Ÿç©ºé—ªçƒ | äº‘é›¾é£˜åŠ¨
+// Ë®Ä«Òâ¾³ - ¶¯»­ÓëÎ¢½»»¥ÏµÍ³£¨ÓÅ»¯°æ£©
+// ĞÇ¿ÕÉÁË¸ | ¹ö¶¯ÏÔÏÖ | Êó±ê¹âÔÎ | Ä«ÔÏÁ÷¶¯ | Ñ©»¨Æ®Âä
 ---
 
 <style is:global>
-
-
-  /* ===== æš—è‰²æ¨¡å¼æ˜Ÿç©º ===== */
+  /* ===== °µÉ«Ä£Ê½ĞÇ¿Õ ===== */
   .stars-container {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    pointer-events: none;
-    z-index: 0;
-    overflow: hidden;
-    opacity: 0;
-    transition: opacity 1s ease;
+    position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+    pointer-events: none; z-index: 0; overflow: hidden;
+    opacity: 0; transition: opacity 1s ease;
   }
-  .dark .stars-container {
-    opacity: 1;
-  }
+  .dark .stars-container { opacity: 1; }
   .stars-container .star {
-    position: absolute;
-    width: 2px;
-    height: 2px;
-    background: #fff;
-    border-radius: 50%;
-    animation: starTwinkle ease-in-out infinite alternate;
+    position: absolute; width: 2px; height: 2px; background: #fff;
+    border-radius: 50%; animation: starTwinkle ease-in-out infinite alternate;
   }
-  .stars-container .star:nth-child(odd) {
-    width: 1.5px;
-    height: 1.5px;
-  }
-  .stars-container .star:nth-child(3n) {
-    width: 2.5px;
-    height: 2.5px;
-  }
+  .stars-container .star:nth-child(odd) { width: 1.5px; height: 1.5px; }
+  .stars-container .star:nth-child(3n) { width: 2.5px; height: 2.5px; }
   @keyframes starTwinkle {
     0% { opacity: 0.1; transform: scale(0.8); }
     100% { opacity: 0.8; transform: scale(1.2); }
   }
-
-  /* ===== ç¬”è§¦ä¹¦å†™åŠ¨ç”» ===== */
-  .brush-stroke-anim {
-    position: relative;
-    display: inline-block;
-  }
+  /* ===== ±Ê´¥ÊéĞ´¶¯»­ ===== */
+  .brush-stroke-anim { position: relative; display: inline-block; }
   .brush-stroke-anim::after {
-    content: "";
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
+    content: ""; position: absolute; top: 0; left: 0; width: 100%; height: 100%;
     background: linear-gradient(90deg, transparent 0%, var(--bg-primary) 50%, transparent 100%);
     animation: brushReveal 1.5s ease-out forwards;
   }
@@ -62,320 +32,195 @@
     0% { transform: translateX(-100%); }
     100% { transform: translateX(100%); }
   }
-
-  /* ===== å¢¨æ»´æ‰©æ•£ ===== */
-  .ink-dot {
-    position: absolute;
-    width: 6px;
-    height: 6px;
-    background: var(--accent);
-    border-radius: 50%;
-    pointer-events: none;
-    animation: inkSpread 1.2s ease-out forwards;
-  }
+  /* ===== Ä«µÎÀ©É¢ ===== */
+  .ink-dot { position: absolute; width: 6px; height: 6px; background: var(--accent); border-radius: 50%; pointer-events: none; animation: inkSpread 1.2s ease-out forwards; }
   @keyframes inkSpread {
     0% { transform: scale(0); opacity: 0.8; }
     50% { opacity: 0.4; }
     100% { transform: scale(8); opacity: 0; }
   }
-
-  /* ===== å·è½´å±•å¼€ ===== */
-  .scroll-unfold {
-    animation: scrollUnfold 1.8s cubic-bezier(0.22, 1, 0.36, 1) forwards;
-    overflow: hidden;
-  }
+  /* ===== ¾íÖáÕ¹¿ª ===== */
+  .scroll-unfold { animation: scrollUnfold 1.8s cubic-bezier(0.22, 1, 0.36, 1) forwards; overflow: hidden; }
   @keyframes scrollUnfold {
     0% { clip-path: inset(0 100% 0 0); }
     100% { clip-path: inset(0 0% 0 0); }
   }
-
-  /* ===== é›ªèŠ±é£˜è½ ===== */
-  #snow-canvas {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100vw;
-    height: 100vh;
-    z-index: 1;
+  /* ===== Canvas ===== */
+  #snow-canvas, #ink-canvas {
+    position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
     pointer-events: none;
   }
+  #snow-canvas { z-index: 1; }
+  #ink-canvas { z-index: 0; opacity: 0.35; }
+  .dark #ink-canvas { opacity: 0.15; }
+  /* ===== Êó±ê¹âÔÎ ===== */
+  #mouse-glow {
+    position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+    pointer-events: none; z-index: 0;
+  }
 </style>
-
 
 <div class="stars-container" id="stars-container"></div>
 <div id="mouse-glow"></div>
 <canvas id="ink-canvas"></canvas>
-
 <canvas id="snow-canvas"></canvas>
+
 <script>
 (function() {
-  'use strict';
+  "use strict";
 
-  // ===== æ¨±èŠ±é£˜è½ =====
-  function initBambooLeaves() {
-    var container = document.getElementById('bamboo-leaves-container');
-    if (!container) return;
-    var count = 18;
-    for (var i = 0; i < count; i++) {
-      var petal = document.createElement('div');
-      petal.className = 'petal';
-      var size = 8 + Math.random() * 10;
-      petal.style.width = size + 'px';
-      petal.style.height = size + 'px';
-      petal.style.left = Math.random() * 100 + '%';
-      petal.style.animationDuration = (8 + Math.random() * 12) + 's';
-      petal.style.animationDelay = (Math.random() * 20) + 's';
-      petal.style.opacity = 0.3 + Math.random() * 0.3;
-      var hue = 340 + Math.random() * 20;
-      petal.style.background = 'radial-gradient(ellipse at 30% 30%, hsl(' + hue + ', 70%, 80%), hsl(' + hue + ', 60%, 65%))';
-      container.appendChild(petal);
-    }
-  }
-
-  // ===== æ˜Ÿç©ºé—ªçƒ =====
+  // ===== ĞÇ¿ÕÉÁË¸ =====
   function initStars() {
-    var container = document.getElementById('stars-container');
-    if (!container) return;
-    var count = 80;
-    for (var i = 0; i < count; i++) {
-      var star = document.createElement('div');
-      star.className = 'star';
-      star.style.left = Math.random() * 100 + '%';
-      star.style.top = Math.random() * 100 + '%';
-      star.style.animationDuration = (2 + Math.random() * 4) + 's';
-      star.style.animationDelay = (Math.random() * 5) + 's';
+    var container = document.getElementById("stars-container");
+    if (!container || container.hasChildNodes()) return;
+    for (var i = 0; i < 80; i++) {
+      var star = document.createElement("div");
+      star.className = "star";
+      star.style.left = Math.random() * 100 + "%";
+      star.style.top = Math.random() * 100 + "%";
+      star.style.animationDuration = (2 + Math.random() * 4) + "s";
+      star.style.animationDelay = (Math.random() * 5) + "s";
       container.appendChild(star);
     }
   }
 
-  // ===== æ»šåŠ¨æ˜¾ç° =====
+  // ===== ¹ö¶¯ÏÔÏÖ =====
   function initReveal() {
     var obs = new IntersectionObserver(function(entries) {
       entries.forEach(function(e) {
         if (e.isIntersecting) {
-          e.target.classList.add('visible');
+          e.target.classList.add("visible");
           obs.unobserve(e.target);
         }
       });
-    }, { threshold: 0.08, rootMargin: '0px 0px -40px 0px' });
-    document.querySelectorAll('.reveal, .reveal-left, .reveal-right, .reveal-scale').forEach(function(el) {
+    }, { threshold: 0.08, rootMargin: "0px 0px -40px 0px" });
+    document.querySelectorAll(".reveal, .reveal-left, .reveal-right, .reveal-scale").forEach(function(el) {
       obs.observe(el);
     });
   }
 
-  // ===== é¼ æ ‡å…‰æ™• - æ°´å¢¨æ™•æŸ“æ•ˆæœ =====
+  // ===== ×Ô¶¯Ìí¼Óreveal =====
+  function autoReveal() {
+    document.querySelectorAll("section, article, .card-ink, .reveal-auto").forEach(function(el) {
+      if (!el.classList.contains("reveal") && !el.classList.contains("no-reveal") && el.offsetHeight > 40) {
+        el.classList.add("reveal");
+      }
+    });
+  }
+
+  // ===== Êó±ê¹âÔÎ =====
   function initGlow() {
-    var g = document.getElementById('mouse-glow');
+    var g = document.getElementById("mouse-glow");
     if (!g) return;
     var mx = -500, my = -500, cx = -500, cy = -500, raf = null;
     function tick() {
       cx += (mx - cx) * 0.05;
       cy += (my - cy) * 0.05;
-      var dark = document.documentElement.classList.contains('dark');
-      var c = dark ? 'rgba(247, 243, 232, 0.02)' : 'rgba(28, 28, 28, 0.025)';
-      g.style.background = 'radial-gradient(350px circle at ' + cx + 'px ' + cy + 'px, ' + c + ', transparent 70%)';
-      if (Math.abs(mx - cx) > 0.3 || Math.abs(my - cy) > 0.3) raf = requestAnimationFrame(tick);
-      else raf = null;
+      var dark = document.documentElement.classList.contains("dark");
+      var c = dark ? "rgba(247, 243, 232, 0.02)" : "rgba(28, 28, 28, 0.025)";
+      g.style.background = "radial-gradient(350px circle at " + cx + "px " + cy + "px, " + c + ", transparent 70%)";
+      raf = requestAnimationFrame(tick);
     }
-    document.addEventListener('mousemove', function(e) { mx = e.clientX; my = e.clientY; g.classList.add('active'); if (!raf) raf = requestAnimationFrame(tick); });
-    document.addEventListener('mouseleave', function() { g.classList.remove('active'); if (raf) { cancelAnimationFrame(raf); raf = null; } });
+    document.addEventListener("mousemove", function(e) {
+      mx = e.clientX; my = e.clientY;
+      if (!raf) raf = requestAnimationFrame(tick);
+    });
+    document.addEventListener("mouseleave", function() {
+      if (raf) { cancelAnimationFrame(raf); raf = null; }
+    });
   }
 
-  // ===== å¢¨éŸµç²’å­ç³»ç»Ÿ =====
+  // ===== Ä«ÔÏÁ÷¶¯ =====
   function initInk() {
-    var canvas = document.getElementById('ink-canvas');
+    var canvas = document.getElementById("ink-canvas");
     if (!canvas) return;
-    var ctx = canvas.getContext('2d');
-    var W, H, particles = [], isDark = false, frame = null;
+    var ctx = canvas.getContext("2d");
+    var W, H, particles = [], isDark = false, frame = null, running = false;
 
     function resize() { W = canvas.width = window.innerWidth; H = canvas.height = window.innerHeight; }
 
     function create(count) {
       var p = [];
-      // å¢¨ç‚¹
       for (var i = 0; i < count; i++) {
         p.push({
           x: Math.random() * W, y: Math.random() * H,
           size: Math.random() * 2.5 + 0.5,
-          vx: (Math.random() - 0.5) * 0.08,
-          vy: -(Math.random() * 0.15 + 0.02),
-          o: Math.random() * 0.1 + 0.03,
+          vx: (Math.random() - 0.5) * 0.05,
+          vy: -(Math.random() * 0.1 + 0.02),
+          alpha: Math.random() * 0.06 + 0.02,
           phase: Math.random() * Math.PI * 2,
-          speed: Math.random() * 0.01 + 0.002,
-          type: 'drop'
-        });
-      }
-      // è¿œå±±
-      for (var i = 0; i < 4; i++) {
-        p.push({
-          x: Math.random() * W, y: H * 0.78 + Math.random() * H * 0.08,
-          size: Math.random() * 120 + 60,
-          o: Math.random() * 0.02 + 0.01,
-          type: 'mountain'
+          speed: Math.random() * 0.005 + 0.002
         });
       }
       return p;
     }
 
-    function drawDrop(p) {
-      p.phase += p.speed;
-      var o = p.o + Math.sin(p.phase) * 0.02;
-      o = Math.max(0.02, Math.min(0.12, o));
-      ctx.beginPath();
-      ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
-      var dark = document.documentElement.classList.contains('dark');
-      ctx.fillStyle = dark ? 'rgba(247, 243, 232, ' + o + ')' : 'rgba(28, 28, 28, ' + o + ')';
-      ctx.fill();
-    }
-
-    function drawMtn(p) {
-      ctx.beginPath();
-      ctx.moveTo(p.x - p.size, p.y);
-      ctx.quadraticCurveTo(p.x - p.size * 0.4, p.y - p.size * 0.7, p.x, p.y - p.size * 0.35);
-      ctx.quadraticCurveTo(p.x + p.size * 0.4, p.y - p.size * 0.5, p.x + p.size, p.y);
-      ctx.closePath();
-      var dark = document.documentElement.classList.contains('dark');
-      ctx.fillStyle = dark ? 'rgba(247, 243, 232, ' + p.o + ')' : 'rgba(28, 28, 28, ' + p.o + ')';
-      ctx.fill();
-    }
-
-    function update(p) {
-      p.x += p.vx; p.y += p.vy;
-      if (p.y < -10) { p.y = H + 10; p.x = Math.random() * W; }
-      if (p.x < -10) p.x = W + 10;
-      if (p.x > W + 10) p.x = -10;
-    }
-
-    function loop() {
-      ctx.clearRect(0, 0, W, H);
-      for (var i = 0; i < particles.length; i++) {
-        if (particles[i].type === 'mountain') drawMtn(particles[i]);
-        else { update(particles[i]); drawDrop(particles[i]); }
-      }
-      frame = requestAnimationFrame(loop);
-    }
-
-    
-  // ===== é›ªèŠ±é£˜è½ + é¼ æ ‡è·Ÿéš =====
-  function initSnow() {
-    var canvas = document.getElementById('snow-canvas');
-    if (!canvas) return;
-    var ctx = canvas.getContext('2d');
-    var W, H, flakes = [], mouseX = -1000, mouseY = -1000, frame = null;
-
-    function resize() { W = canvas.width = window.innerWidth; H = canvas.height = window.innerHeight; }
-
-    function createFlakes(count) {
-      var f = [];
-      for (var i = 0; i < count; i++) {
-        f.push({
-          x: Math.random() * W,
-          y: Math.random() * H,
-          r: Math.random() * 4 + 1,
-          vx: (Math.random() - 0.5) * 0.3,
-          vy: Math.random() * 0.5 + 0.2,
-          o: Math.random() * 0.4 + 0.4,
-          phase: Math.random() * Math.PI * 2,
-          speed: Math.random() * 0.02 + 0.005
-        });
-      }
-      return f;
-    }
-
-    function update() {
-      for (var i = 0; i < flakes.length; i++) {
-        var f = flakes[i];
-        // é£˜è½
-        f.phase += f.speed;
-        f.x += f.vx + Math.sin(f.phase) * 0.2;
-        f.y += f.vy;
-        // é¼ æ ‡æ’æ–¥ - é›ªèŠ±è¿œç¦»é¼ æ ‡
-        var dx = f.x - mouseX;
-        var dy = f.y - mouseY;
-        var dist = Math.sqrt(dx * dx + dy * dy);
-        if (dist < 100) {
-          var force = (100 - dist) / 100 * 1.5;
-          f.x += (dx / dist) * force;
-          f.y += (dy / dist) * force;
-        }
-        // è¾¹ç•Œé‡ç½®
-        if (f.y > H + 10) { f.y = -10; f.x = Math.random() * W; }
-        if (f.x < -10) f.x = W + 10;
-        if (f.x > W + 10) f.x = -10;
-      }
-    }
-
     function draw() {
       ctx.clearRect(0, 0, W, H);
-      var dark = document.documentElement.classList.contains('dark');
-      for (var i = 0; i < flakes.length; i++) {
-        var f = flakes[i];
+      var time = Date.now() * 0.001;
+      // ÔÆÎí
+      for (var i = 0; i < 5; i++) {
+        var mx = (Math.sin(time * 0.05 + i * 1.5) * 0.3 + 0.5) * W;
+        var my = H * (0.2 + i * 0.12);
+        var mw = 200 + Math.sin(time * 0.03 + i) * 80;
+        var grad = ctx.createRadialGradient(mx, my, 0, mx, my, mw);
+        grad.addColorStop(0, "rgba(28,28,28,0.03)");
+        grad.addColorStop(1, "rgba(28,28,28,0)");
+        ctx.fillStyle = grad;
+        ctx.beginPath(); ctx.arc(mx, my, mw, 0, Math.PI * 2); ctx.fill();
+      }
+      // Á£×Ó
+      for (var i = 0; i < particles.length; i++) {
+        var p = particles[i];
+        p.phase += p.speed;
+        p.x += p.vx; p.y += p.vy;
+        if (p.y < -10) { p.y = H + 10; p.x = Math.random() * W; }
+        if (p.x < -10) p.x = W + 10; if (p.x > W + 10) p.x = -10;
         ctx.beginPath();
-        ctx.arc(f.x, f.y, f.r, 0, Math.PI * 2);
-        if (dark) {
-          ctx.fillStyle = 'rgba(247, 243, 232, ' + (f.o * 0.6) + ')';
-        } else {
-          ctx.fillStyle = 'rgba(255, 255, 255, ' + (f.o * 0.7) + ')';
-        }
+        ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+        ctx.fillStyle = "rgba(28,28,28," + (p.alpha + Math.sin(p.phase) * 0.015) + ")";
         ctx.fill();
       }
     }
 
     function loop() {
-      update();
       draw();
       frame = requestAnimationFrame(loop);
     }
 
-    document.addEventListener('mousemove', function(e) {
-      mouseX = e.clientX;
-      mouseY = e.clientY;
-    });
-
-    function init() {
-      if (frame) { cancelAnimationFrame(frame); frame = null; }
+    function start() {
+      if (running) return; running = true;
       resize();
-      flakes = createFlakes(40);
-      loop();
-    }
-
-    init();
-    window.addEventListener('resize', resize);
-  }
-
-  function init() {
-      if (frame) { cancelAnimationFrame(frame); frame = null; }
-      particles = []; resize();
-      isDark = document.documentElement.classList.contains('dark');
+      isDark = document.documentElement.classList.contains("dark");
       particles = create(isDark ? 12 : 20);
       loop();
     }
 
-    var mo = new MutationObserver(function() {
-      var nd = document.documentElement.classList.contains('dark');
-      if (nd !== isDark) { isDark = nd; init(); }
+    function stop() {
+      running = false;
+      if (frame) { cancelAnimationFrame(frame); frame = null; }
+    }
+
+    // ÇĞºóÌ¨Ê±ÔİÍ££¬²»Ó°ÏìÇ°Ì¨ÌåÑé
+    document.addEventListener("visibilitychange", function() {
+      if (document.hidden) stop(); else start();
     });
-    mo.observe(document.documentElement, { attributes: true, attributeFilter: ['class'] });
-    window.addEventListener('resize', resize);
-    init();
+
+    new MutationObserver(function() {
+      var nd = document.documentElement.classList.contains("dark");
+      if (nd !== isDark) { isDark = nd; stop(); start(); }
+    }).observe(document.documentElement, { attributes: true, attributeFilter: ["class"] });
+
+    window.addEventListener("resize", resize);
+    start();
   }
 
-  // ===== è‡ªåŠ¨åº”ç”¨æ˜¾ç° =====
-  function autoReveal() {
-    document.querySelectorAll('section, article, .card-ink, .reveal-auto').forEach(function(el) {
-      if (!el.classList.contains('reveal') && !el.classList.contains('no-reveal') && el.offsetHeight > 40) {
-        el.classList.add('reveal');
-      }
-    });
-  }
-
-  
-  // ===== é›ªèŠ±é£˜è½ + é¼ æ ‡è·Ÿéš =====
+  // ===== Ñ©»¨Æ®Âä =====
   function initSnow() {
-    var canvas = document.getElementById('snow-canvas');
+    var canvas = document.getElementById("snow-canvas");
     if (!canvas) return;
-    var ctx = canvas.getContext('2d');
-    var W, H, flakes = [], mouseX = -1000, mouseY = -1000, frame = null;
+    var ctx = canvas.getContext("2d");
+    var W, H, flakes = [], mouseX = -1000, mouseY = -1000, frame = null, running = false;
 
     function resize() { W = canvas.width = window.innerWidth; H = canvas.height = window.innerHeight; }
 
@@ -383,8 +228,7 @@
       var f = [];
       for (var i = 0; i < count; i++) {
         f.push({
-          x: Math.random() * W,
-          y: Math.random() * H,
+          x: Math.random() * W, y: Math.random() * H,
           r: Math.random() * 4 + 1,
           vx: (Math.random() - 0.5) * 0.3,
           vy: Math.random() * 0.5 + 0.2,
@@ -399,94 +243,73 @@
     function update() {
       for (var i = 0; i < flakes.length; i++) {
         var f = flakes[i];
-        // é£˜è½
         f.phase += f.speed;
         f.x += f.vx + Math.sin(f.phase) * 0.2;
         f.y += f.vy;
-        // é¼ æ ‡æ’æ–¥ - é›ªèŠ±è¿œç¦»é¼ æ ‡
-        var dx = f.x - mouseX;
-        var dy = f.y - mouseY;
-        var dist = Math.sqrt(dx * dx + dy * dy);
+        var dx = f.x - mouseX, dy = f.y - mouseY, dist = Math.sqrt(dx * dx + dy * dy);
         if (dist < 100) {
           var force = (100 - dist) / 100 * 1.5;
-          f.x += (dx / dist) * force;
-          f.y += (dy / dist) * force;
+          f.x += (dx / dist) * force; f.y += (dy / dist) * force;
         }
-        // è¾¹ç•Œé‡ç½®
         if (f.y > H + 10) { f.y = -10; f.x = Math.random() * W; }
-        if (f.x < -10) f.x = W + 10;
-        if (f.x > W + 10) f.x = -10;
+        if (f.x < -10) f.x = W + 10; if (f.x > W + 10) f.x = -10;
       }
     }
 
     function draw() {
       ctx.clearRect(0, 0, W, H);
-      var dark = document.documentElement.classList.contains('dark');
+      var dark = document.documentElement.classList.contains("dark");
       for (var i = 0; i < flakes.length; i++) {
         var f = flakes[i];
-        ctx.beginPath();
-        ctx.arc(f.x, f.y, f.r, 0, Math.PI * 2);
-        if (dark) {
-          ctx.fillStyle = 'rgba(247, 243, 232, ' + (f.o * 0.6) + ')';
-        } else {
-          ctx.fillStyle = 'rgba(255, 255, 255, ' + (f.o * 0.7) + ')';
-        }
+        ctx.beginPath(); ctx.arc(f.x, f.y, f.r, 0, Math.PI * 2);
+        ctx.fillStyle = dark ? "rgba(247,243,232," + (f.o * 0.6) + ")" : "rgba(255,255,255," + (f.o * 0.7) + ")";
         ctx.fill();
       }
     }
 
     function loop() {
-      update();
-      draw();
+      update(); draw();
       frame = requestAnimationFrame(loop);
     }
 
-    document.addEventListener('mousemove', function(e) {
-      mouseX = e.clientX;
-      mouseY = e.clientY;
-    });
-
-    function init() {
-      if (frame) { cancelAnimationFrame(frame); frame = null; }
+    function start() {
+      if (running) return; running = false;
       resize();
       flakes = createFlakes(40);
       loop();
     }
 
-    init();
-    window.addEventListener('resize', resize);
+    function stop() {
+      running = false;
+      if (frame) { cancelAnimationFrame(frame); frame = null; }
+    }
+
+    document.addEventListener("mousemove", function(e) { mouseX = e.clientX; mouseY = e.clientY; });
+    document.addEventListener("visibilitychange", function() {
+      if (document.hidden) stop(); else start();
+    });
+    window.addEventListener("resize", resize);
+    start();
   }
 
+  // ===== Ö÷³õÊ¼»¯ =====
   function init() {
-    
-    initStars(); initSnow();
+    initStars();
     autoReveal();
     initReveal();
     initGlow();
     initInk();
+    initSnow();
   }
 
-  // æ”¯æŒ ViewTransitions å¯¼èˆªåé‡æ–°åˆå§‹åŒ–
   function runInit() {
-    if (document.readyState === 'loading') {
-      document.addEventListener('DOMContentLoaded', init);
+    if (document.readyState === "loading") {
+      document.addEventListener("DOMContentLoaded", init);
     } else {
       init();
     }
   }
   runInit();
-  document.addEventListener('astro:page-load', runInit);
+  document.addEventListener("astro:page-load", runInit);
 })();
 </script>
-
-
-
-
-
-
-
-
-
-
-
-

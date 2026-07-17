@@ -259,18 +259,30 @@
     frame = requestAnimationFrame(loop);
   }
 
-  function init() {
-    if (frame) { cancelAnimationFrame(frame); frame = null; }
+  var running = false;
+
+  function start() {
+    if (running) return; running = true;
     resize();
     particles = createParticles();
     loop();
   }
 
+  function stop() {
+    running = false;
+    if (frame) { cancelAnimationFrame(frame); frame = null; }
+    ctx.clearRect(0, 0, W, H);
+  }
+
+  document.addEventListener('visibilitychange', function() {
+    if (document.hidden) stop(); else start();
+  });
+
   function runInkBg() {
     if (document.readyState === 'loading') {
-      document.addEventListener('DOMContentLoaded', init);
+      document.addEventListener('DOMContentLoaded', start);
     } else {
-      init();
+      start();
     }
   }
   runInkBg();
