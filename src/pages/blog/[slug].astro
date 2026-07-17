@@ -20,7 +20,7 @@ const prev = idx < sorted.length - 1 ? sorted[idx + 1] : null;
 const next = idx > 0 ? sorted[idx - 1] : null;
 ---
 
-<Layout title={post.data.title + " ¡¤ Ğ¡ÑîÍõ×Ó"} description={post.data.description}>
+<Layout title={post.data.title + " Â· å°æ¨ç‹å­"} description={post.data.description}>
   {post.data.coverImage && (
     <div class="relative h-64 md:h-96 overflow-hidden">
       <div class="absolute inset-0 bg-gradient-to-b from-black/40 to-transparent z-10"></div>
@@ -36,8 +36,8 @@ const next = idx > 0 ? sorted[idx - 1] : null;
           <h1 class="text-3xl md:text-4xl font-serif font-bold leading-tight mb-4" style="color:var(--text-primary)">{post.data.title}</h1>
           <div class="flex flex-wrap items-center gap-4 text-sm" style="color:var(--text-secondary)">
             <span>{post.data.date.toLocaleDateString("zh-CN")}</span>
-            <span>¡¤</span>
-            <span>{post.data.readingTime || 5} ·ÖÖÓ</span>
+            <span>Â·</span>
+            <span>{post.data.readingTime || 5} åˆ†é’Ÿ</span>
           </div>
         </header>
 
@@ -56,14 +56,14 @@ const next = idx > 0 ? sorted[idx - 1] : null;
         <div class="flex flex-col sm:flex-row gap-4 mt-10 pt-8 reveal" style="border-top:1px solid var(--border)">
           {prev && (
             <a href={"/blog/" + prev.slug} class="flex-1 p-4 card-ink transition-all duration-300 hover:scale-105" style="background-color:var(--card-bg);border:1px solid var(--border)">
-              <span class="text-xs" style="color:var(--text-secondary)">¡û ÉÏÒ»Æª</span>
+              <span class="text-xs" style="color:var(--text-secondary)">â† ä¸Šä¸€ç¯‡</span>
               <p class="text-sm font-medium mt-1 line-clamp-1" style="color:var(--text-primary)">{prev.data.title}</p>
             </a>
           )}
           <div class="flex-1"></div>
           {next && (
             <a href={"/blog/" + next.slug} class="flex-1 p-4 card-ink text-right transition-all duration-300 hover:scale-105" style="background-color:var(--card-bg);border:1px solid var(--border)">
-              <span class="text-xs" style="color:var(--text-secondary)">ÏÂÒ»Æª ¡ú</span>
+              <span class="text-xs" style="color:var(--text-secondary)">ä¸‹ä¸€ç¯‡ â†’</span>
               <p class="text-sm font-medium mt-1 line-clamp-1" style="color:var(--text-primary)">{next.data.title}</p>
             </a>
           )}
@@ -73,12 +73,12 @@ const next = idx > 0 ? sorted[idx - 1] : null;
           <AuthorCard />
         </div>
 
-        <!-- ÆÀÂÛÇø - Twikoo -->
+        <!-- è¯„è®ºåŒº - Twikoo -->
         <div class="mt-10" id="comment-section">
           <div class="card-ink p-6 md:p-8 reveal" style="animation-delay:0.4s">
             <div class="flex items-center gap-3 mb-6">
               <span class="w-1 h-5" style="background-color:var(--accent)"></span>
-              <h3 class="text-lg font-serif font-bold" style="color:var(--text-primary)">±ÊÄ«ÁôºÛ</h3>
+              <h3 class="text-lg font-serif font-bold" style="color:var(--text-primary)">ç¬”å¢¨ç•™ç—•</h3>
             </div>
             <div id="tcomment"></div>
           </div>
@@ -87,7 +87,7 @@ const next = idx > 0 ? sorted[idx - 1] : null;
 
       <aside class="hidden lg:block w-64 shrink-0 reveal-right">
         <div class="sticky top-24">
-          <h4 class="text-xs font-semibold uppercase tracking-widest mb-4" style="color:var(--text-secondary)">Ä¿Â¼</h4>
+          <h4 class="text-xs font-semibold uppercase tracking-widest mb-4" style="color:var(--text-secondary)">ç›®å½•</h4>
           <nav id="toc" class="space-y-1"></nav>
         </div>
       </aside>
@@ -96,7 +96,7 @@ const next = idx > 0 ? sorted[idx - 1] : null;
 </Layout>
 
 <script>
-// ¶¯Ì¬µ¼Èë Twikoo£¬±ÜÃâ´ò°üµ½Ö÷ chunk
+// åŠ¨æ€å¯¼å…¥ Twikooï¼Œé¿å…æ‰“åŒ…åˆ°ä¸» chunk
 function initTwikoo() {
   var el = document.getElementById("tcomment");
   if (!el || el.dataset.loaded) return;
@@ -107,12 +107,12 @@ function initTwikoo() {
       el: "#tcomment",
       lang: "zh-CN",
     }).then(function() {
-      console.log("Twikoo: ³õÊ¼»¯³É¹¦");
+      console.log("Twikoo: åˆå§‹åŒ–æˆåŠŸ");
     }).catch(function(err) {
-      console.error("Twikoo: ³õÊ¼»¯Ê§°Ü:", err);
+      console.error("Twikoo: åˆå§‹åŒ–å¤±è´¥:", err);
     });
   }).catch(function(err) {
-    console.error("Twikoo: ¼ÓÔØÊ§°Ü:", err);
+    console.error("Twikoo: åŠ è½½å¤±è´¥:", err);
   });
 }
 
@@ -121,7 +121,7 @@ document.addEventListener("astro:page-load", initTwikoo);
 </script>
 
 <style is:global>
-/* ===== Twikoo ÆÀÂÛÇø - Ë®Ä«Ö÷Ìâ ===== */
+/* ===== Twikoo è¯„è®ºåŒº - æ°´å¢¨ä¸»é¢˜ ===== */
 /* ===== Twikoo ===== */
 #comment-section .card-ink { overflow: hidden; width: 100%; max-width: 100%; }
 #tcomment { width: 100%; max-width: 100%; overflow: hidden; --twikoo-border-color: var(--border); --twikoo-bg-color: transparent; --twikoo-text-color: var(--text-primary); --twikoo-secondary-text-color: var(--text-secondary); --twikoo-accent-color: var(--accent); --twikoo-accent-hover-color: var(--accent-light); --twikoo-font-family: "Noto Serif SC", "LXGW WenKai", serif; --twikoo-font-size: 0.875rem; --twikoo-border-radius: 4px; --twikoo-input-bg-color: var(--card-bg); --twikoo-input-border-color: var(--border); --twikoo-input-focus-border-color: var(--accent); --twikoo-button-bg-color: var(--accent); --twikoo-button-text-color: #f7f3e8; --twikoo-button-hover-bg-color: var(--accent-light); --twikoo-tag-bg-color: rgba(199,62,58,0.08); --twikoo-tag-text-color: var(--accent); --twikoo-comment-bg-color: var(--card-bg); --twikoo-comment-border-color: var(--border); --twikoo-reply-bg-color: rgba(247,243,232,0.3); --twikoo-code-bg-color: rgba(28,28,28,0.04); --twikoo-code-text-color: var(--text-primary); --twikoo-success-color: var(--stone); --twikoo-error-color: var(--accent); --twikoo-loading-color: var(--accent); }
