@@ -6,95 +6,135 @@
 <title>后台管理 · 小杨王子</title>
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
-body{min-height:100vh;display:flex;align-items:center;justify-content:center;font-family:"Noto Serif SC","LXGW WenKai",serif;background:#f7f3e8;color:#1c1c1c}
-.login-box{background:#fefcf5;border:1px solid #d4c494;padding:48px 40px;max-width:400px;width:90%;text-align:center;box-shadow:0 4px 24px rgba(28,28,18,0.08)}
-.login-box h1{font-size:20px;margin-bottom:8px;letter-spacing:0.1em}
-.login-box p{font-size:13px;color:#6b5f45;margin-bottom:28px}
-.login-box input{width:100%;padding:12px 16px;border:1px solid #d4c494;background:#f7f3e8;font-size:14px;text-align:center;outline:none;color:#1c1c1c;font-family:inherit;transition:border-color 0.3s}
-.login-box input:focus{border-color:#c73e3a}
-.login-box button{width:100%;padding:12px;margin-top:16px;border:none;background:#c73e3a;color:#f7f3e8;font-size:14px;font-family:inherit;letter-spacing:0.1em;cursor:pointer;transition:background 0.3s}
-.login-box button:hover{background:#a8302c}
-.error{color:#c73e3a;font-size:12px;margin-top:12px;display:none}
-.hidden{display:none}
-.msg{font-size:12px;margin-bottom:12px;padding:8px 12px;border-radius:4px}
-.msg-ok{color:#4a6741;background:#e8f0e4}
-.msg-err{color:#c73e3a;background:#f5e4e4}
+body{font-family:"Noto Serif SC","LXGW WenKai",serif;background:#f7f3e8;color:#1c1c1c;min-height:100vh}
+.card{background:#fefcf5;border:1px solid #d4c494;padding:20px;box-shadow:0 2px 12px rgba(28,28,18,0.06)}
+.btn{display:inline-flex;align-items:center;gap:6px;padding:10px 20px;border:none;font-size:13px;font-family:inherit;cursor:pointer;letter-spacing:0.05em;transition:all .2s}
+.btn:hover{opacity:.85}
+.btn-primary{background:#c73e3a;color:#f7f3e8}
+.btn-ok{background:#4a6741;color:#f7f3e8}
+.btn-outline{background:transparent;border:1px solid #d4c494;color:#1c1c1c}
+.btn-sm{padding:6px 14px;font-size:12px}
+.btn-xs{padding:4px 10px;font-size:11px}
+input,textarea,select{width:100%;padding:8px 12px;border:1px solid #d4c494;background:#f7f3e8;font-size:13px;font-family:inherit;outline:none;transition:border-color .2s}
+input:focus,textarea:focus,select:focus{border-color:#c73e3a}
+textarea{resize:vertical;min-height:80px}
+label{display:block;font-size:12px;color:#6b5f45;margin-bottom:4px;letter-spacing:.05em}
+.hidden{display:none!important}
+.flex{display:flex}
+.flex-1{flex:1}
+.gap-2{gap:8px}
+.gap-3{gap:12px}
+.mb-2{margin-bottom:8px}
+.mb-3{margin-bottom:12px}
+.mb-4{margin-bottom:16px}
+.mt-2{margin-top:8px}
+.mt-3{margin-top:12px}
+.mt-4{margin-top:16px}
+.text-center{text-align:center}
+.text-sm{font-size:13px}
+.text-xs{font-size:12px}
+.text-muted{color:#6b5f45}
+.text-accent{color:#c73e3a}
+.w-full{width:100%}
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.grid-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px}
+.items-center{align-items:center}
+.justify-between{justify-content:space-between}
+.flex-wrap{flex-wrap:wrap}
+.tag{display:inline-block;padding:2px 10px;font-size:11px;border:1px solid #c73e3a;color:#c73e3a}
+.msg{padding:10px 16px;font-size:13px;margin-bottom:12px}
+.msg-ok{background:#e8f0e4;color:#4a6741;border:1px solid #4a6741}
+.msg-err{background:#f5e4e4;color:#c73e3a;border:1px solid #c73e3a}
+.upload-zone{border:2px dashed #d4c494;padding:30px;text-align:center;cursor:pointer;transition:all .2s;background:#f7f3e8}
+.upload-zone:hover,.upload-zone.dragover{border-color:#c73e3a;background:#fefcf5}
+.upload-zone p{font-size:13px;color:#6b5f45}
+.upload-zone .icon{font-size:32px;margin-bottom:8px}
 </style>
 </head>
 <body>
-<div id="login-screen" class="login-box">
-  <h1>🔐 后台管理</h1>
-  <p>小杨王子 · 水墨博客</p>
-  <input id="pwd-input" type="password" placeholder="输入管理密码" autocomplete="off">
-  <button id="login-btn">进入</button>
-  <div id="error-msg" class="error">密码错误</div>
-</div>
 
-<div id="admin-screen" class="hidden" style="width:100%;min-height:100vh;padding:24px;max-width:900px;margin:0 auto">
-  <div style="text-align:center;margin-bottom:32px">
-    <h1 style="font-size:22px;letter-spacing:0.1em">后台管理</h1>
-    <p style="font-size:13px;color:#6b5f45;margin-top:8px">小杨王子 · 水墨博客</p>
+<div id="app">
+  <!-- 登录 -->
+  <div id="login-screen" class="card" style="max-width:360px;margin:40vh auto 0;text-align:center;padding:40px">
+    <h1 style="font-size:20px;margin-bottom:6px;letter-spacing:0.1em">🔐 后台管理</h1>
+    <p style="font-size:13px;color:#6b5f45;margin-bottom:24px">小杨王子 · 水墨博客</p>
+    <input id="pwd-input" type="password" placeholder="管理密码" style="text-align:center">
+    <button id="login-btn" class="btn btn-primary w-full mt-3">进入</button>
+    <div id="login-err" class="msg msg-err hidden mt-2" style="display:none">密码错误</div>
   </div>
 
-  <div id="token-section" class="login-box" style="margin:0 auto">
-    <h1>🔑 GitHub 授权</h1>
-    <p>输入 Personal Access Token 以读写仓库</p>
-    <input id="token-input" type="password" placeholder="ghp_xxxxxxxxxxxxxxxxxxxx" autocomplete="off">
-    <button id="token-btn">连接 GitHub</button>
-    <div id="token-err" class="error" style="display:none"></div>
-    <div style="margin-top:16px;font-size:12px;color:#6b5f45">
-      <a href="https://github.com/settings/tokens" target="_blank" style="color:#c73e3a">生成 Token →</a>
-      <br><span style="font-size:11px">需勾选 repo 权限</span>
+  <!-- 主界面 -->
+  <div id="main-screen" class="hidden" style="max-width:960px;margin:0 auto;padding:24px 16px">
+    <!-- 顶部 -->
+    <div class="flex items-center justify-between mb-4">
+      <div>
+        <h1 style="font-size:20px;letter-spacing:0.1em">后台管理</h1>
+        <p class="text-sm text-muted" style="margin-top:2px">小杨王子 · 水墨博客</p>
+      </div>
+      <div class="flex gap-2 items-center">
+        <span id="status-dot" style="width:8px;height:8px;border-radius:50%;background:#d4c494;display:inline-block"></span>
+        <span id="status-text" class="text-xs text-muted">未连接</span>
+      </div>
     </div>
-  </div>
 
-  <div id="panel-section" class="hidden">
-    <div style="display:flex;gap:12px;margin-bottom:24px;flex-wrap:wrap">
-      <button class="tab-btn" data-tab="tools" style="flex:1;padding:12px;border:1px solid #d4c494;background:#c73e3a;color:#f7f3e8;font-family:inherit;font-size:14px;cursor:pointer;letter-spacing:0.05em">🔧 工具管理</button>
-      <button class="tab-btn" data-tab="nav" style="flex:1;padding:12px;border:1px solid #d4c494;background:#fefcf5;color:#1c1c1c;font-family:inherit;font-size:14px;cursor:pointer;letter-spacing:0.05em">🧭 导航栏</button>
-      <button class="tab-btn" data-tab="posts" style="flex:1;padding:12px;border:1px solid #d4c494;background:#fefcf5;color:#1c1c1c;font-family:inherit;font-size:14px;cursor:pointer;letter-spacing:0.05em">📝 文章</button>
+    <!-- Token 连接 -->
+    <div id="token-bar" class="card mb-4">
+      <div class="flex gap-3 items-center flex-wrap">
+        <input id="token-input" type="password" placeholder="GitHub Personal Access Token (ghp_...)" style="flex:1;min-width:200px">
+        <button id="token-btn" class="btn btn-primary">连接</button>
+        <a href="https://github.com/settings/tokens" target="_blank" class="text-xs text-accent" style="text-decoration:none">生成 Token</a>
+      </div>
+      <div id="token-err" class="text-xs text-accent mt-2 hidden" style="display:none"></div>
     </div>
-    <div id="global-msg" class="msg hidden"></div>
+
+    <!-- 消息 -->
+    <div id="global-msg" class="hidden"></div>
+
+    <!-- 标签页 -->
+    <div class="flex gap-2 mb-4 flex-wrap">
+      <button class="tab-btn btn btn-primary btn-sm" data-tab="tools">🔧 工具</button>
+      <button class="tab-btn btn btn-outline btn-sm" data-tab="nav">🧭 导航</button>
+      <button class="tab-btn btn btn-outline btn-sm" data-tab="posts">📝 文章</button>
+      <button class="tab-btn btn btn-outline btn-sm" data-tab="upload">📤 上传文件</button>
+    </div>
+
     <div id="tab-tools" class="tab-content"></div>
     <div id="tab-nav" class="tab-content hidden"></div>
     <div id="tab-posts" class="tab-content hidden"></div>
+    <div id="tab-upload" class="tab-content hidden"></div>
   </div>
 </div>
 
 <script>
-const PASSWORD = "Grooty920";
-const REPO = "Grooty920/TmpPW";
-const BRANCH = "master";
-let TOKEN = "";
-let toolsData = null, navData = null, toolsSha = null, navSha = null;
+const PASSWORD = "Grooty920", REPO = "Grooty920/TmpPW", BRANCH = "master";
+let TOKEN = "", toolsData = null, navData = null, toolsSha = null, navSha = null;
 
-// Base64 工具（兼容中文）
-function b64Decode(str) {
-  try { return decodeURIComponent(escape(atob(str))); }
-  catch(e) { return atob(str); }
-}
-function b64Encode(str) {
-  return btoa(unescape(encodeURIComponent(str)));
-}
+function b64Decode(s) { try { return decodeURIComponent(escape(atob(s))); } catch(e) { return atob(s); } }
+function b64Encode(s) { return btoa(unescape(encodeURIComponent(s))); }
+function esc(s) { return String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;").replace(/'/g,"&#39;"); }
 
-// 消息提示
 function showMsg(msg, type) {
   const el = document.getElementById("global-msg");
-  el.textContent = msg;
   el.className = "msg " + (type === "ok" ? "msg-ok" : "msg-err") + " hidden";
+  el.textContent = msg;
   el.classList.remove("hidden");
-  if (type === "ok") setTimeout(() => el.classList.add("hidden"), 3000);
+  if (type === "ok") setTimeout(() => el.classList.add("hidden"), 4000);
+}
+
+function setStatus(connected) {
+  document.getElementById("status-dot").style.background = connected ? "#4a6741" : "#d4c494";
+  document.getElementById("status-text").textContent = connected ? "已连接 GitHub" : "未连接";
 }
 
 // 登录
 document.getElementById("login-btn").onclick = () => {
   if (document.getElementById("pwd-input").value === PASSWORD) {
     document.getElementById("login-screen").classList.add("hidden");
-    document.getElementById("admin-screen").classList.remove("hidden");
+    document.getElementById("main-screen").classList.remove("hidden");
     const saved = sessionStorage.getItem("gh_token");
-    if (saved) { TOKEN = saved; doConnect(); }
+    if (saved) { TOKEN = saved; document.getElementById("token-input").value = saved; doConnect(); }
   } else {
-    document.getElementById("error-msg").style.display = "block";
+    document.getElementById("login-err").style.display = "block";
   }
 };
 document.getElementById("pwd-input").addEventListener("keydown", e => { if(e.key==="Enter") document.getElementById("login-btn").click(); });
@@ -104,207 +144,319 @@ document.getElementById("token-btn").onclick = doConnect;
 document.getElementById("token-input").addEventListener("keydown", e => { if(e.key==="Enter") doConnect(); });
 
 async function doConnect() {
-  const input = document.getElementById("token-input");
-  const err = document.getElementById("token-err");
+  const input = document.getElementById("token-input"), err = document.getElementById("token-err");
   const token = input.value || sessionStorage.getItem("gh_token");
-  if (!token) { err.textContent = "请输入 Token"; err.style.display = "block"; return; }
+  if (!token) { err.textContent = "请输入 Token"; err.classList.remove("hidden"); return; }
   try {
-    const res = await fetch("https://api.github.com/user", { headers: { "Authorization": "Bearer " + token } });
-    if (!res.ok) throw new Error("Token 无效 (状态 " + res.status + ")");
-    TOKEN = token;
-    sessionStorage.setItem("gh_token", token);
-    document.getElementById("token-section").classList.add("hidden");
-    document.getElementById("panel-section").classList.remove("hidden");
-    showMsg("✅ GitHub 连接成功", "ok");
-    loadAllData();
+    const r = await fetch("https://api.github.com/user", { headers: { "Authorization": "Bearer " + token } });
+    if (!r.ok) throw new Error("Token 无效 (" + r.status + ")");
+    TOKEN = token; sessionStorage.setItem("gh_token", token);
+    document.getElementById("token-bar").classList.add("hidden");
+    setStatus(true);
+    showMsg("✅ 已连接 GitHub：" + (await r.json()).login, "ok");
+    loadAll();
   } catch(e) {
-    err.textContent = e.message; err.style.display = "block";
+    err.textContent = e.message; err.classList.remove("hidden");
   }
 }
 
 // Tab 切换
 document.querySelectorAll(".tab-btn").forEach(btn => {
   btn.onclick = () => {
-    document.querySelectorAll(".tab-btn").forEach(b => { b.style.background = "#fefcf5"; b.style.color = "#1c1c1c"; });
-    btn.style.background = "#c73e3a"; btn.style.color = "#f7f3e8";
+    document.querySelectorAll(".tab-btn").forEach(b => { b.className = "tab-btn btn btn-outline btn-sm"; });
+    btn.className = "tab-btn btn btn-primary btn-sm";
     document.querySelectorAll(".tab-content").forEach(t => t.classList.add("hidden"));
-    document.getElementById("tab-" + btn.dataset.tab).classList.remove("hidden");
+    const tab = document.getElementById("tab-" + btn.dataset.tab);
+    tab.classList.remove("hidden");
+    if (btn.dataset.tab === "upload") renderUpload();
   };
 });
 
 // GitHub API
 async function ghGet(path) {
-  const url = "https://api.github.com/repos/" + REPO + "/contents/" + path + "?ref=" + BRANCH;
-  const res = await fetch(url, { headers: { "Authorization": "Bearer " + TOKEN, "Accept": "application/vnd.github.v3+json" } });
-  if (!res.ok) {
-    const txt = await res.text();
-    throw new Error("GET " + path + " 失败: " + res.status + " " + txt.slice(0,100));
-  }
-  const data = await res.json();
-  return { content: JSON.parse(b64Decode(data.content)), sha: data.sha };
+  const r = await fetch("https://api.github.com/repos/" + REPO + "/contents/" + path + "?ref=" + BRANCH, {
+    headers: { "Authorization": "Bearer " + TOKEN, "Accept": "application/vnd.github.v3+json" }
+  });
+  if (!r.ok) { const t = await r.text(); throw new Error(path + " " + r.status); }
+  const d = await r.json();
+  return { content: JSON.parse(b64Decode(d.content)), sha: d.sha };
 }
 
 async function ghPut(path, content, sha) {
-  const body = JSON.stringify({
-    message: "后台管理更新: " + path,
-    content: b64Encode(JSON.stringify(content, null, 2)),
-    sha: sha,
-    branch: BRANCH
-  });
-  const res = await fetch("https://api.github.com/repos/" + REPO + "/contents/" + path, {
+  const r = await fetch("https://api.github.com/repos/" + REPO + "/contents/" + path, {
     method: "PUT",
     headers: { "Authorization": "Bearer " + TOKEN, "Content-Type": "application/json" },
-    body: body
+    body: JSON.stringify({ message: "admin: " + path, content: b64Encode(JSON.stringify(content, null, 2)), sha: sha, branch: BRANCH })
   });
-  if (!res.ok) {
-    const txt = await res.text();
-    throw new Error("保存失败: " + res.status + " " + txt.slice(0,100));
-  }
-  return await res.json();
+  if (!r.ok) { const t = await r.text(); throw new Error("保存失败 " + r.status); }
+  return await r.json();
 }
 
-// 加载数据
-async function loadAllData() {
-  document.getElementById("tab-tools").innerHTML = "<p style='color:#6b5f45;padding:20px'>⏳ 正在加载数据...</p>";
+// 加载所有数据
+async function loadAll() {
+  ["tools","nav","posts"].forEach(id => document.getElementById("tab-"+id).innerHTML = "<p class='text-sm text-muted' style='padding:20px'>⏳ 加载中...</p>");
   try {
-    const t = await ghGet("src/data/tools.json");
-    toolsData = t.content; toolsSha = t.sha;
-    const n = await ghGet("src/data/navigation.json");
-    navData = n.content; navSha = n.sha;
-    renderTools();
-    renderNav();
-    renderPosts();
+    const t = await ghGet("src/data/tools.json"); toolsData = t.content; toolsSha = t.sha;
+    const n = await ghGet("src/data/navigation.json"); navData = n.content; navSha = n.sha;
+    renderTools(); renderNav(); renderPosts();
     showMsg("✅ 数据加载成功", "ok");
-  } catch(e) {
-    document.getElementById("tab-tools").innerHTML = "<p style='color:#c73e3a;padding:20px'>❌ " + e.message + "</p>";
-    showMsg("❌ " + e.message, "err");
-  }
+  } catch(e) { showMsg("❌ " + e.message, "err"); }
 }
 
 // ===== 工具管理 =====
 function renderTools() {
-  const el = document.getElementById("tab-tools");
-  let html = "<div style='margin-bottom:16px;display:flex;gap:8px;flex-wrap:wrap'>";
-  html += "<button onclick='addCategory()' style='padding:8px 16px;border:1px solid #c73e3a;background:#c73e3a;color:#fff;cursor:pointer;font-family:inherit'>+ 添加分类</button>";
-  html += "<button onclick='saveTools()' style='padding:8px 16px;border:1px solid #4a6741;background:#4a6741;color:#fff;cursor:pointer;font-family:inherit'>💾 保存到 GitHub</button>";
-  html += "</div>";
-  
+  let html = `<div class="flex gap-2 mb-3 flex-wrap">
+    <button onclick="addCategory()" class="btn btn-primary btn-sm">+ 添加分类</button>
+    <button onclick="saveTools()" class="btn btn-ok btn-sm">💾 保存到 GitHub</button>
+  </div>`;
   toolsData.categories.forEach((cat, ci) => {
-    html += "<div style='border:1px solid #d4c494;padding:16px;margin-bottom:16px;background:#fefcf5'>";
-    html += "<div style='display:flex;gap:8px;align-items:center;margin-bottom:12px;flex-wrap:wrap'>";
-    html += "<span style='font-size:13px;color:#6b5f45'>分类名</span>";
-    html += "<input value='" + esc(cat.name) + "' onchange='toolsData.categories[" + ci + "].name=this.value' style='padding:6px 10px;border:1px solid #d4c494;font-size:14px;font-family:inherit;width:120px'>";
-    html += "<span style='font-size:13px;color:#6b5f45'>副标题</span>";
-    html += "<input value='" + esc(cat.subtitle||"") + "' onchange='toolsData.categories[" + ci + "].subtitle=this.value||null' style='padding:6px 10px;border:1px solid #d4c494;font-size:12px;font-family:inherit;width:180px' placeholder='如 —— 自家笔墨 ——'>";
-    html += "<button onclick='deleteCategory(" + ci + ")' style='padding:4px 10px;border:1px solid #c73e3a;color:#c73e3a;background:transparent;cursor:pointer;font-size:12px'>✕ 删除</button>";
-    html += "</div>";
-    
-    html += "<div style='display:grid;grid-template-columns:1fr 1fr;gap:8px'>";
+    html += `<div class="card mb-3">
+      <div class="flex gap-2 items-center mb-3 flex-wrap">
+        <label style="margin:0">分类名</label>
+        <input value="${esc(cat.name)}" onchange="toolsData.categories[${ci}].name=this.value" style="width:120px">
+        <label style="margin:0">副标题</label>
+        <input value="${esc(cat.subtitle||"")}" onchange="toolsData.categories[${ci}].subtitle=this.value||null" style="width:180px" placeholder="如 —— 自家笔墨 ——">
+        <button onclick="deleteCategory(${ci})" class="btn btn-outline btn-xs">✕ 删除</button>
+      </div>
+      <div class="grid-2">`;
     cat.items.forEach((item, ii) => {
-      html += "<div style='border:1px solid #e8e0cc;padding:10px;background:#f7f3e8;position:relative'>";
-      html += "<div style='margin-bottom:4px'><input value='" + esc(item.title) + "' onchange='toolsData.categories[" + ci + "].items[" + ii + "].title=this.value' style='width:100%;padding:4px 6px;border:1px solid #d4c494;font-size:13px;font-family:inherit' placeholder='名称'></div>";
-      html += "<div style='margin-bottom:4px'><input value='" + esc(item.description||"") + "' onchange='toolsData.categories[" + ci + "].items[" + ii + "].description=this.value' style='width:100%;padding:4px 6px;border:1px solid #d4c494;font-size:12px;font-family:inherit' placeholder='描述'></div>";
-      html += "<div style='margin-bottom:4px'><input value='" + esc(item.url) + "' onchange='toolsData.categories[" + ci + "].items[" + ii + "].url=this.value' style='width:100%;padding:4px 6px;border:1px solid #d4c494;font-size:12px;font-family:inherit' placeholder='URL'></div>";
-      html += "<div style='display:flex;gap:4px'><button onclick='deleteItem(" + ci + "," + ii + ")' style='padding:2px 8px;border:1px solid #c73e3a;color:#c73e3a;background:transparent;cursor:pointer;font-size:11px'>删除</button></div>";
-      html += "</div>";
+      html += `<div style="border:1px solid #e8e0cc;padding:10px;background:#f7f3e8">
+        <div class="mb-2"><input value="${esc(item.title)}" onchange="toolsData.categories[${ci}].items[${ii}].title=this.value" placeholder="名称"></div>
+        <div class="mb-2"><input value="${esc(item.description||"")}" onchange="toolsData.categories[${ci}].items[${ii}].description=this.value" placeholder="描述"></div>
+        <div class="mb-2"><input value="${esc(item.url)}" onchange="toolsData.categories[${ci}].items[${ii}].url=this.value" placeholder="URL"></div>
+        <button onclick="deleteItem(${ci},${ii})" class="btn btn-outline btn-xs">删除</button>
+      </div>`;
     });
-    html += "</div>";
-    html += "<button onclick='addItem(" + ci + ")' style='margin-top:8px;padding:4px 12px;border:1px solid #d4c494;background:transparent;cursor:pointer;font-size:12px;font-family:inherit'>+ 添加工具</button>";
-    html += "</div>";
+    html += `</div><button onclick="addItem(${ci})" class="btn btn-outline btn-sm mt-2">+ 添加工具</button></div>`;
   });
-  el.innerHTML = html;
+  document.getElementById("tab-tools").innerHTML = html;
 }
+function addCategory() { toolsData.categories.push({id:"c"+Date.now(),name:"新分类",subtitle:null,accentColor:"var(--accent)",items:[]}); renderTools(); }
+function deleteCategory(i) { if(!confirm("确定删除？")) return; toolsData.categories.splice(i,1); renderTools(); }
+function addItem(ci) { toolsData.categories[ci].items.push({title:"新工具",description:"",url:"https://",icon:"link",isLocal:false}); renderTools(); }
+function deleteItem(ci,ii) { toolsData.categories[ci].items.splice(ii,1); renderTools(); }
+async function saveTools() { try { const r=await ghPut("src/data/tools.json",toolsData,toolsSha); toolsSha=r.content.sha; showMsg("✅ 工具已保存","ok"); } catch(e) { showMsg("❌ "+e.message,"err"); } }
 
-function esc(s) { return String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;").replace(/'/g,"&#39;"); }
-
-function addCategory() {
-  toolsData.categories.push({ id: "cat-" + Date.now(), name: "新分类", subtitle: null, accentColor: "var(--accent)", items: [] });
-  renderTools();
-}
-function deleteCategory(ci) {
-  if (!confirm("确定删除分类「" + toolsData.categories[ci].name + "」？")) return;
-  toolsData.categories.splice(ci, 1);
-  renderTools();
-}
-function addItem(ci) {
-  toolsData.categories[ci].items.push({ title: "新工具", description: "描述", url: "https://", icon: "link", isLocal: false });
-  renderTools();
-}
-function deleteItem(ci, ii) {
-  toolsData.categories[ci].items.splice(ii, 1);
-  renderTools();
-}
-async function saveTools() {
-  try {
-    const r = await ghPut("src/data/tools.json", toolsData, toolsSha);
-    toolsSha = r.content.sha;
-    showMsg("✅ 工具数据已保存到 GitHub！", "ok");
-  } catch(e) { showMsg("❌ " + e.message, "err"); }
-}
-
-// ===== 导航管理 =====
+// ===== 导航 =====
 function renderNav() {
-  const el = document.getElementById("tab-nav");
-  let html = "<div style='margin-bottom:16px'><button onclick='saveNav()' style='padding:8px 16px;border:1px solid #4a6741;background:#4a6741;color:#fff;cursor:pointer;font-family:inherit'>💾 保存到 GitHub</button></div>";
-  html += "<div style='border:1px solid #d4c494;padding:16px;background:#fefcf5;margin-bottom:12px'>";
-  html += "<label style='font-size:13px;display:block;margin-bottom:6px;color:#6b5f45'>站点名称</label>";
-  html += "<input value='" + esc(navData.brand) + "' onchange='navData.brand=this.value' style='width:100%;padding:8px 10px;border:1px solid #d4c494;font-size:14px;font-family:inherit'>";
-  html += "</div>";
-  html += "<div style='border:1px solid #d4c494;padding:16px;background:#fefcf5'>";
-  html += "<label style='font-size:13px;display:block;margin-bottom:8px;color:#6b5f45'>导航项</label>";
-  navData.items.forEach((item, i) => {
-    html += "<div style='display:flex;gap:8px;margin-bottom:8px;align-items:center'>";
-    html += "<input value='" + esc(item.label) + "' onchange='navData.items[" + i + "].label=this.value' style='padding:6px 10px;border:1px solid #d4c494;font-size:13px;font-family:inherit;width:100px'>";
-    html += "<input value='" + esc(item.url) + "' onchange='navData.items[" + i + "].url=this.value' style='padding:6px 10px;border:1px solid #d4c494;font-size:13px;font-family:inherit;flex:1'>";
-    html += "<button onclick='deleteNavItem(" + i + ")' style='padding:4px 10px;border:1px solid #c73e3a;color:#c73e3a;background:transparent;cursor:pointer;font-size:12px'>✕ 删除</button>";
-    html += "</div>";
+  let html = `<button onclick="saveNav()" class="btn btn-ok btn-sm mb-3">💾 保存到 GitHub</button>
+  <div class="card mb-3"><label>站点名称</label><input value="${esc(navData.brand)}" onchange="navData.brand=this.value"></div>
+  <div class="card"><label class="mb-3">导航项</label>`;
+  navData.items.forEach((item,i) => {
+    html += `<div class="flex gap-2 items-center mb-2">
+      <input value="${esc(item.label)}" onchange="navData.items[${i}].label=this.value" style="width:100px">
+      <input value="${esc(item.url)}" onchange="navData.items[${i}].url=this.value" style="flex:1">
+      <button onclick="deleteNavItem(${i})" class="btn btn-outline btn-xs">✕</button>
+    </div>`;
   });
-  html += "<button onclick='addNavItem()' style='margin-top:4px;padding:6px 14px;border:1px solid #d4c494;background:transparent;cursor:pointer;font-size:12px;font-family:inherit'>+ 添加导航项</button>";
-  html += "</div>";
-  el.innerHTML = html;
+  html += `<button onclick="addNavItem()" class="btn btn-outline btn-sm mt-2">+ 添加</button></div>`;
+  document.getElementById("tab-nav").innerHTML = html;
 }
-function addNavItem() { navData.items.push({ label: "新页面", url: "/", children: [] }); renderNav(); }
-function deleteNavItem(i) { if (!confirm("确定删除？")) return; navData.items.splice(i, 1); renderNav(); }
-async function saveNav() {
-  try {
-    const r = await ghPut("src/data/navigation.json", navData, navSha);
-    navSha = r.content.sha;
-    showMsg("✅ 导航数据已保存到 GitHub！", "ok");
-  } catch(e) { showMsg("❌ " + e.message, "err"); }
-}
+function addNavItem() { navData.items.push({label:"新页面",url:"/",children:[]}); renderNav(); }
+function deleteNavItem(i) { if(!confirm("确定删除？")) return; navData.items.splice(i,1); renderNav(); }
+async function saveNav() { try { const r=await ghPut("src/data/navigation.json",navData,navSha); navSha=r.content.sha; showMsg("✅ 导航已保存","ok"); } catch(e) { showMsg("❌ "+e.message,"err"); } }
 
 // ===== 文章管理 =====
 async function renderPosts() {
   const el = document.getElementById("tab-posts");
-  el.innerHTML = "<p style='color:#6b5f45;padding:20px'>⏳ 加载中...</p>";
+  el.innerHTML = "<p class='text-sm text-muted' style='padding:20px'>⏳ 加载中...</p>";
   try {
-    const res = await fetch("https://api.github.com/repos/" + REPO + "/contents/src/content/posts?ref=" + BRANCH, {
+    const r = await fetch("https://api.github.com/repos/"+REPO+"/contents/src/content/posts?ref="+BRANCH, {
       headers: { "Authorization": "Bearer " + TOKEN, "Accept": "application/vnd.github.v3+json" }
     });
-    if (!res.ok) {
-      const txt = await res.text();
-      throw new Error("获取文章列表失败: " + res.status + " " + txt.slice(0,100));
-    }
-    const files = await res.json();
-    let html = "<div style='margin-bottom:16px;padding:12px;background:#fefcf5;border:1px solid #d4c494;font-size:13px;color:#6b5f45'>文章需通过 GitHub 在线编辑器编辑 MDX 文件</div>";
-    if (files.length === 0) {
-      html += "<p style='color:#6b5f45;padding:12px'>暂无文章</p>";
-    } else {
+    if (!r.ok) throw new Error("获取失败 " + r.status);
+    const files = await r.json();
+    let html = `<div class="flex gap-2 mb-3 flex-wrap">
+      <button onclick="showNewPost()" class="btn btn-primary btn-sm">✏️ 新建文章</button>
+    </div>
+    <div id="new-post-form" class="hidden card mb-3"></div>`;
+    if (files.length === 0) { html += "<p class='text-sm text-muted'>暂无文章</p>"; }
+    else {
       html += "<div style='display:grid;gap:8px'>";
       for (const f of files) {
         if (f.name.endsWith(".mdx") || f.name.endsWith(".md")) {
-          html += "<div style='border:1px solid #d4c494;padding:12px 16px;background:#fefcf5;display:flex;justify-content:space-between;align-items:center'>";
-          html += "<span style='font-size:14px'>📄 " + esc(f.name) + "</span>";
-          html += "<a href='https://github.com/" + REPO + "/edit/" + BRANCH + "/src/content/posts/" + f.name + "' target='_blank' style='padding:6px 14px;border:1px solid #c73e3a;color:#c73e3a;text-decoration:none;font-size:12px;border-radius:2px'>编辑 →</a>";
-          html += "</div>";
+          html += `<div class="card" style="padding:12px 16px;display:flex;justify-content:space-between;align-items:center">
+            <span class="text-sm">📄 ${esc(f.name)}</span>
+            <a href="https://github.com/${REPO}/edit/${BRANCH}/src/content/posts/${f.name}" target="_blank" class="btn btn-outline btn-xs">编辑</a>
+          </div>`;
         }
       }
       html += "</div>";
     }
     el.innerHTML = html;
+  } catch(e) { el.innerHTML = "<p class='text-sm text-accent'>❌ " + e.message + "</p>"; }
+}
+
+function showNewPost() {
+  const el = document.getElementById("new-post-form");
+  el.classList.toggle("hidden");
+  if (el.classList.contains("hidden")) return;
+  el.innerHTML = `<h3 style="font-size:15px;margin-bottom:12px">新建文章</h3>
+    <div class="mb-2"><label>文件名 (英文)</label><input id="np-slug" placeholder="my-new-post" style="font-family:monospace"></div>
+    <div class="mb-2"><label>标题</label><input id="np-title" placeholder="文章标题"></div>
+    <div class="mb-2"><label>描述</label><input id="np-desc" placeholder="简短描述"></div>
+    <div class="grid-2 mb-2">
+      <div><label>分类</label><input id="np-cat" value="随笔"></div>
+      <div><label>标签 (逗号分隔)</label><input id="np-tags" value="随笔"></div>
+    </div>
+    <div class="mb-2"><label>封面图URL (可选)</label><input id="np-cover" placeholder="https://..."></div>
+    <div class="mb-2"><label>正文 (Markdown)</label><textarea id="np-body" rows="8" placeholder="在此输入文章内容..."></textarea></div>
+    <button onclick="publishPost()" class="btn btn-primary btn-sm">📤 发布文章</button>
+    <div id="np-msg" class="text-xs mt-2 text-muted"></div>`;
+}
+
+async function publishPost() {
+  const slug = document.getElementById("np-slug").value.trim();
+  const title = document.getElementById("np-title").value.trim();
+  const desc = document.getElementById("np-desc").value.trim();
+  const cat = document.getElementById("np-cat").value.trim();
+  const tags = document.getElementById("np-tags").value.split(",").map(t=>t.trim());
+  const cover = document.getElementById("np-cover").value.trim();
+  const body = document.getElementById("np-body").value;
+  const msg = document.getElementById("np-msg");
+  if (!slug || !title || !desc) { msg.textContent = "请填写文件名、标题和描述"; msg.style.color = "#c73e3a"; return; }
+  
+  const today = new Date().toISOString().split("T")[0];
+  const frontmatter = `---
+title: "${title}"
+description: "${desc}"
+date: ${today}
+category: "${cat}"
+tags: ${JSON.stringify(tags)}
+${cover ? 'coverImage: "' + cover + '"' : ""}
+readingTime: 5
+---
+`;
+  const content = frontmatter + body;
+  
+  try {
+    const r = await fetch("https://api.github.com/repos/"+REPO+"/contents/src/content/posts/"+slug+".mdx", {
+      method: "PUT",
+      headers: { "Authorization": "Bearer " + TOKEN, "Content-Type": "application/json" },
+      body: JSON.stringify({ message: "新文章: " + title, content: b64Encode(content), branch: BRANCH })
+    });
+    if (!r.ok) throw new Error("发布失败 " + r.status);
+    msg.textContent = "✅ 文章已发布！刷新页面查看"; msg.style.color = "#4a6741";
+    document.getElementById("np-slug").value = "";
+    document.getElementById("np-title").value = "";
+    document.getElementById("np-desc").value = "";
+    document.getElementById("np-body").value = "";
+    setTimeout(() => renderPosts(), 1000);
+  } catch(e) { msg.textContent = "❌ " + e.message; msg.style.color = "#c73e3a"; }
+}
+
+// ===== 文件上传 =====
+function renderUpload() {
+  document.getElementById("tab-upload").innerHTML = `
+    <div class="card mb-3">
+      <h3 style="font-size:15px;margin-bottom:12px">📤 上传文件到博客</h3>
+      <p class="text-sm text-muted mb-3">支持图片、视频等，上传后自动获取链接</p>
+      <div id="drop-zone" class="upload-zone">
+        <div class="icon">📁</div>
+        <p>拖拽文件到此处，或点击选择文件</p>
+        <p class="text-xs text-muted mt-2" style="margin-top:8px">支持 PNG / JPG / WebP / MP4 / GIF</p>
+        <input id="file-input" type="file" style="display:none" accept="image/*,video/*,.webp">
+      </div>
+      <div id="upload-progress" class="hidden text-sm mt-3"></div>
+      <div id="upload-result" class="hidden mt-3">
+        <div class="card"><label>文件链接 (已复制)</label>
+          <input id="upload-url" readonly style="font-family:monospace;font-size:12px" onclick="this.select();navigator.clipboard?.writeText(this.value)">
+        </div>
+      </div>
+    </div>
+    <div class="card">
+      <h3 style="font-size:15px;margin-bottom:12px">已上传文件</h3>
+      <div id="uploaded-files"><p class="text-sm text-muted">⏳ 加载中...</p></div>
+    </div>`;
+  
+  setupUpload();
+  listUploadedFiles();
+}
+
+function setupUpload() {
+  const zone = document.getElementById("drop-zone");
+  const input = document.getElementById("file-input");
+  zone.onclick = () => input.click();
+  zone.ondragover = e => { e.preventDefault(); zone.classList.add("dragover"); };
+  zone.ondragleave = () => zone.classList.remove("dragover");
+  zone.ondrop = e => { e.preventDefault(); zone.classList.remove("dragover"); if (e.dataTransfer.files.length) uploadFile(e.dataTransfer.files[0]); };
+  input.onchange = () => { if (input.files.length) uploadFile(input.files[0]); };
+}
+
+async function uploadFile(file) {
+  const prog = document.getElementById("upload-progress");
+  const result = document.getElementById("upload-result");
+  prog.classList.remove("hidden");
+  prog.innerHTML = "⏳ 正在上传: " + file.name + " (" + (file.size/1024).toFixed(1) + "KB)...";
+  result.classList.add("hidden");
+  
+  const ext = file.name.split(".").pop();
+  const name = Date.now() + "-" + file.name.replace(/[^a-zA-Z0-9.-]/g, "");
+  const path = "public/uploads/" + name;
+  
+  try {
+    const reader = new FileReader();
+    const base64 = await new Promise((resolve, reject) => {
+      reader.onload = () => resolve(reader.result.split(",")[1]);
+      reader.onerror = reject;
+      reader.readAsDataURL(file);
+    });
+    
+    // Check if path exists
+    let sha = null;
+    try {
+      const r = await fetch("https://api.github.com/repos/"+REPO+"/contents/"+path+"?ref="+BRANCH, {
+        headers: { "Authorization": "Bearer " + TOKEN, "Accept": "application/vnd.github.v3+json" }
+      });
+      if (r.ok) sha = (await r.json()).sha;
+    } catch(e) {}
+    
+    const r = await fetch("https://api.github.com/repos/"+REPO+"/contents/"+path, {
+      method: "PUT",
+      headers: { "Authorization": "Bearer " + TOKEN, "Content-Type": "application/json" },
+      body: JSON.stringify({ message: "上传: " + name, content: base64, sha: sha, branch: BRANCH })
+    });
+    if (!r.ok) throw new Error("上传失败 " + r.status);
+    
+    const url = "/uploads/" + name;
+    prog.innerHTML = "✅ 上传成功！";
+    result.classList.remove("hidden");
+    document.getElementById("upload-url").value = url;
+    document.getElementById("upload-url").select();
+    try { await navigator.clipboard.writeText(url); } catch(e) {}
+    setTimeout(() => listUploadedFiles(), 500);
   } catch(e) {
-    el.innerHTML = "<p style='color:#c73e3a;padding:20px'>❌ " + e.message + "</p>";
+    prog.innerHTML = "❌ " + e.message;
   }
+}
+
+async function listUploadedFiles() {
+  const el = document.getElementById("uploaded-files");
+  try {
+    const r = await fetch("https://api.github.com/repos/"+REPO+"/contents/public/uploads?ref="+BRANCH, {
+      headers: { "Authorization": "Bearer " + TOKEN, "Accept": "application/vnd.github.v3+json" }
+    });
+    if (!r.ok) { el.innerHTML = "<p class='text-sm text-muted'>暂无上传文件</p>"; return; }
+    const files = await r.json();
+    if (!files.length) { el.innerHTML = "<p class='text-sm text-muted'>暂无上传文件</p>"; return; }
+    let html = "<div class='grid-3'>";
+    files.slice().reverse().slice(0,30).forEach(f => {
+      const isImg = f.name.match(/\.(png|jpg|jpeg|webp|gif|svg)$/i);
+      html += `<div style="border:1px solid #e8e0cc;padding:8px;text-align:center;background:#f7f3e8">
+        ${isImg ? `<img src="/uploads/${f.name}" style="max-width:100%;height:60px;object-fit:cover;margin-bottom:4px">` : "📄"}
+        <div style="font-size:11px;word-break:break-all">${f.name}</div>
+        <button onclick="copyUrl('${f.name}')" class="btn btn-outline btn-xs mt-2">复制链接</button>
+      </div>`;
+    });
+    html += "</div>";
+    el.innerHTML = html;
+  } catch(e) { el.innerHTML = "<p class='text-sm text-muted'>加载失败</p>"; }
+}
+
+function copyUrl(name) {
+  const url = "/uploads/" + name;
+  try { navigator.clipboard.writeText(url); } catch(e) {}
+  showMsg("✅ 已复制: " + url, "ok");
 }
 </script>
 </body>
