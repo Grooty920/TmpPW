@@ -1,4 +1,4 @@
----
+﻿---
 import "../styles/global.css";
 import navData from "../data/navigation.json";
 import profile from "../data/profile.json";
@@ -64,7 +64,7 @@ const { title = "小杨王子", description = "个人博客与工具集" } = Ast
         <a href="/" class="text-xl font-serif font-bold tracking-wide" style="color:var(--text-primary); font-family: 'Ma Shan Zheng', 'Noto Serif SC', cursive;">{navData.brand}</a>
         <div class="hidden md:flex items-center gap-8">
           {navData.items.map((item) => (
-            <a href={item.url} class="relative text-sm tracking-wide transition-colors duration-300 group" style="color:var(--text-secondary)">
+            <a data-astro-reload href={item.url} class="relative text-sm tracking-wide transition-colors duration-300 group" style="color:var(--text-secondary)">
               {item.label}
               <span class="absolute -bottom-1 left-0 w-0 h-0.5 transition-all duration-300 group-hover:w-full" style="background-color:var(--accent)"></span>
             </a>
@@ -105,9 +105,9 @@ const { title = "小杨王子", description = "个人博客与工具集" } = Ast
 
     <div id="mobile-menu" class="fixed inset-0 top-16 z-40 hidden flex-col items-center gap-8 pt-16 text-lg" style="background-color:var(--bg-primary)">
       <a href="/" class="transition-colors" style="color:var(--text-secondary)" onclick="document.getElementById('mobile-menu').classList.add('hidden')">首页</a>
-      <a href="/blog" class="transition-colors" style="color:var(--text-secondary)" onclick="document.getElementById('mobile-menu').classList.add('hidden')">随笔</a>
-      <a href="/tools" class="transition-colors" style="color:var(--text-secondary)" onclick="document.getElementById('mobile-menu').classList.add('hidden')">工具</a>
-      <a href="/search" class="transition-colors" style="color:var(--text-secondary)" onclick="document.getElementById('mobile-menu').classList.add('hidden')">搜索</a>
+      <a data-astro-reload href="/blog" class="transition-colors" style="color:var(--text-secondary)" onclick="document.getElementById('mobile-menu').classList.add('hidden')">随笔</a>
+      <a data-astro-reload href="/tools" class="transition-colors" style="color:var(--text-secondary)" onclick="document.getElementById('mobile-menu').classList.add('hidden')">工具</a>
+      <a data-astro-reload href="/search" class="transition-colors" style="color:var(--text-secondary)" onclick="document.getElementById('mobile-menu').classList.add('hidden')">搜索</a>
     </div>
 
     <main class="min-h-screen pt-20">

@@ -106,18 +106,15 @@ const next = idx > 0 ? sorted[idx - 1] : null;
     </div>
   </div>
 
-  <script is:inline src="https://cdn.jsdelivr.net/npm/twikoo@1.6.41/dist/twikoo.all.min.js"></script>
-  <script is:inline>
+  <script>
+    import twikoo from 'twikoo';
     // Twikoo 评论初始化
+    
     function initComments() {
       var el = document.getElementById('tcomment');
       if (!el || el.dataset.loaded) return;
       el.dataset.loaded = '1';
       console.log('Twikoo: initializing...');
-      if (typeof twikoo === 'undefined') {
-        console.error('Twikoo: twikoo is not defined, CDN may not have loaded');
-        return;
-      }
       twikoo.init({
         envId: 'https://twikoo-teal.vercel.app',
         el: '#tcomment',

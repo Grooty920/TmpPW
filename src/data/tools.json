@@ -3,7 +3,7 @@
     {
       "id": "masterpiece",
       "name": "匠心",
-      "subtitle": "—— 自家笔墨 ——",
+      "subtitle": "—— 自研 ——",
       "accentColor": "var(--accent)",
       "items": [
         {
@@ -95,7 +95,7 @@
       "items": [
         {
           "title": "音频转换",
-          "description": "耳聆 · tool.ear0.com",
+          "description": "耳朵 · tool.ear0.com",
           "url": "https://tool.ear0.com/convert",
           "icon": "music",
           "isLocal": false
@@ -136,7 +136,7 @@
           "isLocal": false
         },
         {
-          "title": "监考系统",
+          "title": "监控系统",
           "description": "safeexambrowser.org",
           "url": "https://safeexambrowser.org/download_en.html",
           "icon": "monitor",
