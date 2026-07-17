@@ -122,110 +122,33 @@ document.addEventListener("astro:page-load", initTwikoo);
 
 <style is:global>
 /* ===== Twikoo 评论区 - 水墨主题 ===== */
-#tcomment {
-  --twikoo-border-color: var(--border);
-  --twikoo-bg-color: transparent;
-  --twikoo-text-color: var(--text-primary);
-  --twikoo-secondary-text-color: var(--text-secondary);
-  --twikoo-accent-color: var(--accent);
-  --twikoo-accent-hover-color: var(--accent-light);
-  --twikoo-font-family: "Noto Serif SC", "LXGW WenKai", serif;
-  --twikoo-font-size: 0.875rem;
-  --twikoo-border-radius: 4px;
-  --twikoo-input-bg-color: var(--card-bg);
-  --twikoo-input-border-color: var(--border);
-  --twikoo-input-focus-border-color: var(--accent);
-  --twikoo-button-bg-color: var(--accent);
-  --twikoo-button-text-color: #f7f3e8;
-  --twikoo-button-hover-bg-color: var(--accent-light);
-  --twikoo-tag-bg-color: rgba(199, 62, 58, 0.08);
-  --twikoo-tag-text-color: var(--accent);
-  --twikoo-comment-bg-color: var(--card-bg);
-  --twikoo-comment-border-color: var(--border);
-  --twikoo-reply-bg-color: rgba(247, 243, 232, 0.3);
-  --twikoo-code-bg-color: rgba(28, 28, 28, 0.04);
-  --twikoo-code-text-color: var(--text-primary);
-  --twikoo-success-color: var(--stone);
-  --twikoo-error-color: var(--accent);
-  --twikoo-loading-color: var(--accent);
-}
-
-#tcomment .tk-comments { margin-top: 0; }
+/* ===== Twikoo ===== */
+#comment-section .card-ink { overflow: hidden; width: 100%; max-width: 100%; }
+#tcomment { width: 100%; max-width: 100%; overflow: hidden; --twikoo-border-color: var(--border); --twikoo-bg-color: transparent; --twikoo-text-color: var(--text-primary); --twikoo-secondary-text-color: var(--text-secondary); --twikoo-accent-color: var(--accent); --twikoo-accent-hover-color: var(--accent-light); --twikoo-font-family: "Noto Serif SC", "LXGW WenKai", serif; --twikoo-font-size: 0.875rem; --twikoo-border-radius: 4px; --twikoo-input-bg-color: var(--card-bg); --twikoo-input-border-color: var(--border); --twikoo-input-focus-border-color: var(--accent); --twikoo-button-bg-color: var(--accent); --twikoo-button-text-color: #f7f3e8; --twikoo-button-hover-bg-color: var(--accent-light); --twikoo-tag-bg-color: rgba(199,62,58,0.08); --twikoo-tag-text-color: var(--accent); --twikoo-comment-bg-color: var(--card-bg); --twikoo-comment-border-color: var(--border); --twikoo-reply-bg-color: rgba(247,243,232,0.3); --twikoo-code-bg-color: rgba(28,28,28,0.04); --twikoo-code-text-color: var(--text-primary); --twikoo-success-color: var(--stone); --twikoo-error-color: var(--accent); --twikoo-loading-color: var(--accent); }
+#tcomment .tk-comments, #tcomment .tk-submit { width: 100%; max-width: 100%; margin-top: 0; }
 #tcomment .tk-submit { margin-bottom: 1.5rem; }
-#tcomment .tk-row { display: flex; align-items: center; gap: 0.75rem; }
-
-#tcomment .tk-input {
-  border: 1px solid var(--twikoo-input-border-color);
-  background: var(--twikoo-input-bg-color);
-  border-radius: 4px;
-  padding: 0.625rem 0.875rem;
-  font-family: var(--twikoo-font-family);
-  font-size: var(--twikoo-font-size);
-  color: var(--twikoo-text-color);
-  transition: border-color 0.3s ease;
-}
-#tcomment .tk-input:focus {
-  border-color: var(--twikoo-input-focus-border-color);
-  outline: none;
-  box-shadow: 0 0 0 2px rgba(199, 62, 58, 0.1);
-}
-
-#tcomment .tk-btn {
-  font-family: var(--twikoo-font-family);
-  font-size: 0.8125rem;
-  padding: 0.5rem 1.25rem;
-  border-radius: 4px;
-  border: 1px solid var(--accent);
-  background: var(--accent);
-  color: #f7f3e8;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  letter-spacing: 0.05em;
-}
-#tcomment .tk-btn:hover {
-  background: var(--accent-light);
-  border-color: var(--accent-light);
-  transform: translateY(-1px);
-  box-shadow: 0 2px 12px rgba(199, 62, 58, 0.2);
-}
-
-#tcomment .tk-comment {
-  border: 1px solid var(--twikoo-comment-border-color);
-  background: var(--twikoo-comment-bg-color);
-  border-radius: 4px;
-  padding: 1rem;
-  margin-bottom: 0.75rem;
-  transition: all 0.3s ease;
-}
-#tcomment .tk-comment:hover {
-  border-color: var(--accent);
-  box-shadow: 0 2px 8px rgba(0,0,0,0.04);
-}
-
+#tcomment .tk-row { display: flex; align-items: center; gap: 0.75rem; width: 100%; }
+#tcomment .tk-input { width: 100%; box-sizing: border-box; border: 1px solid var(--twikoo-input-border-color); background: var(--twikoo-input-bg-color); border-radius: 4px; padding: 0.625rem 0.875rem; font-family: var(--twikoo-font-family); font-size: var(--twikoo-font-size); color: var(--twikoo-text-color); transition: border-color 0.3s ease; }
+#tcomment .tk-input:focus { border-color: var(--twikoo-input-focus-border-color); outline: none; box-shadow: 0 0 0 2px rgba(199,62,58,0.1); }
+#tcomment .tk-btn { font-family: var(--twikoo-font-family); font-size: 0.8125rem; padding: 0.5rem 1.25rem; border-radius: 4px; border: 1px solid var(--accent); background: var(--accent); color: #f7f3e8; cursor: pointer; transition: all 0.3s ease; letter-spacing: 0.05em; white-space: nowrap; }
+#tcomment .tk-btn:hover { background: var(--accent-light); border-color: var(--accent-light); transform: translateY(-1px); box-shadow: 0 2px 12px rgba(199,62,58,0.2); }
+#tcomment .tk-comment { width: 100%; max-width: 100%; box-sizing: border-box; border: 1px solid var(--twikoo-comment-border-color); background: var(--twikoo-comment-bg-color); border-radius: 4px; padding: 1rem; margin-bottom: 0.75rem; transition: all 0.3s ease; word-wrap: break-word; overflow-wrap: break-word; }
+#tcomment .tk-comment:hover { border-color: var(--accent); box-shadow: 0 2px 8px rgba(0,0,0,0.04); }
 #tcomment .tk-nick { font-family: "Ma Shan Zheng", "Noto Serif SC", cursive; font-size: 0.9375rem; color: var(--text-primary); }
 #tcomment .tk-time { font-size: 0.75rem; color: var(--text-secondary); }
-#tcomment .tk-content { font-size: 0.875rem; line-height: 1.7; color: var(--text-primary); }
-#tcomment .tk-tag { background: rgba(199, 62, 58, 0.08); color: var(--accent); border: none; font-size: 0.6875rem; padding: 0.125rem 0.5rem; border-radius: 2px; }
+#tcomment .tk-content { font-size: 0.875rem; line-height: 1.7; color: var(--text-primary); word-wrap: break-word; overflow-wrap: break-word; }
+#tcomment .tk-tag { background: rgba(199,62,58,0.08); color: var(--accent); border: none; font-size: 0.6875rem; padding: 0.125rem 0.5rem; border-radius: 2px; }
 #tcomment .tk-actions a { color: var(--text-secondary); font-size: 0.75rem; transition: color 0.3s ease; }
 #tcomment .tk-actions a:hover { color: var(--accent); }
 #tcomment .tk-preview { border: 1px dashed var(--border); background: var(--card-bg); border-radius: 4px; padding: 1rem; }
-#tcomment .tk-preview .tk-content { font-size: 0.875rem; color: var(--text-primary); }
-#tcomment .tk-emoji { max-width: 1.5rem; vertical-align: middle; }
+#tcomment .tk-content img { max-width: 100%; height: auto; }
+#tcomment .tk-emoji { max-width: 1.5rem; max-height: 1.5rem; vertical-align: middle; }
 #tcomment .tk-owo { max-height: 200px; overflow-y: auto; border: 1px solid var(--border); background: var(--card-bg); border-radius: 4px; padding: 0.5rem; }
 #tcomment .tk-owo .tk-owo-item { cursor: pointer; transition: transform 0.2s ease; }
 #tcomment .tk-owo .tk-owo-item:hover { transform: scale(1.15); }
 #tcomment .tk-loading { display: flex; align-items: center; justify-content: center; gap: 0.5rem; padding: 2rem; color: var(--text-secondary); font-size: 0.875rem; }
 #tcomment .tk-no-comments { text-align: center; padding: 2rem; color: var(--text-secondary); font-size: 0.875rem; font-family: "LXGW WenKai", serif; }
-
-.dark #tcomment {
-  --twikoo-reply-bg-color: rgba(26, 21, 16, 0.5);
-  --twikoo-code-bg-color: rgba(247, 243, 232, 0.04);
-  --twikoo-input-bg-color: rgba(26, 21, 16, 0.5);
-  --twikoo-comment-bg-color: rgba(26, 21, 16, 0.3);
-}
+.dark #tcomment { --twikoo-reply-bg-color: rgba(26,21,16,0.5); --twikoo-code-bg-color: rgba(247,243,232,0.04); --twikoo-input-bg-color: rgba(26,21,16,0.5); --twikoo-comment-bg-color: rgba(26,21,16,0.3); }
 .dark #tcomment .tk-comment:hover { box-shadow: 0 2px 12px rgba(0,0,0,0.2); }
-
-@media (max-width: 640px) {
-  #tcomment .tk-row { flex-direction: column; align-items: stretch; }
-}
+@media (max-width: 640px) { #tcomment .tk-row { flex-direction: column; align-items: stretch; } #comment-section .card-ink { padding: 1rem; } }
 </style>

@@ -1,4 +1,4 @@
-const CACHE_NAME = "xiaoyang-v2";
+const CACHE_NAME = "xiaoyang-v3";
 const urlsToCache = [
   "/",
   "/about",
@@ -8,6 +8,7 @@ const urlsToCache = [
 ];
 
 self.addEventListener("install", function(event) {
+  self.skipWaiting();
   event.waitUntil(
     caches.open(CACHE_NAME).then(function(cache) {
       return cache.addAll(urlsToCache);

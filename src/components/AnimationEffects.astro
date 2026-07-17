@@ -298,8 +298,9 @@
     autoReveal();
     initReveal();
     initGlow();
-    initInk();
-    initSnow();
+    // Canvas动画延迟启动，优先保证页面渲染
+    setTimeout(function() { initInk(); }, 300);
+    setTimeout(function() { initSnow(); }, 600);
   }
 
   function runInit() {
