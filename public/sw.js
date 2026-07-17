@@ -1,4 +1,4 @@
-﻿const CACHE_NAME = "xiaoyang-v2";
+const CACHE_NAME = "xiaoyang-v2";
 const urlsToCache = [
   "/",
   "/about",
