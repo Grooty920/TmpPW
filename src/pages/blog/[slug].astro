@@ -97,23 +97,14 @@ const next = idx > 0 ? sorted[idx - 1] : null;
           </div>
         </div>
 
-        <!-- 评论区 - 本地留言 -->
+        <!-- 评论区 - Giscus -->
         <div class="mt-10 reveal" style="animation-delay:0.3s">
           <div class="flex items-center gap-3 mb-6">
             <span class="w-1 h-5" style="background-color:var(--accent)"></span>
             <h2 class="text-lg font-serif font-semibold" style="color:var(--text-primary)">笔墨留痕</h2>
           </div>
           <div class="card-ink p-6">
-            <div id="comments-area">
-              <div id="comments-list" class="space-y-4 mb-6"></div>
-              <div class="border-t pt-6" style="border-color:var(--border)">
-                <textarea id="comment-input" rows="3" class="w-full p-3 text-sm outline-none transition-all duration-300" style="border:1px solid var(--border);border-radius:6px;background:var(--bg-primary);color:var(--text-primary);font-family:inherit;" placeholder="写下你的想法..."></textarea>
-                <div class="flex items-center justify-between mt-3">
-                  <input id="comment-author" type="text" placeholder="你的名字（选填）" class="text-sm p-2 outline-none" style="border:1px solid var(--border);border-radius:4px;background:var(--bg-primary);color:var(--text-primary);width:160px;font-family:inherit;">
-                  <button id="comment-submit" class="ink-btn px-5 py-2 text-sm" style="border:1px solid var(--accent);color:var(--accent);">留墨</button>
-                </div>
-              </div>
-            </div>
+            <div class="giscus" id="giscus-comments"></div>
           </div>
         </div>
       </article>
@@ -126,7 +117,7 @@ const next = idx > 0 ? sorted[idx - 1] : null;
       </aside>
     </div>
   </div>
-  <script>
+    <script>
     function initArticle() {
       var parallax = document.querySelector(".parallax-img");
       if (parallax) {
@@ -232,68 +223,47 @@ const next = idx > 0 ? sorted[idx - 1] : null;
       });
     }
 
-    // 本地留言系统
-    function initComments() {
-      var btn = document.getElementById("comment-submit");
-      var input = document.getElementById("comment-input");
-      var author = document.getElementById("comment-author");
-      var list = document.getElementById("comments-list");
-      if (!btn || !input || !list) return;
-
-      var slug = window.location.pathname.replace("/blog/", "").replace(/\/$/, "");
-      var storageKey = "comments_" + slug;
-
-      function loadComments() {
-        try {
-          var data = JSON.parse(localStorage.getItem(storageKey) || "[]");
-          if (data.length === 0) {
-            list.innerHTML = "<p class=\"text-sm text-center\" style=\"color:var(--text-secondary)\">暂无留墨，做第一个留下墨迹的人吧</p>";
-            return;
-          }
-          list.innerHTML = data.map(function(c) {
-            var date = new Date(c.time).toLocaleString("zh-CN");
-            return "<div class=\"p-4\" style=\"border-bottom:1px solid var(--border)\">" +
-              "<div class=\"flex items-center gap-2 mb-1\">" +
-              "<span class=\"text-xs font-semibold\" style=\"color:var(--accent)\">" + (c.author || "墨客") + "</span>" +
-              "<span class=\"text-xs\" style=\"color:var(--text-secondary);opacity:0.5\">" + date + "</span>" +
-              "</div>" +
-              "<p class=\"text-sm\" style=\"color:var(--text-primary)\">" + c.text + "</p>" +
-              "</div>";
-          }).join("");
-        } catch(e) { list.innerHTML = ""; }
-      }
-
-      btn.addEventListener("click", function() {
-        var text = input.value.trim();
-        if (!text) { alert("请写下你的想法"); return; }
-        var authorName = author.value.trim() || "墨客";
-        try {
-          var data = JSON.parse(localStorage.getItem(storageKey) || "[]");
-          data.unshift({ text: text, author: authorName, time: Date.now() });
-          localStorage.setItem(storageKey, JSON.stringify(data));
-          input.value = "";
-          loadComments();
-        } catch(e) { alert("保存失败，请重试"); }
-      });
-
-      loadComments();
+    // Giscus 评论
+    function initGiscus() {
+      var giscus = document.getElementById("giscus-comments");
+      if (!giscus || giscus.dataset.loaded) return;
+      giscus.dataset.loaded = "1";
+      var script = document.createElement("script");
+      script.src = "https://giscus.app/client.js";
+      script.setAttribute("data-repo", "Grooty920/TmpPW");
+      script.setAttribute("data-repo-id", "R_kgDOTZEgNQ");
+      script.setAttribute("data-category", "Announcements");
+      script.setAttribute("data-category-id", "DIC_kwDOTZEgNc4DBXNP");
+      script.setAttribute("data-mapping", "pathname");
+      script.setAttribute("data-strict", "0");
+      script.setAttribute("data-reactions-enabled", "1");
+      script.setAttribute("data-emit-metadata", "0");
+      script.setAttribute("data-input-position", "top");
+      script.setAttribute("data-theme", "preferred_color_scheme");
+      script.setAttribute("data-lang", "zh-CN");
+      script.setAttribute("crossorigin", "anonymous");
+      script.setAttribute("async", "");
+      giscus.appendChild(script);
     }
 
     function runPage() {
       if (document.readyState === 'loading') {
         document.addEventListener('DOMContentLoaded', function() {
           initArticle();
-          setTimeout(function() { initShare(); initComments(); }, 300);
+          setTimeout(function() { initShare(); initGiscus(); }, 300);
         });
       } else {
         initArticle();
-        setTimeout(function() { initShare(); initComments(); }, 300);
+        setTimeout(function() { initShare(); initGiscus(); }, 300);
       }
     }
     runPage();
     document.addEventListener('astro:page-load', function() {
       initArticle();
-      setTimeout(function() { initShare(); initComments(); }, 300);
+      setTimeout(function() { initShare(); initGiscus(); }, 300);
     });
   </script>
 </Layout>
+
+
+
