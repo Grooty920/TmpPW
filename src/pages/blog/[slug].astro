@@ -224,27 +224,16 @@ const next = idx > 0 ? sorted[idx - 1] : null;
       });
     }
 
-    // Giscus 评论
+    // Twikoo 评论
     function initComments() {
-      var giscus = document.getElementById("giscus-comments");
-      if (!giscus || giscus.dataset.loaded) return;
-      giscus.dataset.loaded = "1";
-      var script = document.createElement("script");
-      script.src = "https://giscus.app/client.js";
-      script.setAttribute("data-repo", "Grooty920/TmpPW");
-      script.setAttribute("data-repo-id", "R_kgDOTZEgNQ");
-      script.setAttribute("data-category", "Announcements");
-      script.setAttribute("data-category-id", "DIC_kwDOTZEgNc4DBXNP");
-      script.setAttribute("data-mapping", "pathname");
-      script.setAttribute("data-strict", "0");
-      script.setAttribute("data-reactions-enabled", "1");
-      script.setAttribute("data-emit-metadata", "0");
-      script.setAttribute("data-input-position", "top");
-      script.setAttribute("data-theme", "preferred_color_scheme");
-      script.setAttribute("data-lang", "zh-CN");
-      script.setAttribute("crossorigin", "anonymous");
-      script.setAttribute("async", "");
-      giscus.appendChild(script);
+      var el = document.getElementById("tcomment");
+      if (!el || el.dataset.loaded) return;
+      el.dataset.loaded = "1";
+      twikoo.init({
+        envId: "https://twikoo-kkkk7v8jg-grooty1.vercel.app",
+        el: "#tcomment",
+        lang: "zh-CN",
+      });
     }
 
     function runPage() {
@@ -265,6 +254,8 @@ const next = idx > 0 ? sorted[idx - 1] : null;
     });
   </script>
 </Layout>
+
+
 
 
 
