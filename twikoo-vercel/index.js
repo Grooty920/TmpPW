@@ -1,2 +1,2 @@
-﻿const twikoo = require("twikoo-vercel");
+const twikoo = require("twikoo-vercel");
 module.exports = twikoo;
