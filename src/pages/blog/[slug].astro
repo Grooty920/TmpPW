@@ -106,40 +106,45 @@ const next = idx > 0 ? sorted[idx - 1] : null;
     </div>
   </div>
 
-  <script>
-    import twikoo from 'twikoo';
-    // Twikoo 评论初始化
-    
-    function initComments() {
-      var el = document.getElementById('tcomment');
-      if (!el || el.dataset.loaded) return;
-      el.dataset.loaded = '1';
-      console.log('Twikoo: initializing...');
-      twikoo.init({
-        envId: 'https://twikoo-teal.vercel.app',
-        el: '#tcomment',
-        lang: 'zh-CN',
-      }).then(function() {
-        console.log('Twikoo: initialized successfully');
-      }).catch(function(err) {
-        console.error('Twikoo: init error:', err);
-      });
-    }
-
-    // 页面加载后初始化
-    function runPage() {
-      if (document.readyState === 'loading') {
-        document.addEventListener('DOMContentLoaded', function() {
-          setTimeout(function() { initComments(); }, 500);
+    <script is:inline>
+    // Twikoo 评论 - 动态加载CDN
+    (function() {
+      var s = document.createElement('script');
+      s.src = 'https://cdn.jsdelivr.net/npm/twikoo@1.7.14/dist/twikoo.all.min.js';
+      s.onload = function() {
+        console.log('Twikoo: CDN loaded');
+        var el = document.getElementById('tcomment');
+        if (!el || el.dataset.loaded) return;
+        el.dataset.loaded = '1';
+        console.log('Twikoo: initializing...');
+        twikoo.init({
+          envId: 'https://twikoo-teal.vercel.app',
+          el: '#tcomment',
+          lang: 'zh-CN',
+        }).then(function() {
+          console.log('Twikoo: initialized successfully');
+        }).catch(function(err) {
+          console.error('Twikoo: init error:', err);
         });
-      } else {
-        setTimeout(function() { initComments(); }, 500);
-      }
-    }
-    runPage();
-    document.addEventListener('astro:page-load', function() {
-      setTimeout(function() { initComments(); }, 500);
-    });
+      };
+      s.onerror = function() {
+        console.error('Twikoo: CDN failed to load');
+      };
+      document.head.appendChild(s);
+      
+      document.addEventListener('astro:page-load', function() {
+        if (typeof twikoo !== 'undefined') {
+          var el = document.getElementById('tcomment');
+          if (!el || el.dataset.loaded) return;
+          el.dataset.loaded = '1';
+          twikoo.init({
+            envId: 'https://twikoo-teal.vercel.app',
+            el: '#tcomment',
+            lang: 'zh-CN',
+          });
+        }
+      });
+    })();
   </script>
 
 </Layout>
