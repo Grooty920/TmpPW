@@ -1,0 +1,98 @@
+﻿---
+import Layout from "../layouts/Layout.astro";
+import { getCollection } from "astro:content";
+
+const posts = await getCollection("posts", ({ data }) => !data.draft);
+const searchData = posts.map(p => ({
+  title: p.data.title,
+  description: p.data.description,
+  slug: p.slug,
+  category: p.data.category,
+  date: p.data.date.toISOString(),
+  tags: p.data.tags,
+}));
+---
+
+<Layout title="搜索 · 小杨王子" description="搜索文章">
+  <div class="container-page py-20">
+    <div class="text-center mb-12 reveal">
+      <h1 class="text-3xl md:text-4xl font-serif font-bold" style="color:var(--text-primary)">搜索</h1>
+      <div class="mt-4 mx-auto w-12 h-0.5" style="background-color:var(--accent)"></div>
+    </div>
+
+    <div class="max-w-2xl mx-auto">
+      <div class="relative mb-8">
+        <input
+          id="search-input"
+          type="text"
+          placeholder="搜索文章标题、内容..."
+          class="w-full px-5 py-3 pl-12 text-sm outline-none transition-all duration-300 card-ink"
+          style="border:1px solid var(--border);border-radius:8px;"
+        />
+        <svg class="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4" style="color:var(--text-secondary)" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/>
+        </svg>
+      </div>
+
+      <div id="search-results" class="space-y-4"></div>
+      <div id="search-empty" class="hidden text-center py-16">
+        <p class="text-sm" style="color:var(--text-secondary)">未找到相关笔墨</p>
+      </div>
+    </div>
+  </div>
+</Layout>
+
+<script id="search-data" type="application/json">${JSON.stringify(searchData)}</script><script>
+  (function() {
+    var searchData = JSON.parse(document.getElementById("search-data")?.textContent || "[]");
+    var input = document.getElementById("search-input");
+    var results = document.getElementById("search-results");
+    var empty = document.getElementById("search-empty");
+    if (!input || !results) return;
+
+    function render(items) {
+      if (items.length === 0) {
+        results.innerHTML = "";
+        empty.classList.remove("hidden");
+        return;
+      }
+      empty.classList.add("hidden");
+      results.innerHTML = items.map(function(item) {
+        var date = new Date(item.date).toLocaleDateString("zh-CN");
+        return '<a href="/blog/' + item.slug + '" class="block p-5 card-ink transition-all duration-300 hover:scale-[1.01]">' +
+          '<span class="inline-block px-2 py-0.5 text-xs mb-2 ink-tag">' + item.category + '</span>' +
+          '<h3 class="text-base font-serif font-semibold mb-1" style="color:var(--text-primary)">' + highlight(item.title) + '</h3>' +
+          '<p class="text-sm" style="color:var(--text-secondary)">' + highlight(item.description) + '</p>' +
+          '<div class="flex items-center gap-3 mt-2 text-xs" style="color:var(--text-secondary)">' +
+          '<span>' + date + '</span>' +
+          (item.tags && item.tags.length ? '<span>·</span><span>' + item.tags.slice(0,3).join(", ") + '</span>' : "") +
+          '</div></a>';
+      }).join("");
+    }
+
+    function highlight(text) {
+      var q = input.value.trim();
+      if (!q) return escapeHtml(text);
+      var escaped = q.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+      var re = new RegExp("(" + escaped + ")", "gi");
+      return escapeHtml(text).replace(re, '<mark style="background:var(--accent);color:#fff;padding:0 2px;border-radius:2px">$1</mark>');
+    }
+
+    function escapeHtml(t) { return t.replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;"); }
+
+    function search(q) {
+      if (!q.trim()) { results.innerHTML = ""; empty.classList.add("hidden"); return; }
+      var ql = q.toLowerCase();
+      var matched = searchData.filter(function(item) {
+        return item.title.toLowerCase().indexOf(ql) > -1 ||
+          item.description.toLowerCase().indexOf(ql) > -1 ||
+          (item.tags && item.tags.some(function(t) { return t.toLowerCase().indexOf(ql) > -1; }));
+      });
+      render(matched);
+    }
+
+    input.addEventListener("input", function() { search(this.value); });
+    render([]);
+  })();
+</script>
+

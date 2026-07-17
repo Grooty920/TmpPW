@@ -1,0 +1,16 @@
+﻿{
+  "name": "小杨王子 · 水墨博客",
+  "short_name": "小杨王子",
+  "description": "寄蜉蝣于天地，渺沧海之一粟 — 小杨王子的水墨博客",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#f7f3e8",
+  "theme_color": "#c73e3a",
+  "icons": [
+    {
+      "src": "/avatar.jpg",
+      "sizes": "192x192",
+      "type": "image/jpeg"
+    }
+  ]
+}

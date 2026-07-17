@@ -82,8 +82,31 @@ const next = idx > 0 ? sorted[idx - 1] : null;
           <AuthorCard />
         </div>
 
-        <div class="mt-10 p-8 card-ink text-center" style="background-color:var(--card-bg);border:1px solid var(--border)">
-          <p class="text-sm" style="color:var(--text-secondary)">山水有相逢，来日皆可期...</p>
+        <!-- 社交分享 -->
+        <div class="mt-10 reveal" style="animation-delay:0.2s">
+          <div class="flex items-center justify-center gap-4 p-6 card-ink">
+            <span class="text-xs" style="color:var(--text-secondary)">分享此文</span>
+            <button id="share-twitter" class="w-9 h-9 rounded-full flex items-center justify-center transition-all duration-300 hover:scale-110 hover:bg-blue-50" style="border:1px solid var(--border);color:var(--text-secondary)" aria-label="分享到 Twitter/X">
+              <svg class="w-4 h-4" viewBox="0 0 24 24" fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+            </button>
+            <button id="share-weibo" class="w-9 h-9 rounded-full flex items-center justify-center transition-all duration-300 hover:scale-110 hover:bg-red-50" style="border:1px solid var(--border);color:var(--text-secondary)" aria-label="分享到微博">
+              <svg class="w-4 h-4" viewBox="0 0 24 24" fill="currentColor"><path d="M10.098 20.323c-3.977.391-7.414-1.406-7.672-4.02-.259-2.609 2.759-5.047 6.74-5.441 3.979-.394 7.413 1.404 7.671 4.018.259 2.6-2.759 5.049-6.739 5.443zM9.05 17.219c-.464.614-1.452.937-2.196.719-.744-.218-1.007-.945-.543-1.559.465-.614 1.43-.937 2.173-.725.744.213 1.031.944.566 1.565zm-1.492-1.623c-.187.232-.548.359-.805.284-.256-.074-.314-.319-.129-.548.186-.229.539-.35.798-.279.258.069.32.31.136.543zm-1.315.15c-.211.174-.5.23-.641.122-.141-.106-.09-.343.119-.518.211-.175.499-.233.641-.124.142.108.089.346-.119.52zm4.447-1.349c.08.14.013.31-.15.38-.163.07-.36.012-.44-.128-.08-.139-.014-.31.149-.38.163-.07.36-.013.441.128zm.707.304c.162.058.214.24.114.41-.099.168-.301.258-.464.195-.164-.064-.218-.243-.121-.418.099-.175.298-.256.471-.187zM3.596 13.38s.395-.365 1.173-.528c.777-.163 1.273.062 1.273.062s.244.576.033 1.08c-.21.505-.767.952-.767.952s-.82-.2-1.186-.826c-.366-.627-.526-.74-.526-.74zm5.217-1.596c-.01.124-.114.217-.236.21-.12-.007-.216-.112-.206-.237.01-.126.113-.22.235-.211.121.009.218.114.207.238zM20.137 6.82c-2.084-2.807-5.566-4.558-9.535-4.475C5.697 2.48 1.734 5.628.5 9.804c-.518 1.752-.5 3.35.161 4.587.137.257.303.49.498.692.788.845 1.892 1.4 3.125 1.693.225.055.45.1.68.134.223.03.423.09.577.192.595.374.68 1.067.62 1.614-.064.579-.316 1.114-.667 1.505-.328.363-.746.636-1.203.792-.524.18-1.1.238-1.662.206a5.46 5.46 0 0 1-1.14-.22c-.25-.08-.447-.137-.652-.137-.234 0-.42.09-.56.25-.143.165-.193.38-.14.59.08.32.28.62.56.86 1.08.93 2.636 1.5 4.366 1.5.33 0 .66-.02.99-.06 3.58-.4 6.5-1.85 8.56-4.01 2.07-2.17 3.36-5.02 3.77-8.27.08-.64.12-1.29.11-1.94 0-.32-.02-.64-.05-.96.19-.58.18-1.2-.17-1.84z"/></svg>
+            </button>
+            <button id="share-copy" class="w-9 h-9 rounded-full flex items-center justify-center transition-all duration-300 hover:scale-110 hover:bg-green-50" style="border:1px solid var(--border);color:var(--text-secondary)" aria-label="复制链接">
+              <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>
+            </button>
+          </div>
+        </div>
+
+        <!-- 评论区 - Giscus -->
+        <div class="mt-10 reveal" style="animation-delay:0.3s">
+          <div class="flex items-center gap-3 mb-6">
+            <span class="w-1 h-5" style="background-color:var(--accent)"></span>
+            <h2 class="text-lg font-serif font-semibold" style="color:var(--text-primary)">笔墨留痕</h2>
+          </div>
+          <div class="card-ink p-6">
+            <div class="giscus" id="giscus-comments"></div>
+          </div>
         </div>
       </article>
 
@@ -198,6 +221,68 @@ const next = idx > 0 ? sorted[idx - 1] : null;
     }
     runArticle();
     document.addEventListener('astro:page-load', runArticle);
+
+    // Giscus 评论
+    function initGiscus() {
+      var giscus = document.getElementById("giscus-comments");
+      if (!giscus || giscus.dataset.loaded) return;
+      giscus.dataset.loaded = "1";
+      if (typeof Giscus !== "undefined") {
+        renderGiscus();
+      } else {
+        var script = document.createElement("script");
+        script.src = "https://giscus.app/client.js";
+        script.setAttribute("data-repo", "Grooty920/TmpPW");
+        script.setAttribute("data-repo-id", "R_kgDOORxxwA");
+        script.setAttribute("data-category", "Announcements");
+        script.setAttribute("data-category-id", "DIC_kwDOORxxwM4Cob1_");
+        script.setAttribute("data-mapping", "pathname");
+        script.setAttribute("data-strict", "0");
+        script.setAttribute("data-reactions-enabled", "1");
+        script.setAttribute("data-emit-metadata", "0");
+        script.setAttribute("data-input-position", "top");
+        script.setAttribute("data-theme", "preferred_color_scheme");
+        script.setAttribute("data-lang", "zh-CN");
+        script.setAttribute("crossorigin", "anonymous");
+        script.setAttribute("async", "");
+        var giscusDiv = document.getElementById("giscus-comments");
+        if (giscusDiv) giscusDiv.appendChild(script);
+      }
+    }
+
+    // 社交分享
+    function initShare() {
+      var url = encodeURIComponent(window.location.href);
+      var title = encodeURIComponent(document.title.replace(" · 小杨王子", ""));
+      var shareTwitter = document.getElementById("share-twitter");
+      var shareWeibo = document.getElementById("share-weibo");
+      var shareCopy = document.getElementById("share-copy");
+      if (shareTwitter) shareTwitter.addEventListener("click", function() { window.open("https://twitter.com/intent/tweet?text=" + title + "&url=" + url, "_blank", "width=600,height=400"); });
+      if (shareWeibo) shareWeibo.addEventListener("click", function() { window.open("https://service.weibo.com/share/share.php?title=" + title + "&url=" + url, "_blank", "width=600,height=400"); });
+      if (shareCopy) shareCopy.addEventListener("click", function() {
+        navigator.clipboard.writeText(window.location.href).then(function() {
+          shareCopy.innerHTML = "<svg class=\"w-4 h-4\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"var(--accent)\" stroke-width=\"2\"><polyline points=\"20 6 9 17 4 12\"/></svg>";
+          setTimeout(function() { shareCopy.innerHTML = "<svg class=\"w-4 h-4\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\"><path d=\"M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71\"/><path d=\"M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71\"/></svg>"; }, 2000);
+        });
+      });
+    }
+
+    function runEnhanced() {
+      // 延迟初始化 Giscus 和分享
+      setTimeout(function() {
+        initGiscus();
+        initShare();
+      }, 500);
+    }
+    runEnhanced();
+    document.addEventListener("astro:page-load", function() {
+      setTimeout(function() {
+        initGiscus();
+        initShare();
+      }, 500);
+    });
   </script>
 </Layout>
+
+
 

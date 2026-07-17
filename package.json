@@ -10,6 +10,8 @@
   },
   "dependencies": {
     "@astrojs/mdx": "^4.2.0",
+    "@astrojs/rss": "^4.0.19",
+    "@astrojs/sitemap": "^3.7.3",
     "@astrojs/tailwind": "^5.0.0",
     "@chinese-fonts/lxgwwenkai": "^3.0.0",
     "astro": "^5.0.0",
@@ -28,5 +30,3 @@
   },
   "homepage": "https://github.com/Grooty920/TmpPW#readme"
 }
-
-
