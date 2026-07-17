@@ -40,11 +40,15 @@ const searchData = posts.map(p => ({
       </div>
     </div>
   </div>
+
+  <!-- 搜索数据：通过HTML元素传递，避免Script标签表达式问题 -->
+  <div id="search-data-store" style="display:none">{JSON.stringify(searchData)}</div>
 </Layout>
 
-<script id="search-data" type="application/json">${JSON.stringify(searchData)}</script><script>
+<script>
   (function() {
-    var searchData = JSON.parse(document.getElementById("search-data")?.textContent || "[]");
+    var store = document.getElementById("search-data-store");
+    var searchData = store ? JSON.parse(store.textContent) : [];
     var input = document.getElementById("search-input");
     var results = document.getElementById("search-results");
     var empty = document.getElementById("search-empty");
@@ -59,14 +63,14 @@ const searchData = posts.map(p => ({
       empty.classList.add("hidden");
       results.innerHTML = items.map(function(item) {
         var date = new Date(item.date).toLocaleDateString("zh-CN");
-        return '<a href="/blog/' + item.slug + '" class="block p-5 card-ink transition-all duration-300 hover:scale-[1.01]">' +
-          '<span class="inline-block px-2 py-0.5 text-xs mb-2 ink-tag">' + item.category + '</span>' +
-          '<h3 class="text-base font-serif font-semibold mb-1" style="color:var(--text-primary)">' + highlight(item.title) + '</h3>' +
-          '<p class="text-sm" style="color:var(--text-secondary)">' + highlight(item.description) + '</p>' +
-          '<div class="flex items-center gap-3 mt-2 text-xs" style="color:var(--text-secondary)">' +
-          '<span>' + date + '</span>' +
-          (item.tags && item.tags.length ? '<span>·</span><span>' + item.tags.slice(0,3).join(", ") + '</span>' : "") +
-          '</div></a>';
+        return "<a href=\"/blog/" + item.slug + "\" class=\"block p-5 card-ink transition-all duration-300 hover:scale-[1.01]\">" +
+          "<span class=\"inline-block px-2 py-0.5 text-xs mb-2 ink-tag\">" + item.category + "</span>" +
+          "<h3 class=\"text-base font-serif font-semibold mb-1\" style=\"color:var(--text-primary)\">" + highlight(item.title) + "</h3>" +
+          "<p class=\"text-sm\" style=\"color:var(--text-secondary)\">" + highlight(item.description) + "</p>" +
+          "<div class=\"flex items-center gap-3 mt-2 text-xs\" style=\"color:var(--text-secondary)\">" +
+          "<span>" + date + "</span>" +
+          (item.tags && item.tags.length ? "<span>·</span><span>" + item.tags.slice(0,3).join(", ") + "</span>" : "") +
+          "</div></a>";
       }).join("");
     }
 
@@ -75,7 +79,7 @@ const searchData = posts.map(p => ({
       if (!q) return escapeHtml(text);
       var escaped = q.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
       var re = new RegExp("(" + escaped + ")", "gi");
-      return escapeHtml(text).replace(re, '<mark style="background:var(--accent);color:#fff;padding:0 2px;border-radius:2px">$1</mark>');
+      return escapeHtml(text).replace(re, "<mark style=\"background:var(--accent);color:#fff;padding:0 2px;border-radius:2px\">$1</mark>");
     }
 
     function escapeHtml(t) { return t.replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;"); }
@@ -95,4 +99,3 @@ const searchData = posts.map(p => ({
     render([]);
   })();
 </script>
-

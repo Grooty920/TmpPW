@@ -19,7 +19,6 @@ const idx = sorted.findIndex((p) => p.slug === post.slug);
 const prev = idx < sorted.length - 1 ? sorted[idx + 1] : null;
 const next = idx > 0 ? sorted[idx - 1] : null;
 ---
-
 <Layout title={post.data.title + " · 小杨王子"} description={post.data.description}>
   {post.data.coverImage && (
     <div class="relative h-64 md:h-96 overflow-hidden">
@@ -98,14 +97,23 @@ const next = idx > 0 ? sorted[idx - 1] : null;
           </div>
         </div>
 
-        <!-- 评论区 - Giscus -->
+        <!-- 评论区 - 本地留言 -->
         <div class="mt-10 reveal" style="animation-delay:0.3s">
           <div class="flex items-center gap-3 mb-6">
             <span class="w-1 h-5" style="background-color:var(--accent)"></span>
             <h2 class="text-lg font-serif font-semibold" style="color:var(--text-primary)">笔墨留痕</h2>
           </div>
           <div class="card-ink p-6">
-            <div class="giscus" id="giscus-comments"></div>
+            <div id="comments-area">
+              <div id="comments-list" class="space-y-4 mb-6"></div>
+              <div class="border-t pt-6" style="border-color:var(--border)">
+                <textarea id="comment-input" rows="3" class="w-full p-3 text-sm outline-none transition-all duration-300" style="border:1px solid var(--border);border-radius:6px;background:var(--bg-primary);color:var(--text-primary);font-family:inherit;" placeholder="写下你的想法..."></textarea>
+                <div class="flex items-center justify-between mt-3">
+                  <input id="comment-author" type="text" placeholder="你的名字（选填）" class="text-sm p-2 outline-none" style="border:1px solid var(--border);border-radius:4px;background:var(--bg-primary);color:var(--text-primary);width:160px;font-family:inherit;">
+                  <button id="comment-submit" class="ink-btn px-5 py-2 text-sm" style="border:1px solid var(--accent);color:var(--accent);">留墨</button>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </article>
@@ -118,20 +126,16 @@ const next = idx > 0 ? sorted[idx - 1] : null;
       </aside>
     </div>
   </div>
-
   <script>
     function initArticle() {
       var parallax = document.querySelector(".parallax-img");
-      var scrollHandler1 = null;
       if (parallax) {
-        scrollHandler1 = function() {
+        window.addEventListener("scroll", function() {
           parallax.style.transform = "translateY(" + window.scrollY * 0.3 + "px)";
-        };
-        window.addEventListener("scroll", scrollHandler1, { passive: true });
+        }, { passive: true });
       }
 
       var toc = document.getElementById("toc");
-      var scrollHandler2 = null;
       if (toc) {
         toc.innerHTML = "";
         var headings = document.querySelectorAll(".prose-content h2, .prose-content h3");
@@ -152,7 +156,7 @@ const next = idx > 0 ? sorted[idx - 1] : null;
           items.push({ el: a, heading: h });
         });
         if (items.length > 0) {
-          scrollHandler2 = function() {
+          window.addEventListener("scroll", function() {
             var scrollY = window.scrollY + 100;
             var current = null;
             for (var i = 0; i < items.length; i++) {
@@ -166,8 +170,7 @@ const next = idx > 0 ? sorted[idx - 1] : null;
               current.el.style.color = "var(--accent)";
               current.el.style.fontWeight = "600";
             }
-          };
-          window.addEventListener("scroll", scrollHandler2, { passive: true });
+          }, { passive: true });
         }
       }
 
@@ -212,44 +215,6 @@ const next = idx > 0 ? sorted[idx - 1] : null;
       });
     }
 
-    function runArticle() {
-      if (document.readyState === 'loading') {
-        document.addEventListener('DOMContentLoaded', initArticle);
-      } else {
-        initArticle();
-      }
-    }
-    runArticle();
-    document.addEventListener('astro:page-load', runArticle);
-
-    // Giscus 评论
-    function initGiscus() {
-      var giscus = document.getElementById("giscus-comments");
-      if (!giscus || giscus.dataset.loaded) return;
-      giscus.dataset.loaded = "1";
-      if (typeof Giscus !== "undefined") {
-        renderGiscus();
-      } else {
-        var script = document.createElement("script");
-        script.src = "https://giscus.app/client.js";
-        script.setAttribute("data-repo", "Grooty920/TmpPW");
-        script.setAttribute("data-repo-id", "R_kgDOORxxwA");
-        script.setAttribute("data-category", "Announcements");
-        script.setAttribute("data-category-id", "DIC_kwDOORxxwM4Cob1_");
-        script.setAttribute("data-mapping", "pathname");
-        script.setAttribute("data-strict", "0");
-        script.setAttribute("data-reactions-enabled", "1");
-        script.setAttribute("data-emit-metadata", "0");
-        script.setAttribute("data-input-position", "top");
-        script.setAttribute("data-theme", "preferred_color_scheme");
-        script.setAttribute("data-lang", "zh-CN");
-        script.setAttribute("crossorigin", "anonymous");
-        script.setAttribute("async", "");
-        var giscusDiv = document.getElementById("giscus-comments");
-        if (giscusDiv) giscusDiv.appendChild(script);
-      }
-    }
-
     // 社交分享
     function initShare() {
       var url = encodeURIComponent(window.location.href);
@@ -267,22 +232,68 @@ const next = idx > 0 ? sorted[idx - 1] : null;
       });
     }
 
-    function runEnhanced() {
-      // 延迟初始化 Giscus 和分享
-      setTimeout(function() {
-        initGiscus();
-        initShare();
-      }, 500);
+    // 本地留言系统
+    function initComments() {
+      var btn = document.getElementById("comment-submit");
+      var input = document.getElementById("comment-input");
+      var author = document.getElementById("comment-author");
+      var list = document.getElementById("comments-list");
+      if (!btn || !input || !list) return;
+
+      var slug = window.location.pathname.replace("/blog/", "").replace(/\/$/, "");
+      var storageKey = "comments_" + slug;
+
+      function loadComments() {
+        try {
+          var data = JSON.parse(localStorage.getItem(storageKey) || "[]");
+          if (data.length === 0) {
+            list.innerHTML = "<p class=\"text-sm text-center\" style=\"color:var(--text-secondary)\">暂无留墨，做第一个留下墨迹的人吧</p>";
+            return;
+          }
+          list.innerHTML = data.map(function(c) {
+            var date = new Date(c.time).toLocaleString("zh-CN");
+            return "<div class=\"p-4\" style=\"border-bottom:1px solid var(--border)\">" +
+              "<div class=\"flex items-center gap-2 mb-1\">" +
+              "<span class=\"text-xs font-semibold\" style=\"color:var(--accent)\">" + (c.author || "墨客") + "</span>" +
+              "<span class=\"text-xs\" style=\"color:var(--text-secondary);opacity:0.5\">" + date + "</span>" +
+              "</div>" +
+              "<p class=\"text-sm\" style=\"color:var(--text-primary)\">" + c.text + "</p>" +
+              "</div>";
+          }).join("");
+        } catch(e) { list.innerHTML = ""; }
+      }
+
+      btn.addEventListener("click", function() {
+        var text = input.value.trim();
+        if (!text) { alert("请写下你的想法"); return; }
+        var authorName = author.value.trim() || "墨客";
+        try {
+          var data = JSON.parse(localStorage.getItem(storageKey) || "[]");
+          data.unshift({ text: text, author: authorName, time: Date.now() });
+          localStorage.setItem(storageKey, JSON.stringify(data));
+          input.value = "";
+          loadComments();
+        } catch(e) { alert("保存失败，请重试"); }
+      });
+
+      loadComments();
     }
-    runEnhanced();
-    document.addEventListener("astro:page-load", function() {
-      setTimeout(function() {
-        initGiscus();
-        initShare();
-      }, 500);
+
+    function runPage() {
+      if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', function() {
+          initArticle();
+          setTimeout(function() { initShare(); initComments(); }, 300);
+        });
+      } else {
+        initArticle();
+        setTimeout(function() { initShare(); initComments(); }, 300);
+      }
+    }
+    runPage();
+    document.addEventListener('astro:page-load', function() {
+      initArticle();
+      setTimeout(function() { initShare(); initComments(); }, 300);
     });
   </script>
 </Layout>
-
-
-
