@@ -1,0 +1,9 @@
+﻿# Auto detect text files and prevent BOM issues
+*.json text working-tree-encoding=UTF-8
+*.astro text working-tree-encoding=UTF-8
+*.mdx text working-tree-encoding=UTF-8
+*.yml text working-tree-encoding=UTF-8
+*.html text working-tree-encoding=UTF-8
+*.css text working-tree-encoding=UTF-8
+*.mjs text working-tree-encoding=UTF-8
+*.js text working-tree-encoding=UTF-8
