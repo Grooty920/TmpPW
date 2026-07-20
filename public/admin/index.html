@@ -493,20 +493,24 @@ async function renderPosts() {
     </div>`;
         if (files.length === 0) { html += "<p class='text-sm text-muted'>暂无文章</p>"; }
     else {
-      html += "<div style='display:grid;gap:8px'>";
+      html += "<div style='display:flex;align-items:center;gap:8px;margin-bottom:8px'><input type='checkbox' id='select-all' onchange='toggleSelectAll()' style='width:16px;height:16px;cursor:pointer'> <label for='select-all' style='font-size:12px;color:#6b5f45;cursor:pointer'>全选</label></div><div id='batch-bar' class='hidden' style='display:none;padding:8px 12px;background:rgba(199,62,58,0.06);border:1px solid rgba(199,62,58,0.15);border-radius:4px;margin-bottom:8px;font-size:12px;color:#6b5f45;align-items:center;gap:8px'></div><div style='display:grid;gap:8px'>";
       for (const f of files) {
         if (f.name.endsWith(".mdx") || f.name.endsWith(".md")) {
           try {
-            var c = atob(f.content.replace(/\n/g, ""));
+            var c = b64Decode(f.content);
             var parts = c.split("---");
             var frontmatter = {};
             if (parts.length >= 3) {
               var fmLines = parts[1].split("\n");
               fmLines.forEach(function(line) {
+                line = line.trim();
+                if (!line) return;
                 var m = line.match(/^\s*(\w+):\s*["'](.+)["']\s*$/);
-                if (m) frontmatter[m[1]] = m[2];
+                if (m) { frontmatter[m[1]] = m[2]; return; }
                 var m2 = line.match(/^\s*(\w+):\s*(\S+)\s*$/);
-                if (m2) frontmatter[m2[1]] = m2[2];
+                if (m2) { frontmatter[m2[1]] = m2[2]; return; }
+                var m3 = line.match(/^\s*(\w+):\s*(\[.*\])\s*$/);
+                if (m3) { frontmatter[m3[1]] = m3[2]; }
               });
             }
             var title = frontmatter.title || f.name.replace(/\.(mdx|md)$/, "");
@@ -517,14 +521,19 @@ async function renderPosts() {
               try { var d = new Date(date); date = d.getFullYear() + "-" + String(d.getMonth()+1).padStart(2,"0") + "-" + String(d.getDate()).padStart(2,"0"); } catch(e) {}
             }
             html += `<div class="card" style="padding:12px 16px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px">
-              <div style="flex:1;min-width:200px">
-                <div style="font-size:13px;font-weight:500;color:#1c1c1c">📄 ${esc(title)}</div>
-                <div style="font-size:11px;color:#6b5f45;margin-top:2px">${esc(f.name)}${date ? " · <span style='color:#4a6741'>" + esc(date) + "</span>" : ""}${category ? " · <span style='background:rgba(199,62,58,0.08);padding:1px 6px;border-radius:2px;font-size:10px;color:#c73e3a'>" + esc(category) + "</span>" : ""}</div>
-                ${desc ? "<div style='font-size:11px;color:#6b5f45;margin-top:2px;opacity:0.7'>" + esc(desc.substring(0, 60)) + (desc.length > 60 ? "..." : "") + "</div>" : ""}
+              <div style="display:flex;align-items:center;gap:8px;flex:1;min-width:200px">
+                <input type="checkbox" class="post-select" data-name="${esc(f.name)}" onchange="updateBatchBar()" style="width:16px;height:16px;cursor:pointer;flex-shrink:0">
+                <div style="flex:1">
+                  <div style="font-size:13px;font-weight:500;color:#1c1c1c">📄 ${esc(title)}</div>
+                  <div style="font-size:11px;color:#6b5f45;margin-top:2px">${esc(f.name)}${date ? " · <span style='color:#4a6741'>" + esc(date) + "</span>" : ""}${category ? " · <span style='background:rgba(199,62,58,0.08);padding:1px 6px;border-radius:2px;font-size:10px;color:#c73e3a'>" + esc(category) + "</span>" : ""}</div>
+                  ${desc ? "<div style='font-size:11px;color:#6b5f45;margin-top:2px;opacity:0.7'>" + esc(desc.substring(0, 60)) + (desc.length > 60 ? "..." : "") + "</div>" : ""}
+                </div>
               </div>
               <div class="flex gap-2" style="flex-shrink:0">
                 <button onclick="editPost('${esc(f.name)}')" class="btn btn-outline btn-xs">✏️ 编辑</button>
                 <button onclick="previewPost('${esc(f.name)}')" class="btn btn-outline btn-xs">👁️ 预览</button>
+                <button onclick="duplicatePost('${esc(f.name)}')" class="btn btn-outline btn-xs">📋 复制</button>
+                <button onclick="togglePostDraft('${esc(f.name)}')" class="btn btn-outline btn-xs">📄 草稿</button>
                 <button onclick="deletePost('${esc(f.name)}')" class="btn btn-outline btn-xs" style="color:#c73e3a">🗑️ 删除</button>
               </div>
             </div>`;
@@ -548,6 +557,104 @@ async function renderPosts() {
 
 
 // ===== Markdown 渲染 =====
+
+// ===== 批量操作 =====
+function toggleSelectAll() {
+  var cb = document.getElementById("select-all");
+  if (!cb) return;
+  var cards = document.querySelectorAll("#post-list .post-select");
+  cards.forEach(function(c) { c.checked = cb.checked; });
+  updateBatchBar();
+}
+function updateBatchBar() {
+  var selected = document.querySelectorAll("#post-list .post-select:checked");
+  var bar = document.getElementById("batch-bar");
+  if (!bar) return;
+  if (selected.length > 0) {
+    bar.classList.remove("hidden");
+    bar.style.display = "flex";
+    bar.innerHTML = "已选择 <strong>" + selected.length + "</strong> 篇文章 " +
+      "<button onclick='batchDelete()' class='btn btn-outline btn-xs' style='color:#c73e3a'>批量删除</button> " +
+      "<button onclick='batchSelectNone()' class='btn btn-outline btn-xs'>取消选择</button>";
+  } else {
+    bar.classList.add("hidden");
+    bar.style.display = "none";
+  }
+}
+function batchSelectNone() {
+  document.querySelectorAll("#post-list .post-select").forEach(function(c) { c.checked = false; });
+  var cb = document.getElementById("select-all");
+  if (cb) cb.checked = false;
+  updateBatchBar();
+}
+async function batchDelete() {
+  var selected = document.querySelectorAll("#post-list .post-select:checked");
+  if (selected.length === 0) return;
+  if (!confirm("确定删除选中的 " + selected.length + " 篇文章？此操作不可撤销！")) return;
+  if (!confirm("再次确认：删除 " + selected.length + " 篇文章？")) return;
+  var count = 0;
+  for (var i = 0; i < selected.length; i++) {
+    try {
+      var name = selected[i].getAttribute("data-name");
+      var r = await fetch("https://api.github.com/repos/"+REPO+"/contents/src/content/posts/"+name+"?ref="+BRANCH, {
+        headers: { "Authorization": "Bearer " + TOKEN, "Accept": "application/vnd.github.v3+json" }
+      });
+      if (!r.ok) continue;
+      var d = await r.json();
+      await fetch("https://api.github.com/repos/"+REPO+"/contents/src/content/posts/"+name, {
+        method: "DELETE",
+        headers: { "Authorization": "Bearer " + TOKEN, "Content-Type": "application/json" },
+        body: JSON.stringify({ message: "批量删除: " + name, sha: d.sha, branch: BRANCH })
+      });
+      count++;
+    } catch(e) {}
+  }
+  showMsg("已删除 " + count + " 篇文章", "ok");
+  renderPosts();
+}
+async function duplicatePost(name) {
+  try {
+    var r = await fetch("https://api.github.com/repos/"+REPO+"/contents/src/content/posts/"+name+"?ref="+BRANCH, {
+      headers: { "Authorization": "Bearer " + TOKEN, "Accept": "application/vnd.github.v3+json" }
+    });
+    if (!r.ok) throw new Error("获取失败");
+    var d = await r.json();
+    var content = b64Decode(d.content);
+    var newName = name.replace(/\.(mdx|md)$/, "") + "-copy." + (name.endsWith(".mdx") ? "mdx" : "md");
+    var newR = await fetch("https://api.github.com/repos/"+REPO+"/contents/src/content/posts/"+newName, {
+      method: "PUT",
+      headers: { "Authorization": "Bearer " + TOKEN, "Content-Type": "application/json" },
+      body: JSON.stringify({ message: "复制文章: " + newName, content: b64Encode(content), branch: BRANCH })
+    });
+    if (!newR.ok) throw new Error("复制失败");
+    showMsg("已复制为: " + newName, "ok");
+    renderPosts();
+  } catch(e) { showMsg("错误: " + e.message, "err"); }
+}
+async function togglePostDraft(name) {
+  try {
+    var r = await fetch("https://api.github.com/repos/"+REPO+"/contents/src/content/posts/"+name+"?ref="+BRANCH, {
+      headers: { "Authorization": "Bearer " + TOKEN, "Accept": "application/vnd.github.v3+json" }
+    });
+    if (!r.ok) throw new Error("获取失败");
+    var d = await r.json();
+    var content = b64Decode(d.content);
+    if (content.indexOf("draft: true") >= 0) {
+      content = content.replace("draft: true", "draft: false");
+    } else if (content.indexOf("draft: false") >= 0) {
+      content = content.replace("draft: false", "draft: true");
+    } else {
+      content = content.replace("---\n", "---\ndraft: true\n");
+    }
+    await fetch("https://api.github.com/repos/"+REPO+"/contents/src/content/posts/"+name, {
+      method: "PUT",
+      headers: { "Authorization": "Bearer " + TOKEN, "Content-Type": "application/json" },
+      body: JSON.stringify({ message: "切换草稿状态: " + name, content: b64Encode(content), sha: d.sha, branch: BRANCH })
+    });
+    showMsg("已切换草稿状态", "ok");
+    renderPosts();
+  } catch(e) { showMsg("错误: " + e.message, "err"); }
+}
 function mdRender(text) {
   var t = text
     .replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;")
@@ -575,7 +682,7 @@ async function previewPost(name) {
     });
     if (!r.ok) throw new Error("获取失败");
     var d = await r.json();
-    var c = atob(d.content.replace(/\n/g, ""));
+    var c = b64Decode(d.content);
     var parts = c.split("---");
     var body = parts[2] || parts[1] || c;
     var w = window.open("", "_blank", "width=800,height=600");
@@ -708,7 +815,7 @@ async function editPost(name) {
     });
     if (!r.ok) throw new Error("获取失败");
     var d = await r.json();
-    var content = atob(d.content.replace(/\n/g, ""));
+    var content = b64Decode(d.content);
     var parts = content.split("---");
     var fm = parts[1] || "";
     var body = parts[2] || parts[1] || content;
@@ -759,7 +866,7 @@ async function updatePost(name, sha) {
       headers: { "Authorization": "Bearer " + TOKEN, "Accept": "application/vnd.github.v3+json" }
     });
     var oldData = await r.json();
-    var oldContent = atob(oldData.content.replace(/\n/g, ""));
+    var oldContent = b64Decode(oldData.content);
     var oldParts = oldContent.split("---");
     var oldFm = oldParts[1] || "";
     var dateMatch = oldFm.match(/date:\s*["']([^"']+)["']/);
