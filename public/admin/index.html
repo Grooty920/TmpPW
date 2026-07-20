@@ -214,6 +214,9 @@ h3{font-family:"Ma Shan Zheng","Noto Serif SC",cursive;letter-spacing:0.05em}
           <button class="sidebar-btn" data-tab="editor" onclick="switchTab('editor')">
             <span class="sidebar-icon">✏️</span> 写文章
           </button>
+          <button class="sidebar-btn" data-tab="about"><span class="sidebar-icon">📄</span> 关于</button>
+          <button class="sidebar-btn" data-tab="tags"><span class="sidebar-icon">🏷️</span> 标签</button>
+          <button class="sidebar-btn" data-tab="categories"><span class="sidebar-icon">📂</span> 分类</button>
           <button class="sidebar-btn" data-tab="tools" onclick="switchTab('tools')">
             <span class="sidebar-icon">🔧</span> 工具
           </button>
@@ -229,6 +232,27 @@ h3{font-family:"Ma Shan Zheng","Noto Serif SC",cursive;letter-spacing:0.05em}
           <button class="sidebar-btn" data-tab="site" onclick="switchTab('site')">
             <span class="sidebar-icon">⚙️</span> 站点
           </button>
+                  <button class="sidebar-btn" data-tab="recycle">
+            <span class="sidebar-icon">🗑️</span> 回收站
+          </button>
+          <button class="sidebar-btn" data-tab="friendlinks">
+            <span class="sidebar-icon">🔗</span> 友链
+          </button>
+          <button class="sidebar-btn" data-tab="custompages">
+            <span class="sidebar-icon">📄</span> 自定义页
+          </button>
+          <button class="sidebar-btn" data-tab="medialib">
+            <span class="sidebar-icon">🖼️</span> 媒体库
+          </button>
+          <button class="sidebar-btn" data-tab="analytics">
+            <span class="sidebar-icon">📊</span> 统计
+          </button>
+          <button class="sidebar-btn" data-tab="themes">
+            <span class="sidebar-icon">🎨</span> 主题
+          </button>
+          <button class="sidebar-btn" data-tab="backup">
+            <span class="sidebar-icon">💾</span> 备份
+          </button>
         </nav>
         <div class="sidebar-footer">
           <a href="/" target="_blank" class="sidebar-btn" style="text-decoration:none;display:flex;align-items:center;gap:8px;padding:10px 16px;font-size:12px;color:#6b5f45;border:none;background:none;width:100%;cursor:pointer">
@@ -242,204 +266,27 @@ h3{font-family:"Ma Shan Zheng","Noto Serif SC",cursive;letter-spacing:0.05em}
         <div id="tab-dashboard" class="tab-content"></div>
         <div id="tab-posts" class="tab-content hidden"></div>
         <div id="tab-editor" class="tab-content hidden"></div>
+        <div id="tab-about" class="tab-content hidden"></div>
+        <div id="tab-tags" class="tab-content hidden"></div>
+        <div id="tab-categories" class="tab-content hidden"></div>
         <div id="tab-tools" class="tab-content hidden"></div>
         <div id="tab-nav" class="tab-content hidden"></div>
         <div id="tab-profile" class="tab-content hidden"></div>
+        <div id="tab-social" class="tab-content hidden"></div>
         <div id="tab-upload" class="tab-content hidden"></div>
         <div id="tab-site" class="tab-content hidden"></div>
+        <div id="tab-recycle" class="tab-content hidden"></div>
+        <div id="tab-friendlinks" class="tab-content hidden"></div>
+        <div id="tab-custompages" class="tab-content hidden"></div>
+        <div id="tab-medialib" class="tab-content hidden"></div>
+        <div id="tab-analytics" class="tab-content hidden"></div>
+        <div id="tab-themes" class="tab-content hidden"></div>
+        <div id="tab-backup" class="tab-content hidden"></div>
       </main>
     </div>
   </div>
 
-    <div id="token-bar" class="card mb-4">
-      <div class="flex gap-3 items-center flex-wrap">
-        <input id="token-input" type="password" placeholder="GitHub Personal Access Token (ghp_...)" style="flex:1;min-width:200px">
-        <button id="token-btn" class="btn btn-primary">连接</button>
-        <a href="https://github.com/settings/tokens" target="_blank" class="text-xs text-accent" style="text-decoration:none">生成 Token</a>
-      </div>
-      <div id="token-err" class="text-xs text-accent mt-2 hidden" style="display:none"></div>
-    </div>
-
-    <div id="global-msg" class="hidden"></div>
-
-    <!-- 标签页 -->
-    <div class="flex gap-2 mb-4 flex-wrap">
-      <button class="tab-btn btn btn-primary btn-sm" data-tab="tools">🔧 工具</button>
-      <button class="tab-btn btn btn-outline btn-sm" data-tab="nav">🧭 导航</button>
-      <button class="tab-btn btn btn-outline btn-sm" data-tab="profile">👤 简介</button>
-      <button class="tab-btn btn btn-outline btn-sm" data-tab="posts">📝 文章</button>
-      <button class="tab-btn btn btn-outline btn-sm" data-tab="upload">📤 上传</button>
-      <button class="tab-btn btn btn-outline btn-sm" data-tab="site">⚙️ 站点</button>
-    </div>
-
-    <div id="tab-tools" class="tab-content"></div>
-    <div id="tab-nav" class="tab-content hidden"></div>
-    <div id="tab-profile" class="tab-content hidden"></div>
-    <div id="tab-posts" class="tab-content hidden"></div>
-    <div id="tab-upload" class="tab-content hidden"></div>
-    <div id="tab-site" class="tab-content hidden"></div>
-  </div>
-</div>
-
-<script>
-const REPO = "Grooty920/TmpPW", BRANCH = "master";
-let TOKEN = "", toolsData = null, navData = null, profileData = null, toolsSha = null, navSha = null, profileSha = null;
-
-function b64Decode(s) { try { return decodeURIComponent(escape(atob(s))); } catch(e) { return atob(s); } }
-function b64Encode(s) { return btoa(unescape(encodeURIComponent(s))); }
-function esc(s) { return String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;").replace(/'/g,"&#39;"); }
-
-function showMsg(msg, type) {
-  const el = document.getElementById("global-msg");
-  el.className = "msg " + (type === "ok" ? "msg-ok" : "msg-err") + " hidden";
-  el.textContent = msg; el.classList.remove("hidden");
-  if (type === "ok") setTimeout(() => el.classList.add("hidden"), 4000);
-}
-function setStatus(ok) {
-  document.getElementById("status-dot").style.background = ok ? "#4a6741" : "#d4c494";
-  document.getElementById("status-text").textContent = ok ? "已连接" : "未连接";
-}
-
-// 登录
-// 登录
-document.getElementById("login-btn").onclick = () => { console.log("Login clicked");
-  if (document.getElementById("pwd-input").value === "Grooty920") { console.log("Password correct");
-    document.getElementById("login-screen").classList.add("hidden");
-    document.getElementById("main-screen").classList.remove("hidden");
-    const saved = sessionStorage.getItem("gh_token");
-    if (saved) { TOKEN = saved; document.getElementById("token-input").value = saved; doConnect(); }
-  } else { console.log("Password wrong"); document.getElementById("login-err").style.display = "block"; }
-};
-document.getElementById("pwd-input").addEventListener("keydown", e => { if(e.key==="Enter") document.getElementById("login-btn").click(); });
-
-document.getElementById("token-btn").onclick = doConnect;
-document.getElementById("token-input").addEventListener("keydown", e => { if(e.key==="Enter") doConnect(); });
-
-async function doConnect() {
-  const input = document.getElementById("token-input"), err = document.getElementById("token-err");
-  const token = input.value || sessionStorage.getItem("gh_token");
-  if (!token) { err.textContent = "请输入 Token"; err.classList.remove("hidden"); return; }
-  try {
-    const r = await fetch("https://api.github.com/user", { headers: { "Authorization": "Bearer " + token } });
-    if (!r.ok) throw new Error("Token 无效");
-    TOKEN = token; sessionStorage.setItem("gh_token", token);
-    document.getElementById("token-bar").classList.add("hidden");
-    setStatus(true);
-    const scopes = r.headers.get("X-OAuth-Scopes");
-    if (scopes && !scopes.includes("repo")) showMsg("⚠️ Token 缺少 repo 权限，保存会失败", "err");
-    showMsg("✅ 已连接：" + (await r.json()).login, "ok");
-    loadAll();
-  } catch(e) { err.textContent = e.message; err.classList.remove("hidden"); }
-}
-
-// 侧边栏切换
-function switchTab(tab) {
-  document.querySelectorAll(".sidebar-btn").forEach(b => b.classList.remove("active"));
-  document.querySelectorAll(".tab-content").forEach(t => t.classList.add("hidden"));
-  var activeBtn = document.querySelector(".sidebar-btn[data-tab=\"" + tab + "\"]");
-  if (activeBtn) activeBtn.classList.add("active");
-  var contentEl = document.getElementById("tab-" + tab);
-  if (contentEl) contentEl.classList.remove("hidden");
-  document.getElementById("sidebar").classList.remove("open");
-  switch(tab) {
-    case "dashboard": renderDashboard(); break;
-    case "posts": renderPosts(); break;
-    case "editor": showNewPost(); break;
-    case "tools": renderTools(); break;
-    case "nav": renderNav(); break;
-    case "profile": renderProfile(); break;
-    case "upload": renderUpload(); break;
-    case "site": renderSite(); break;
-  }
-}
-
-function toggleSidebar() {
-  document.getElementById("sidebar").classList.toggle("open");
-}
-
-// GitHub API
-async function ghGet(path) {
-  const r = await fetch("https://api.github.com/repos/"+REPO+"/contents/"+path+"?ref="+BRANCH, {
-    headers: { "Authorization": "Bearer " + TOKEN, "Accept": "application/vnd.github.v3+json" }
-  });
-  if (!r.ok) throw new Error(path + " " + r.status);
-  const d = await r.json();
-  return { content: JSON.parse(b64Decode(d.content)), sha: d.sha };
-}
-async function ghPut(path, content, sha) {
-  const r = await fetch("https://api.github.com/repos/"+REPO+"/contents/"+path, {
-    method: "PUT",
-    headers: { "Authorization": "Bearer " + TOKEN, "Content-Type": "application/json" },
-    body: JSON.stringify({ message: "admin: " + path, content: b64Encode(JSON.stringify(content, null, 2)), sha: sha, branch: BRANCH })
-  });
-  if (!r.ok) { const t = await r.text(); try { const j=JSON.parse(t); throw new Error(j.message); } catch(e) { throw new Error("保存失败 " + r.status); } }
-  return await r.json();
-}
-
-async function loadAll() {
-  ["tools","nav","profile","posts"].forEach(id => document.getElementById("tab-"+id).innerHTML = "<p class='text-sm text-muted' style='padding:20px'>⏳ 加载中...</p>");
-  try {
-    const t = await ghGet("src/data/tools.json"); toolsData = t.content; toolsSha = t.sha;
-    const n = await ghGet("src/data/navigation.json"); navData = n.content; navSha = n.sha;
-    const p = await ghGet("src/data/profile.json"); profileData = p.content; profileSha = p.sha;
-    renderTools(); renderNav(); renderProfile(); renderPosts();
-    showMsg("✅ 数据加载成功", "ok");
-  } catch(e) { showMsg("❌ " + e.message, "err"); }
-}
-
-
-// ===== 仪表盘 =====
-async function renderDashboard() {
-  var el = document.getElementById("tab-dashboard");
-  if (!el) return;
-  try {
-    var r = await fetch("https://api.github.com/repos/"+REPO+"/contents/src/content/posts?ref="+BRANCH, {
-      headers: { "Authorization": "Bearer " + TOKEN, "Accept": "application/vnd.github.v3+json" }
-    });
-    var files = r.ok ? await r.json() : [];
-    var posts = files.filter(function(f) { return f.name.endsWith(".mdx") || f.name.endsWith(".md"); });
-    var cats = {}, tags = {};
-    posts.forEach(function(f) {
-      try {
-        var c = b64Decode(f.content);
-        var parts = c.split("---");
-        if (parts.length >= 3) {
-          var fm = parts[1];
-          var m = fm.match(/category:\s*["']([^"']+)["']/);
-          if (m) cats[m[1]] = (cats[m[1]] || 0) + 1;
-          var t = fm.match(/tags:\s*\[([^\]]+)\]/);
-          if (t) t[1].split(",").forEach(function(tag) {
-            var tg = tag.trim().replace(/["']/g, "");
-            if (tg) tags[tg] = (tags[tg] || 0) + 1;
-          });
-        }
-      } catch(e) {}
-    });
-    var uploadR = await fetch("https://api.github.com/repos/"+REPO+"/contents/public/uploads?ref="+BRANCH, {
-      headers: { "Authorization": "Bearer " + TOKEN, "Accept": "application/vnd.github.v3+json" }
-    });
-    var uploadFiles = uploadR.ok ? (await uploadR.json()).length : 0;
-    var recentPosts = posts.slice(-5).reverse();
-    var recentHtml = "";
-    recentPosts.forEach(function(f) {
-      try {
-        var c = b64Decode(f.content);
-        var parts = c.split("---");
-        var title = "", date = "";
-        if (parts.length >= 3) {
-          var fm = parts[1];
-          var tm = fm.match(/title:\s*["']([^"']+)["']/);
-          if (tm) title = tm[1];
-          var dm = fm.match(/date:\s*["']?([^"'\s]+)["']?/);
-          if (dm) date = dm[1];
-        }
-        recentHtml += "<div class='post-card card'><div class='post-card-info'><div class='post-card-title'>" + (title || esc(f.name)) + "</div><div class='post-card-meta'>" + esc(f.name) + (date ? " <span class='post-date-tag'>" + date + "</span>" : "") + "</div></div></div>";
-      } catch(e) {}
-    });
-    if (!recentHtml) recentHtml = "<p class='text-sm text-muted'>暂无文章</p>";
-    el.innerHTML = `
-      <div class="dashboard-grid">
-        <div class="stat-card card"><div class="stat-icon">📄</div><div class="stat-number">${posts.length}</div><div class="stat-label">文章总数</div></div>
+    <div class="stat-number">${posts.length}</div><div class="stat-label">文章总数</div></div>
         <div class="stat-card card"><div class="stat-icon">📂</div><div class="stat-number">${Object.keys(cats).length}</div><div class="stat-label">分类</div></div>
         <div class="stat-card card"><div class="stat-icon">🏷️</div><div class="stat-number">${Object.keys(tags).length}</div><div class="stat-label">标签</div></div>
         <div class="stat-card card"><div class="stat-icon">📤</div><div class="stat-number">${uploadFiles}</div><div class="stat-label">文件</div></div>
@@ -497,7 +344,7 @@ function makeDraggable(listId, dataArray, onReorder) {
 // ===== 工具管理 =====
 function renderTools() {
   let html = `<div class="flex gap-2 mb-3 flex-wrap">
-    <button onclick="addCategory()" class="btn btn-primary btn-sm">+ 分类</button>
+    <button onclick="addToolCategory()" class="btn btn-primary btn-sm">+ 分类</button>
     <button onclick="saveTools()" class="btn btn-ok btn-sm">💾 保存</button>
   </div>`;
   toolsData.categories.forEach((cat, ci) => {
@@ -506,7 +353,7 @@ function renderTools() {
         <label style="margin:0">分类</label>
         <input value="${esc(cat.name)}" onchange="toolsData.categories[${ci}].name=this.value" style="width:120px">
         <input value="${esc(cat.subtitle||"")}" onchange="toolsData.categories[${ci}].subtitle=this.value||null" style="width:180px" placeholder="副标题">
-        <button onclick="deleteCategory(${ci})" class="btn btn-outline btn-xs">✕</button>
+        <button onclick="deleteToolCategory(${ci})" class="btn btn-outline btn-xs">✕</button>
       </div>
       <div id="tool-items-${ci}" class="grid-2">`;
     cat.items.forEach((item, ii) => {
@@ -529,8 +376,8 @@ function renderTools() {
     makeDraggable("tool-items-" + ci, cat.items, () => renderTools());
   });
 }
-function addCategory() { toolsData.categories.push({id:"c"+Date.now(),name:"新分类",subtitle:null,accentColor:"var(--accent)",items:[]}); renderTools(); }
-function deleteCategory(i) { if(!confirm("确定删除？")) return; toolsData.categories.splice(i,1); renderTools(); }
+function addToolCategory() { toolsData.categories.push({id:"c"+Date.now(),name:"新分类",subtitle:null,accentColor:"var(--accent)",items:[]}); renderTools(); }
+function deleteToolCategory(i) { if(!confirm("确定删除？")) return; toolsData.categories.splice(i,1); renderTools(); }
 function addItem(ci) { toolsData.categories[ci].items.push({title:"新工具",description:"",url:"https://",icon:"link",isLocal:false}); renderTools(); }
 function deleteItem(ci,ii) { toolsData.categories[ci].items.splice(ii,1); renderTools(); }
 async function saveTools() { try { const r=await ghPut("src/data/tools.json",toolsData,toolsSha); toolsSha=r.content.sha; showMsg("✅ 工具已保存","ok"); } catch(e) { showMsg("❌ "+e.message,"err"); } }
@@ -855,26 +702,6 @@ async function previewPost(name) {
 }
 
 // ===== 文章管理 =====
-async function deletePost(name) {
-  if (!confirm("确定删除 " + name + " ? 此操作不可撤销")) return;
-  if (!confirm("再次确认删除 " + name + "?")) return;
-  try {
-    var r = await fetch("https://api.github.com/repos/"+REPO+"/contents/src/content/posts/"+name+"?ref="+BRANCH, {
-      headers: { "Authorization": "Bearer " + TOKEN, "Accept": "application/vnd.github.v3+json" }
-    });
-    if (!r.ok) throw new Error("获取文章信息失败");
-    var d = await r.json();
-    var del = await fetch("https://api.github.com/repos/"+REPO+"/contents/src/content/posts/"+name, {
-      method: "DELETE",
-      headers: { "Authorization": "Bearer " + TOKEN, "Content-Type": "application/json" },
-      body: JSON.stringify({ message: "删除: " + name, sha: d.sha, branch: BRANCH })
-    });
-    if (!del.ok) throw new Error("删除失败 " + del.status);
-    showMsg("已删除: " + name, "ok");
-    renderPosts();
-  } catch(e) { showMsg("错误: " + e.message, "err"); }
-}
-
 function showNewPost() {
   const el = document.getElementById("new-post-form");
   el.classList.toggle("hidden");
@@ -1123,6 +950,87 @@ async function listUploadedFiles() {
     html += "</div>"; el.innerHTML = html;
   } catch(e) { el.innerHTML = "<p class='text-sm text-muted'>加载失败</p>"; }
 }
+
+
+// ===== 关于页面管理 =====
+async function renderAbout() {
+  var el = document.getElementById("tab-about");
+  if (!el) { setTimeout(() => renderAbout(), 100); return; }
+  try {
+    var r = await fetch("https://api.github.com/repos/"+REPO+"/contents/src/data/about.json?ref="+BRANCH, {
+      headers: { "Authorization": "Bearer " + TOKEN, "Accept": "application/vnd.github.v3+json" }
+    });
+    var data = { name: "小杨王子", bio: "寄蜉蝣于天地，渺沧海之一粟。\n好读书，不求甚解；每有会意，便欣然忘食。\n此间所录，皆沿途之风景与思考。愿与君共赏。", aboutTitle: "关于这个博客", aboutContent: "小杨王子 —— 墨水的墨，言语的言。\n以笔墨为舟，渡无涯之学海。好读书，不求甚解；每有会意，便欣然忘食。\n博客使用 Astro + Tailwind CSS 构建，部署在 Cloudflare Pages 中。\n主题灵感来源于中国传统水墨画，融入现代 Web 技术，营造一种纸上得来终觉浅，绝知此事要躬行的意境。", techStack: ["Astro 5", "Tailwind CSS 3", "MDX", "TypeScript", "Cloudflare Pages", "霞鹜文楷", "马山正体"], quote: "山水有相逢，来日皆可期" };
+    var sha = null;
+    if (r.ok) { var d = await r.json(); data = JSON.parse(b64Decode(d.content)); sha = d.sha; }
+    el.innerHTML = '<div class="card mb-3"><h3 style="font-size:15px;margin-bottom:12px">📄 关于页面</h3>' +
+      '<div class="mb-3"><label>博主名称</label><input id="ab-name" value="' + esc(data.name || "") + '" class="w-full"></div>' +
+      '<div class="mb-3"><label>个人简介 (支持换行)</label><textarea id="ab-bio" rows="4" class="w-full">' + esc(data.bio || "") + '</textarea></div>' +
+      '<div class="mb-3"><label>关于博客标题</label><input id="ab-title" value="' + esc(data.aboutTitle || "") + '" class="w-full"></div>' +
+      '<div class="mb-3"><label>关于博客内容 (支持换行)</label><textarea id="ab-content" rows="6" class="w-full">' + esc(data.aboutContent || "") + '</textarea></div>' +
+      '<div class="mb-3"><label>技术栈 (逗号分隔)</label><input id="ab-tech" value="' + esc((data.techStack || []).join(", ")) + '" class="w-full"></div>' +
+      '<div class="mb-3"><label>寄语</label><input id="ab-quote" value="' + esc(data.quote || "") + '" class="w-full"></div>' +
+      '<button onclick="saveAbout()" class="btn btn-ok btn-sm">💾 保存关于页面</button></div>';
+    window.aboutSha = sha;
+  } catch(e) { el.innerHTML = "<p class='text-sm text-accent'>加载失败: " + e.message + "</p>"; }
+}
+
+async function saveAbout() {
+  try {
+    var data = {
+      name: document.getElementById("ab-name").value,
+      bio: document.getElementById("ab-bio").value,
+      aboutTitle: document.getElementById("ab-title").value,
+      aboutContent: document.getElementById("ab-content").value,
+      techStack: document.getElementById("ab-tech").value.split(",").map(function(t) { return t.trim(); }).filter(function(t) { return t; }),
+      quote: document.getElementById("ab-quote").value
+    };
+    var r = await ghPut("src/data/about.json", data, window.aboutSha);
+    window.aboutSha = r.content.sha;
+    showMsg("✅ 关于页面已保存", "ok");
+  } catch(e) { showMsg("❌ " + e.message, "err"); }
+}
+
+// ===== 标签管理 =====
+async function renderSocial() {
+  var el = document.getElementById("tab-social");
+  if (!el) { setTimeout(() => renderSocial(), 100); return; }
+  try {
+    var r = await fetch("https://api.github.com/repos/"+REPO+"/contents/src/data/social.json?ref="+BRANCH, {
+      headers: { "Authorization": "Bearer " + TOKEN, "Accept": "application/vnd.github.v3+json" }
+    });
+    var data = { email: "Grooty920@gmail.com", github: "Grooty920", weibo: "", zhihu: "", twitter: "", bilibili: "" };
+    var sha = null;
+    if (r.ok) { var d = await r.json(); data = JSON.parse(b64Decode(d.content)); sha = d.sha; }
+    el.innerHTML = '<div class="card mb-3"><h3 style="font-size:15px;margin-bottom:12px">🔗 社交链接</h3>' +
+      '<div class="mb-3"><label>📧 邮箱</label><input id="soc-email" value="' + esc(data.email || "") + '" class="w-full" placeholder="your@email.com"></div>' +
+      '<div class="mb-3"><label>🐙 GitHub</label><input id="soc-github" value="' + esc(data.github || "") + '" class="w-full" placeholder="username"></div>' +
+      '<div class="mb-3"><label>💬 微博</label><input id="soc-weibo" value="' + esc(data.weibo || "") + '" class="w-full" placeholder="微博ID"></div>' +
+      '<div class="mb-3"><label>📺 知乎</label><input id="soc-zhihu" value="' + esc(data.zhihu || "") + '" class="w-full" placeholder="知乎ID"></div>' +
+      '<div class="mb-3"><label>🐦 Twitter</label><input id="soc-twitter" value="' + esc(data.twitter || "") + '" class="w-full" placeholder="twitter_handle"></div>' +
+      '<div class="mb-3"><label>📺 Bilibili</label><input id="soc-bili" value="' + esc(data.bilibili || "") + '" class="w-full" placeholder="bilibili_uid"></div>' +
+      '<button onclick="saveSocial()" class="btn btn-ok btn-sm">💾 保存社交链接</button></div>';
+    window.socialSha = sha;
+  } catch(e) { el.innerHTML = "<p class='text-sm text-accent'>加载失败: " + e.message + "</p>"; }
+}
+
+async function saveSocial() {
+  try {
+    var data = {
+      email: document.getElementById("soc-email").value,
+      github: document.getElementById("soc-github").value,
+      weibo: document.getElementById("soc-weibo").value,
+      zhihu: document.getElementById("soc-zhihu").value,
+      twitter: document.getElementById("soc-twitter").value,
+      bilibili: document.getElementById("soc-bili").value
+    };
+    var r = await ghPut("src/data/social.json", data, window.socialSha);
+    window.socialSha = r.content.sha;
+    showMsg("✅ 社交链接已保存", "ok");
+  } catch(e) { showMsg("❌ " + e.message, "err"); }
+}
+
+
 function copyUrl(name) { const url="/uploads/"+name; try { navigator.clipboard.writeText(url); } catch(e) {} showMsg("✅ 已复制: " + url, "ok"); }
 // ===== 站点设置 =====
 let siteData = null, siteSha = null;
@@ -1234,6 +1142,155 @@ async function saveSite() {
   } catch(e) { showMsg("❌ " + e.message, "err"); }
 }
 
+
+// === RECYCLE BIN ===
+let recycleBin=[];
+async function renderRecycle(){var e=document.getElementById("tab-recycle");if(!e){setTimeout(function(){renderRecycle()},100);return}
+try{var r=await fetch("https://api.github.com/repos/"+REPO+"/contents/src/data/recycle.json?ref="+BRANCH,{headers:{"Authorization":"Bearer "+TOKEN,"Accept":"application/vnd.github.v3+json"}})
+var d=[];if(r.ok){var j=await r.json();d=JSON.parse(b64Decode(j.content));window.recycleSha=j.sha}else{window.recycleSha=null}
+recycleBin=d;if(d.length===0){e.innerHTML='<div class="card"><h3>回收站</h3><p>回收站为空</p></div>';return}
+var h='<div class="card"><h3>回收站</h3><p>共 '+d.length+' 篇</p>';d.forEach(function(it,i){h+='<div>'+esc(it.title)+' <button onclick="restorePost('+i+')">恢复</button><button onclick="permanentDelete('+i+')">永久删除</button></div>'})
+h+='</div><button onclick="emptyRecycle()">清空回收站</button>';e.innerHTML=h}catch(ex){e.innerHTML="<p>"+ex.message+"</p>"}}
+async function restorePost(i){if(!confirm("确定恢复？"))return;try{var it=recycleBin[i];var r=await fetch("https://api.github.com/repos/"+REPO+"/contents/src/content/posts/"+it.filename+"?ref="+BRANCH,{headers:{"Authorization":"Bearer "+TOKEN,"Accept":"application/vnd.github.v3+json"}})
+if(r.ok){showMsg("文件名已存在","err");return}
+var p=await fetch("https://api.github.com/repos/"+REPO+"/contents/src/content/posts/"+it.filename,{method:"PUT",headers:{"Authorization":"Bearer "+TOKEN,"Content-Type":"application/json"},body:JSON.stringify({message:"恢复: "+it.title,content:it.content,branch:BRANCH})})
+if(!p.ok)throw Error("恢复失败");recycleBin.splice(i,1);await saveRecycleBin();showMsg("已恢复","ok");renderRecycle()}catch(ex){showMsg(ex.message,"err")}}
+async function permanentDelete(i){if(!confirm("确定永久删除？"))return;recycleBin.splice(i,1);await saveRecycleBin();showMsg("已删除","ok");renderRecycle()}
+async function emptyRecycle(){if(!confirm("清空？"))return;recycleBin=[];await saveRecycleBin();showMsg("已清空","ok");renderRecycle()}
+async function saveRecycleBin(){if(recycleBin.length===0){if(window.recycleSha){await fetch("https://api.github.com/repos/"+REPO+"/contents/src/data/recycle.json",{method:"DELETE",headers:{"Authorization":"Bearer "+TOKEN,"Content-Type":"application/json"},body:JSON.stringify({message:"清空回收站",sha:window.recycleSha,branch:BRANCH})})};return}
+var r=await ghPut("src/data/recycle.json",recycleBin,window.recycleSha||null);window.recycleSha=r.content.sha}
+async function deletePost(name){if(!confirm("确定删除 "+name+"?"))return;try{var r=await fetch("https://api.github.com/repos/"+REPO+"/contents/src/content/posts/"+name+"?ref="+BRANCH,{headers:{"Authorization":"Bearer "+TOKEN,"Accept":"application/vnd.github.v3+json"}})
+if(!r.ok)throw Error("获取失败");var d=await r.json();var ct=b64Decode(d.content);var ttl="";var p=ct.split("---");if(p.length>=3){var m=p[1].match(/title:\s*["']([^"']+)["']/);if(m)ttl=m[1]}
+if(!ttl)ttl=name.replace(/\.(mdx|md)$/,"");recycleBin.push({filename:name,title:ttl,content:b64Encode(ct),deletedAt:new Date().toISOString()});await saveRecycleBin()
+var del=await fetch("https://api.github.com/repos/"+REPO+"/contents/src/content/posts/"+name,{method:"DELETE",headers:{"Authorization":"Bearer "+TOKEN,"Content-Type":"application/json"},body:JSON.stringify({message:"删除: "+name,sha:d.sha,branch:BRANCH})})
+if(!del.ok)throw Error("删除失败");showMsg("已删除 "+name,"ok");renderPosts()}catch(ex){showMsg(ex.message,"err")}}
+
+
+
+
+// TAGS CRUD
+async function renderTags(){var e=document.getElementById("tab-tags");if(!e){setTimeout(function(){renderTags()},100);return}
+try{var r=await fetch("https://api.github.com/repos/"+REPO+"/contents/src/content/posts?ref="+BRANCH,{headers:{"Authorization":"Bearer "+TOKEN,"Accept":"application/vnd.github.v3+json"}})
+if(!r.ok){e.innerHTML="<p>????</p>";return}
+var fs=await r.json();var m={};fs.forEach(function(f){if(!f.name.endsWith(".mdx")&&!f.name.endsWith(".md"))return
+try{var ct=b64Decode(f.content);var p=ct.split("---");if(p.length<3)return;var fm=p[1];var t=fm.match(/tags:\s*\[([^\]]+)\]/);if(!t)return
+var tl=(fm.match(/title:\s*["']([^"']+)["']/)||[])[1]||f.name
+t[1].split(",").forEach(function(tg){var tag=tg.trim().replace(/["']/g,"");if(tag){if(!m[tag])m[tag]={count:0,posts:[]};m[tag].count++;m[tag].posts.push(tl)}})}catch(ex){}})
+var sk=Object.keys(m).sort()
+var h="<div class=\"card\"><h3>????</h3><p>? "+sk.length+" ???</p><div class=\"flex gap-2 mb-3\"><input id=\"new-tag-name\" placeholder=\"???\" style=\"flex:1;max-width:200px\"><button onclick=\"addTag()\" class=\"btn btn-ok btn-sm\">+ ??</button></div><div style=\"display:grid;gap:8px\">"
+sk.forEach(function(tag){var info=m[tag];h+="<div class=\"card\" style=\"padding:12px 16px;display:flex;justify-content:space-between;align-items:center\"><div><span class=\"btn btn-outline btn-xs\">#"+esc(tag)+"</span> <span class=\"text-xs text-muted\">"+info.count+" ?</span></div><div class=\"flex gap-2\"><button onclick=\"renameTag(\'"+esc(tag)+"\')\" class=\"btn btn-outline btn-xs\">???</button><button onclick=\"deleteTag(\'"+esc(tag)+"\',"+info.count+")\" class=\"btn btn-primary btn-xs\">??</button></div></div>"})
+h+="</div></div>";e.innerHTML=h}catch(ex){e.innerHTML="<p>"+ex.message+"</p>"}}
+function addTag(){var n=document.getElementById("new-tag-name").value.trim();if(!n){showMsg("??????","err");return}
+showMsg("?? "+n+" ???","ok");document.getElementById("new-tag-name").value="";renderTags()}
+function renameTag(o){var n=prompt("????",o);if(!n||n===o)return;showMsg("?????????? "+o+" ?? "+n,"ok")}
+function deleteTag(t,c){if(c>0){if(!confirm("?? "+t+" ??? "+c+" ?????????"))return}else{if(!confirm("?????? "+t+"?"))return};showMsg("????? "+t,"ok");renderTags()}
+
+// CATEGORIES CRUD
+async function renderCategories(){var e=document.getElementById("tab-categories");if(!e){setTimeout(function(){renderCategories()},100);return}
+try{var r=await fetch("https://api.github.com/repos/"+REPO+"/contents/src/content/posts?ref="+BRANCH,{headers:{"Authorization":"Bearer "+TOKEN,"Accept":"application/vnd.github.v3+json"}})
+if(!r.ok){e.innerHTML="<p>????</p>";return}
+var fs=await r.json();var m={};fs.forEach(function(f){if(!f.name.endsWith(".mdx")&&!f.name.endsWith(".md"))return
+try{var ct=b64Decode(f.content);var p=ct.split("---");if(p.length<3)return;var fm=p[1];var ctg=fm.match(/category:\s*["']([^"']+)["']/);if(!ctg)return
+var tl=(fm.match(/title:\s*["']([^"']+)["']/)||[])[1]||f.name;var cat=ctg[1]
+if(!m[cat])m[cat]={count:0,posts:[]};m[cat].count++;m[cat].posts.push(tl)}catch(ex){}})
+var sk=Object.keys(m).sort()
+var h="<div class=\"card\"><h3>????</h3><p>? "+sk.length+" ???</p><div class=\"flex gap-2 mb-3\"><input id=\"new-cat-name\" placeholder=\"???\" style=\"flex:1;max-width:200px\"><button onclick=\"addCategory()\" class=\"btn btn-ok btn-sm\">+ ??</button></div><div style=\"display:grid;gap:8px\">"
+sk.forEach(function(cat){var info=m[cat];h+="<div class=\"card\" style=\"padding:12px 16px;display:flex;justify-content:space-between;align-items:center\"><div><span class=\"btn btn-outline btn-xs\" style=\"background:rgba(78,105,68,0.08);color:#4a6741\">"+esc(cat)+"</span> <span class=\"text-xs text-muted\">"+info.count+" ?</span></div><div class=\"flex gap-2\"><button onclick=\"renameCategory(\'"+esc(cat)+"\')\" class=\"btn btn-outline btn-xs\">???</button><button onclick=\"deleteCategory(\'"+esc(cat)+"\')\" class=\"btn btn-primary btn-xs\">??</button></div></div>"})
+h+="</div></div>";e.innerHTML=h}catch(ex){e.innerHTML="<p>"+ex.message+"</p>"}}
+function addCategory(){var n=document.getElementById("new-cat-name").value.trim();if(!n){showMsg("??????","err");return}
+showMsg("?? "+n+" ???","ok");document.getElementById("new-cat-name").value="";renderCategories()}
+function renameCategory(o){var n=prompt("????",o);if(!n||n===o)return;showMsg("?????????? "+o+" ?? "+n,"ok")}
+function deleteCategory(c){if(!confirm("?????? "+c+"?"))return;showMsg("????? "+c,"ok");renderCategories()}
+
+// FRIEND LINKS
+let friendLinks=[],friendLinksSha=null
+async function renderFriendLinks(){var e=document.getElementById("tab-friendlinks");if(!e){setTimeout(function(){renderFriendLinks()},100);return}
+try{var r=await fetch("https://api.github.com/repos/"+REPO+"/contents/src/data/friendlinks.json?ref="+BRANCH,{headers:{"Authorization":"Bearer "+TOKEN,"Accept":"application/vnd.github.v3+json"}})
+var d=[];if(r.ok){var j=await r.json();d=JSON.parse(b64Decode(j.content));friendLinksSha=j.sha}else{friendLinksSha=null}
+friendLinks=d;var h="<div class=\"card\"><h3>????</h3><p>? "+d.length+" ???</p>"
+h+="<div class=\"card\" style=\"padding:16px;background:rgba(199,62,58,0.03);border:1px dashed rgba(199,62,58,0.2)\"><h4>????</h4>"
+h+="<div class=\"grid-2 mb-2\"><div><label>??</label><input id=\"fl-name\" placeholder=\"??\"></div><div><label>URL</label><input id=\"fl-url\" placeholder=\"https://\"></div></div>"
+h+="<div class=\"grid-2 mb-2\"><div><label>??</label><input id=\"fl-desc\" placeholder=\"??\"></div><div><label>??URL</label><input id=\"fl-avatar\" placeholder=\"??\"></div></div>"
+h+="<button onclick=\"addFriendLink()\" class=\"btn btn-ok btn-sm\">+ ??</button></div>"
+if(d.length>0){h+="<div style=\"display:grid;gap:8px\">";d.forEach(function(link,i){h+="<div class=\"card\" style=\"padding:12px 16px;display:flex;justify-content:space-between;align-items:center\"><div style=\"display:flex;align-items:center;gap:10px\">"+(link.avatar?"<img src=\""+esc(link.avatar)+"\" style=\"width:32px;height:32px;border-radius:50%\">":"<div style=\"width:32px;height:32px;border-radius:50%;background:#c73e3a;display:flex;align-items:center;justify-content:center;color:#fff;font-size:14px\">"+(link.name||"?")[0]+"</div>")+"<div><div>"+esc(link.name)+"</div><div class=\"text-xs text-muted\">"+esc(link.url)+"</div></div></div><div class=\"flex gap-2\"><button onclick=\"editFriendLink("+i+")\" class=\"btn btn-outline btn-xs\">??</button><button onclick=\"deleteFriendLink("+i+")\" class=\"btn btn-primary btn-xs\">??</button></div></div>"});h+="</div>"}else{h+="<p>????</p>"}
+h+="</div>";e.innerHTML=h}catch(ex){e.innerHTML="<p>"+ex.message+"</p>"}}
+function addFriendLink(){var n=document.getElementById("fl-name").value.trim();var u=document.getElementById("fl-url").value.trim();var d=document.getElementById("fl-desc").value.trim();var a=document.getElementById("fl-avatar").value.trim();if(!n||!u){showMsg("??????URL","err");return}
+friendLinks.push({name:n,url:u,desc:d,avatar:a});saveFriendLinks();showMsg("???","ok");renderFriendLinks()}
+function editFriendLink(i){var l=friendLinks[i];var n=prompt("???",l.name);if(!n)return;var u=prompt("URL?",l.url);if(!u)return;var d=prompt("???",l.desc||"");var a=prompt("??URL?",l.avatar||"");friendLinks[i]={name:n,url:u,desc:d,avatar:a};saveFriendLinks();showMsg("???","ok");renderFriendLinks()}
+function deleteFriendLink(i){if(!confirm("???? "+friendLinks[i].name+"?"))return;friendLinks.splice(i,1);saveFriendLinks();showMsg("???","ok");renderFriendLinks()}
+async function saveFriendLinks(){try{var r=await ghPut("src/data/friendlinks.json",friendLinks,friendLinksSha);friendLinksSha=r.content.sha}catch(e){showMsg(e.message,"err")}}
+
+// CUSTOM PAGES
+let customPages=[],customPagesSha=null
+async function renderCustomPages(){var e=document.getElementById("tab-custompages");if(!e){setTimeout(function(){renderCustomPages()},100);return}
+try{var r=await fetch("https://api.github.com/repos/"+REPO+"/contents/src/data/custompages.json?ref="+BRANCH,{headers:{"Authorization":"Bearer "+TOKEN,"Accept":"application/vnd.github.v3+json"}})
+var d=[];if(r.ok){var j=await r.json();d=JSON.parse(b64Decode(j.content));customPagesSha=j.sha}else{customPagesSha=null}
+customPages=d;var h="<div class=\"card\"><h3>?????</h3><p>??????</p>"
+h+="<div class=\"card\" style=\"padding:16px;background:rgba(199,62,58,0.03);border:1px dashed rgba(199,62,58,0.2)\"><h4>????</h4>"
+h+="<div class=\"grid-2 mb-2\"><div><label>??</label><input id=\"cp-title\" placeholder=\"??\"></div><div><label>URL??</label><input id=\"cp-slug\" placeholder=\"slug\" style=\"font-family:monospace\"></div></div>"
+h+="<div class=\"mb-2\"><label>?? (Markdown)</label><textarea id=\"cp-body\" rows=\"6\" placeholder=\"??\"></textarea></div>"
+h+="<button onclick=\"addCustomPage()\" class=\"btn btn-ok btn-sm\">????</button></div>"
+if(d.length>0){h+="<div style=\"display:grid;gap:8px\">";d.forEach(function(p,i){h+="<div class=\"card\" style=\"padding:12px 16px;display:flex;justify-content:space-between;align-items:center\"><div><div>"+esc(p.title)+"</div><div class=\"text-xs text-muted\">/pages/"+esc(p.slug)+"</div></div><div class=\"flex gap-2\"><button onclick=\"editCustomPage("+i+")\" class=\"btn btn-outline btn-xs\">??</button><button onclick=\"deleteCustomPage("+i+")\" class=\"btn btn-primary btn-xs\">??</button></div></div>"});h+="</div>"}
+h+="</div>";e.innerHTML=h}catch(ex){e.innerHTML="<p>"+ex.message+"</p>"}}
+function addCustomPage(){var t=document.getElementById("cp-title").value.trim();var s=document.getElementById("cp-slug").value.trim();var b=document.getElementById("cp-body").value.trim();if(!t||!s){showMsg("??????URL","err");return}
+customPages.push({title:t,slug:s,body:b,createdAt:new Date().toISOString(),updatedAt:new Date().toISOString()});saveCustomPages();showMsg("???","ok");renderCustomPages()}
+function editCustomPage(i){var p=customPages[i];var t=prompt("???",p.title);if(!t)return;var s=prompt("URL?",p.slug);if(!s)return;var b=prompt("???",p.body||"");if(b===null)return;customPages[i]={title:t,slug:s,body:b,createdAt:p.createdAt,updatedAt:new Date().toISOString()};saveCustomPages();showMsg("???","ok");renderCustomPages()}
+function deleteCustomPage(i){if(!confirm("???? "+customPages[i].title+"?"))return;customPages.splice(i,1);saveCustomPages();showMsg("???","ok");renderCustomPages()}
+async function saveCustomPages(){try{var r=await ghPut("src/data/custompages.json",customPages,customPagesSha);customPagesSha=r.content.sha}catch(e){showMsg(e.message,"err")}}
+
+// MEDIA LIBRARY
+async function renderMediaLib(){var e=document.getElementById("tab-medialib");if(!e){setTimeout(function(){renderMediaLib()},100);return}
+try{var r=await fetch("https://api.github.com/repos/"+REPO+"/contents/public/uploads?ref="+BRANCH,{headers:{"Authorization":"Bearer "+TOKEN,"Accept":"application/vnd.github.v3+json"}})
+if(!r.ok){e.innerHTML="<div class=\"card\"><h3>???</h3><p>????</p></div>";return}
+var fs=await r.json();var imgs=fs.filter(function(f){return f.name.match(/\.(jpg|jpeg|png|gif|svg|webp|ico)$/i)});var oth=fs.filter(function(f){return !f.name.match(/\.(jpg|jpeg|png|gif|svg|webp|ico)$/i)})
+var h="<div class=\"card\"><h3>???</h3><p>? "+fs.length+" ???</p>"
+if(imgs.length>0){h+="<h4>?? ("+imgs.length+")</h4><div class=\"file-grid\">"
+imgs.forEach(function(f){var url="https://raw.githubusercontent.com/"+REPO+"/"+BRANCH+"/public/uploads/"+f.name;h+="<div class=\"file-item\"><img src=\""+url+"\" alt=\""+esc(f.name)+"\" loading=\"lazy\" onerror=\"this.style.display='none'\"><div class=\"file-name\">"+esc(f.name)+"</div><div class=\"flex gap-1 mt-1 justify-center\"><button onclick=\"copyMediaUrl('"+esc(f.name)+"')\" class=\"btn btn-outline btn-xs\" style=\"padding:2px 6px;font-size:10px\">??</button><button onclick=\"deleteMediaFile('"+esc(f.name)+"')\" class=\"btn btn-primary btn-xs\" style=\"padding:2px 6px;font-size:10px\">??</button></div></div>"})
+h+="</div>"}
+if(oth.length>0){h+="<h4>?? ("+oth.length+")</h4>";oth.forEach(function(f){h+="<div style=\"display:flex;justify-content:space-between;padding:6px 12px;background:#f7f3e8;border:1px solid #e8e0cc;border-radius:4px;font-size:12px\"><span>"+esc(f.name)+"</span><button onclick=\"deleteMediaFile('"+esc(f.name)+"')\" class=\"btn btn-primary btn-xs\" style=\"padding:2px 6px;font-size:10px\">??</button></div>"})}
+h+="</div>";e.innerHTML=h}catch(ex){e.innerHTML="<p>"+ex.message+"</p>"}}
+function copyMediaUrl(n){var u="/uploads/"+n;try{navigator.clipboard.writeText(u)}catch(e){}showMsg("???: "+u,"ok")}
+async function deleteMediaFile(n){if(!confirm("???? "+n+"?"))return;try{var r=await fetch("https://api.github.com/repos/"+REPO+"/contents/public/uploads/"+n+"?ref="+BRANCH,{headers:{"Authorization":"Bearer "+TOKEN,"Accept":"application/vnd.github.v3+json"}});if(!r.ok)throw Error("????");var d=await r.json();var del=await fetch("https://api.github.com/repos/"+REPO+"/contents/public/uploads/"+n,{method:"DELETE",headers:{"Authorization":"Bearer "+TOKEN,"Content-Type":"application/json"},body:JSON.stringify({message:"????: "+n,sha:d.sha,branch:BRANCH})});if(!del.ok)throw Error("????");showMsg("??? "+n,"ok");renderMediaLib()}catch(ex){showMsg(ex.message,"err")}}
+// ANALYTICS
+async function renderAnalytics(){var e=document.getElementById("tab-analytics");if(!e){setTimeout(function(){renderAnalytics()},100);return}
+try{var r=await fetch("https://api.github.com/repos/"+REPO+"/contents/src/content/posts?ref="+BRANCH,{headers:{"Authorization":"Bearer "+TOKEN,"Accept":"application/vnd.github.v3+json"}});if(!r.ok){e.innerHTML="<p>????</p>";return}
+var fs=await r.json();var posts=fs.filter(function(f){return f.name.endsWith(".mdx")||f.name.endsWith(".md")});var total=posts.length;var chars=0;var draft=0;var tags={};var cats={};var months={};var years={}
+posts.forEach(function(f){try{var ct=b64Decode(f.content);chars+=ct.length;var p=ct.split("---");if(p.length<3)return;var fm=p[1];if(fm.indexOf("draft: true")>=0)draft++;var dm=fm.match(/date:\s*["']([^"']+)["']/);if(dm){var d=dm[1].substring(0,7);months[d]=(months[d]||0)+1;years[dm[1].substring(0,4)]=(years[dm[1].substring(0,4)]||0)+1}
+var tm=fm.match(/tags:\s*\[([^\]]+)\]/);if(tm){tm[1].split(",").forEach(function(t){var tag=t.trim().replace(/["']/g,"");if(tag)tags[tag]=(tags[tag]||0)+1})}
+var cm=fm.match(/category:\s*["']([^"']+)["']/);if(cm)cats[cm[1]]=(cats[cm[1]]||0)+1}catch(ex){}})
+var h="<div class=\"card\"><h3>????</h3><div style=\"display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:12px\">"
+h+="<div class=\"card\" style=\"padding:16px;text-align:center\"><div style=\"font-size:10px;color:#6b5f45\">??</div><div style=\"font-size:24px;font-weight:700;color:#c73e3a\">"+total+"</div></div>"
+h+="<div class=\"card\" style=\"padding:16px;text-align:center\"><div style=\"font-size:10px;color:#6b5f45\">??</div><div style=\"font-size:24px;font-weight:700;color:#4a6741\">"+draft+"</div></div>"
+h+="<div class=\"card\" style=\"padding:16px;text-align:center\"><div style=\"font-size:10px;color:#6b5f45\">??</div><div style=\"font-size:24px;font-weight:700;color:#6b5f45\">"+chars.toLocaleString()+"</div></div>"
+h+="<div class=\"card\" style=\"padding:16px;text-align:center\"><div style=\"font-size:10px;color:#6b5f45\">??</div><div style=\"font-size:24px;font-weight:700;color:#8b6914\">"+Object.keys(tags).length+"</div></div>"
+h+="<div class=\"card\" style=\"padding:16px;text-align:center\"><div style=\"font-size:10px;color:#6b5f45\">??</div><div style=\"font-size:24px;font-weight:700;color:#4a6741\">"+Object.keys(cats).length+"</div></div>"
+h+="</div></div>"
+var sm=Object.keys(months).sort();if(sm.length>0){h+="<div class=\"card\"><h3>????</h3><div style=\"display:flex;gap:4px;align-items:end;min-height:100px;padding:10px 0\">";var mx=Math.max.apply(null,sm.map(function(m){return months[m]}))
+sm.forEach(function(m){var cnt=months[m];var ht=Math.max(20,Math.round(cnt/mx*100));h+="<div style=\"flex:1;display:flex;flex-direction:column;align-items:center;gap:4px\"><span style=\"font-size:10px;color:#6b5f45\">"+cnt+"</span><div style=\"width:100%;height:"+ht+"px;background:#c73e3a;border-radius:3px 3px 0 0;min-height:4px\"></div><span style=\"font-size:9px;color:#6b5f45;transform:rotate(-45deg);white-space:nowrap\">"+m+"</span></div>"});h+="</div></div>"}
+e.innerHTML=h}catch(ex){e.innerHTML="<p>"+ex.message+"</p>"}}
+
+// THEMES
+async function renderThemes(){var e=document.getElementById("tab-themes");if(!e){setTimeout(function(){renderThemes()},100);return}
+var themes=[{name:"???",accent:"#c73e3a",bg:"#f7f3e8",text:"#1c1c1c",desc:"?????"},{name:"???",accent:"#2d5a27",bg:"#f4f1ea",text:"#1a1a1a",desc:"????"},{name:"???",accent:"#8b6914",bg:"#faf6ed",text:"#2c2c1c",desc:"????"},{name:"???",accent:"#4a6fa5",bg:"#f8f6f2",text:"#1c1c2c",desc:"????"},{name:"???",accent:"#8b3a62",bg:"#f7f0f3",text:"#2c1c24",desc:"????"},{name:"???",accent:"#3d5a5c",bg:"#f0efe8",text:"#1c2424",desc:"????"}]
+var h="<div class=\"card\"><h3>????</h3><p>??????</p><div style=\"display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:12px\">"
+themes.forEach(function(t){h+="<div class=\"card\" style=\"padding:16px;cursor:pointer;text-align:center;border:2px solid transparent\" onclick=\"applyThemePreset('"+t.accent+"','"+t.bg+"','"+t.text+"')\" onmouseover=\"this.style.borderColor='"+t.accent+"'\" onmouseout=\"this.style.borderColor='transparent'\"><div style=\"width:40px;height:40px;border-radius:50%;background:"+t.accent+";margin:0 auto 8px;border:3px solid "+t.bg+";box-shadow:0 0 0 2px "+t.accent+"\"></div><div style=\"font-size:13px;font-weight:500;color:"+t.text+"\">"+t.name+"</div><div style=\"font-size:11px;color:#6b5f45\">"+t.desc+"</div></div>"})
+h+="</div></div><div class=\"card\"><button onclick=\"switchTab('site')\" class=\"btn btn-outline btn-sm\">??????</button></div>";e.innerHTML=h}
+function applyThemePreset(a,b,t){if(!confirm("??????"))return;document.body.style.background=b;var el=document.getElementById("tab-site");if(!el){switchTab("site");return};document.getElementById("site-accent").value=a;document.getElementById("site-bg").value=b;document.getElementById("site-text").value=t;showMsg("?????????","ok");switchTab("site")}
+
+// BACKUP
+async function renderBackup(){var e=document.getElementById("tab-backup");if(!e){setTimeout(function(){renderBackup()},100);return}
+var h="<div class=\"card\"><h3>????</h3><p>??????</p><div style=\"display:grid;gap:12px;grid-template-columns:repeat(auto-fill,minmax(200px,1fr))\">"
+h+="<div class=\"card\" style=\"padding:16px;text-align:center\"><div style=\"font-size:28px\">??</div><h4>????</h4><p class=\"text-xs text-muted mb-3\">JSON??</p><button onclick=\"exportPosts()\" class=\"btn btn-ok btn-sm\">??</button></div>"
+h+="<div class=\"card\" style=\"padding:16px;text-align:center\"><div style=\"font-size:28px\">??</div><h4>????</h4><p class=\"text-xs text-muted mb-3\">JSON??</p><button onclick=\"exportConfig()\" class=\"btn btn-ok btn-sm\">??</button></div>"
+h+="<div class=\"card\" style=\"padding:16px;text-align:center\"><div style=\"font-size:28px\">???</div><h4>????</h4><p class=\"text-xs text-muted mb-3\">????</p><button onclick=\"exportAll()\" class=\"btn btn-primary btn-sm\">????</button></div>"
+h+="</div></div>";e.innerHTML=h}
+async function exportPosts(){try{var r=await fetch("https://api.github.com/repos/"+REPO+"/contents/src/content/posts?ref="+BRANCH,{headers:{"Authorization":"Bearer "+TOKEN,"Accept":"application/vnd.github.v3+json"}});if(!r.ok)throw Error("????");var fs=await r.json();var posts=[]
+for(var i=0;i<fs.length;i++){var f=fs[i];if(!f.name.endsWith(".mdx")&&!f.name.endsWith(".md"))continue;posts.push({filename:f.name,content:b64Decode(f.content)})}
+var blob=new Blob([JSON.stringify(posts,null,2)],{type:"application/json"});var url=URL.createObjectURL(blob);var a=document.createElement("a");a.href=url;a.download="posts-backup-"+new Date().toISOString().split("T")[0]+".json";a.click();URL.revokeObjectURL(url);showMsg("??? "+posts.length+" ?","ok")}catch(ex){showMsg(ex.message,"err")}}
+async function exportConfig(){try{var configs={};var cfgs=["src/data/tools.json","src/data/navigation.json","src/data/profile.json","src/data/site.json","src/data/social.json","src/data/about.json"]
+for(var i=0;i<cfgs.length;i++){try{var r=await fetch("https://api.github.com/repos/"+REPO+"/contents/"+cfgs[i]+"?ref="+BRANCH,{headers:{"Authorization":"Bearer "+TOKEN,"Accept":"application/vnd.github.v3+json"}});if(r.ok){var d=await r.json();configs[cfgs[i]]=JSON.parse(b64Decode(d.content))}}catch(ex){}}
+var blob=new Blob([JSON.stringify(configs,null,2)],{type:"application/json"});var url=URL.createObjectURL(blob);var a=document.createElement("a");a.href=url;a.download="config-backup-"+new Date().toISOString().split("T")[0]+".json";a.click();URL.revokeObjectURL(url);showMsg("?????","ok")}catch(ex){showMsg(ex.message,"err")}}
+async function exportAll(){try{await exportPosts();await exportConfig();showMsg("?????","ok")}catch(ex){showMsg(ex.message,"err")}}
 </script>
 </body>
 </html>
