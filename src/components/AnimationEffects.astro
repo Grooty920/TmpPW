@@ -1,4 +1,4 @@
----
+﻿---
 // 水墨意境 - 动画与微交互系统（优化版）
 // 星空闪烁 | 滚动显现 | 鼠标光晕 | 墨韵流动 | 雪花飘落
 ---
@@ -73,7 +73,7 @@
   function initStars() {
     var container = document.getElementById("stars-container");
     if (!container || container.hasChildNodes()) return;
-    for (var i = 0; i < 80; i++) {
+    var starCount = (typeof isLowPerf === "function" && isLowPerf()) ? 25 : 80; for (var i = 0; i < starCount; i++) {
       var star = document.createElement("div");
       star.className = "star";
       star.style.left = Math.random() * 100 + "%";
@@ -216,7 +216,8 @@
   }
 
   // ===== 雪花飘落 =====
-  function initSnow() {
+  function isLowPerf(){try{var c=document.createElement('canvas');var gl=c.getContext('webgl')||c.getContext('experimental-webgl');if(!gl)return true;var isMobile=/Android|iPhone|iPad|iPod|webOS/i.test(navigator.userAgent);var memory=navigator.deviceMemory||4;return isMobile||memory<=4}catch(e){return true}}
+function initSnow(){
     var canvas = document.getElementById("snow-canvas");
     if (!canvas) return;
     var ctx = canvas.getContext("2d");
@@ -273,9 +274,9 @@
     }
 
     function start() {
-      if (running) return; running = false;
+      if (running) return; running = true;
       resize();
-      flakes = createFlakes(40);
+      flakes = createFlakes(isLowPerf() ? 15 : 40);
       loop();
     }
 
@@ -314,3 +315,4 @@
   document.addEventListener("astro:page-load", runInit);
 })();
 </script>
+

@@ -1,4 +1,4 @@
----
+﻿---
 // 水墨背景层：江湖侠客水墨动画
 // 宣纸纹理 + 动态水墨晕染 + 侠客剪影 + 云雾飘动
 ---
@@ -150,7 +150,7 @@
 
   // ===== 绘制云雾 =====
   function drawMist() {
-    var count = 5;
+    var count = isLowPerf ? 2 : 5;
     for (var i = 0; i < count; i++) {
       var mx = (Math.sin(time * 0.0003 + i * 1.5) * 0.3 + 0.5) * W;
       var my = H * (0.2 + i * 0.12);
@@ -170,9 +170,11 @@
   }
 
   // ===== 墨滴粒子 =====
-  function createParticles() {
+  function detectPerformance(){try{var c=document.createElement('canvas');var gl=c.getContext('webgl')||c.getContext('experimental-webgl');if(!gl)return true;var isMobile=/Android|iPhone|iPad|iPod|webOS/i.test(navigator.userAgent);var memory=navigator.deviceMemory||4;return isMobile||memory<=4}catch(e){return true}}
+isLowPerf=detectPerformance();
+function createParticles(){
     var p = [];
-    for (var i = 0; i < 12; i++) {
+    for (var i = 0; i < (isLowPerf ? 6 : 12); i++) {
       p.push({
         x: Math.random() * W,
         y: Math.random() * H,
@@ -208,7 +210,7 @@
   // ===== 墨迹飞溅 =====
   var splashes = [];
   function addSplash() {
-    if (Math.random() > 0.005) return;
+    if (Math.random() > (isLowPerf ? 0.002 : 0.005)) return;
     splashes.push({
       x: Math.random() * W,
       y: H * 0.3 + Math.random() * H * 0.4,
@@ -290,4 +292,5 @@
   window.addEventListener('resize', resize);
 })();
 </script>
+
 

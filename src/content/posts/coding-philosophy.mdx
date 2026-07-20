@@ -1,0 +1,49 @@
+---
+title: "编程十年：一些不成熟的思考"
+description: "从第一行 Hello World 到现在，十年编程路上的几点感悟与反思。"
+date: 2026-07-12
+tags: ["随笔", "感悟", "编程"]
+category: "随笔"
+readingTime: 8
+---
+
+## 关于工具
+
+工具是手的延伸，编程语言是思想的延伸。这些年用过的语言从 PHP 到 Python，从 JavaScript 到 TypeScript，每一种都有其独特的思维方式。
+
+> 工欲善其事，必先利其器。但不要沉迷于打磨工具而忘了真正要做的事。
+
+## 关于简单
+
+写代码最大的挑战不是写复杂的代码，而是写简单的代码。
+
+```python
+# 复杂的方式
+def process(data):
+    result = []
+    for i in range(len(data)):
+        item = data[i]
+        if item["status"] == "active":
+            processed = transform(item)
+            result.append(processed)
+    return result
+
+# 简单的方式
+def process(data):
+    return [transform(item) for item in data if item["status"] == "active"]
+```
+
+## 关于学习
+
+技术更新迭代的速度越来越快，但**底层原理**是不变的：
+
+- 操作系统原理
+- 网络协议
+- 数据结构与算法
+- 设计模式
+
+掌握了这些，学任何新框架都只是看文档的问题。
+
+## 结语
+
+编程是一条漫长的路，重要的不是走得快，而是走得远。

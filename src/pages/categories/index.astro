@@ -1,0 +1,64 @@
+---
+import Layout from "../../layouts/Layout.astro";
+import { getCollection } from "astro:content";
+
+const posts = await getCollection("posts", ({ data }) => !data.draft);
+
+// 收集所有分类并统计文章数
+const catMap = new Map();
+for (const post of posts) {
+  const cat = post.data.category || "随笔";
+  if (!catMap.has(cat)) catMap.set(cat, []);
+  catMap.get(cat).push(post);
+}
+// 按文章数排序
+const categories = [...catMap.entries()].sort((a, b) => b[1].length - a[1].length);
+const totalCats = categories.length;
+---
+
+<Layout title="分类 · 小杨王子" description="文章分类，按类索骥">
+  <div class="container-page py-20">
+    <div class="text-center mb-16 reveal">
+      <h1 class="text-3xl md:text-4xl font-serif font-bold" style="color:var(--text-primary)">文章分类</h1>
+      <div class="mt-4 mx-auto w-12 h-0.5" style="background-color:var(--accent)"></div>
+      <p class="text-xs mt-4" style="color:var(--text-secondary); font-family: 'LXGW WenKai', serif; letter-spacing: 0.2em;">分门别类，各归其位</p>
+    </div>
+
+    {totalCats === 0 && (
+      <div class="text-center py-20 reveal">
+        <p class="text-lg" style="color:var(--text-secondary)">暂无分类...</p>
+      </div>
+    )}
+
+    <div class="max-w-3xl mx-auto grid grid-cols-1 sm:grid-cols-2 gap-5">
+      {categories.map(([cat, catPosts], index) => (
+        <a
+          href={"/categories/" + cat}
+          class="group card-ink p-6 transition-all duration-300 hover:scale-[1.02] reveal "
+          style={"animation-delay: " + (0.05 + index * 0.05) + "s; border-left: 3px solid var(--accent);"}
+        >
+          <div class="flex items-center justify-between mb-3">
+            <h3 class="text-lg font-serif font-semibold group-hover:text-gradient" style="color:var(--text-primary)">{cat}</h3>
+            <span class="text-xs px-2 py-1 rounded-full" style="background:var(--accent-light);color:var(--accent);">{catPosts.length} 篇</span>
+          </div>
+          <p class="text-xs line-clamp-2" style="color:var(--text-secondary)">
+            {catPosts.slice(0, 3).map(p => p.data.title).join(" · ")}
+            {catPosts.length > 3 && " · ..."}
+          </p>
+          <div class="mt-3 flex items-center text-xs" style="color:var(--accent);opacity:0.7;">
+            查看全部
+            <svg class="w-3.5 h-3.5 ml-1 transition-transform group-hover:translate-x-1" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+          </div>
+        </a>
+      ))}
+    </div>
+
+    <!-- 寄语 -->
+    <div class="mt-20 text-center reveal">
+      <div class="max-w-lg mx-auto">
+        <div class="w-12 h-[1px] mx-auto mb-6" style="background:var(--border);"></div>
+        <p class="text-sm" style="color:var(--text-secondary); font-family: 'LXGW WenKai', serif;">物以类聚，人以群分</p>
+      </div>
+    </div>
+  </div>
+</Layout>

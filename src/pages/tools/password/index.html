@@ -1,320 +1,271 @@
-<!doctype html>
+﻿<!doctype html>
 <html lang="zh-CN">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>施工队智能门锁密码分配系统</title>
+<title>门锁密码分配系统 · 小杨王子</title>
+<link rel="icon" href="/avatar.jpg" type="image/jpeg">
 <style>
-*{margin:0;padding:0;box-sizing:border-box}
-:root{
-  color-scheme:light;
-  font-family:"Inter","Microsoft YaHei","PingFang SC",system-ui,sans-serif;
-  --primary:#4f46e5;
-  --primary-light:#818cf8;
-  --primary-dark:#3730a3;
-  --success:#10b981;
-  --warning:#f59e0b;
-  --bg:#f1f5f9;
-  --card-bg:#ffffff;
-  --text:#1e293b;
-  --text-secondary:#64748b;
-  --border:#e2e8f0;
-  --shadow:0 4px 24px rgba(0,0,0,0.08);
-  --radius:12px;
-}
-body{
-  min-height:100vh;
-  background:linear-gradient(135deg,#eef2ff 0%,#e0e7ff 100%);
-  padding:24px 16px;
-  color:var(--text);
-}
-.container{
-  max-width:800px;
-  margin:0 auto;
-}
-.header{
-  text-align:center;
-  margin-bottom:28px;
-}
-.header h1{
-  font-size:26px;
-  font-weight:700;
-  background:linear-gradient(135deg,var(--primary),var(--primary-light));
-  -webkit-background-clip:text;
-  -webkit-text-fill-color:transparent;
-  background-clip:text;
-  letter-spacing:1px;
-}
-.header p{
-  color:var(--text-secondary);
-  font-size:14px;
-  margin-top:6px;
-}
-.card{
-  background:var(--card-bg);
-  border-radius:var(--radius);
-  box-shadow:var(--shadow);
-  padding:24px;
-  margin-bottom:20px;
-}
-.card-title{
-  font-size:16px;
-  font-weight:600;
-  margin-bottom:16px;
-  display:flex;
-  align-items:center;
-  gap:8px;
-}
-.card-title .icon{font-size:20px;}
-.form-grid{
-  display:grid;
-  grid-template-columns:1fr 1fr;
-  gap:14px;
-}
-.form-group{display:flex;flex-direction:column;gap:5px;}
-.form-group.full{grid-column:1/-1;}
-.form-group label{
-  font-size:13px;
-  font-weight:600;
-  color:var(--text-secondary);
-}
-.form-group select,.form-group input{
-  padding:10px 12px;
-  border:1.5px solid var(--border);
-  border-radius:8px;
-  font-size:15px;
-  background:#fafafa;
-  color:var(--text);
-  outline:none;
-  transition:border-color .2s;
-  cursor:pointer;
-}
-.form-group select:focus,.form-group input:focus{
-  border-color:var(--primary);
-  background:#fff;
-}
-.btn-row{
-  grid-column:1/-1;
-  display:flex;
-  gap:12px;
-  margin-top:4px;
-}
-.btn{
-  flex:1;
-  padding:12px;
-  border:none;
-  border-radius:8px;
-  font-size:15px;
-  font-weight:600;
-  cursor:pointer;
-  transition:transform .15s,box-shadow .15s;
-}
-.btn:active{transform:scale(.97);}
-.btn-primary{
-  background:linear-gradient(135deg,var(--primary),var(--primary-dark));
-  color:#fff;
-  box-shadow:0 4px 14px rgba(79,70,229,.35);
-}
-.btn-primary:hover{box-shadow:0 6px 20px rgba(79,70,229,.45);}
-.btn-outline{
-  background:transparent;
-  color:var(--text-secondary);
-  border:1.5px solid var(--border);
-}
-.btn-outline:hover{background:#f8fafc;border-color:var(--text-secondary);}
+  @import url("https://fonts.googleapis.com/css2?family=Noto+Serif+SC&display=swap:wght@400;500;600;700&display=swap");
+  @import url("https://fonts.googleapis.com/css2?family=Ma+Shan+Zheng&display=swap");
+  @import url("https://cdn.jsdelivr.net/npm/@chinese-fonts/lxgwwenkai@3.0.0/dist/LXGWWenKai-Regular/result.css");
+  *{margin:0;padding:0;box-sizing:border-box}
+  :root{
+    --bg-primary: #f7f3e8;
+    --bg-secondary: #f0e8cc;
+    --text-primary: #1c1c1c;
+    --text-secondary: #6b5f45;
+    --accent: #c73e3a;
+    --accent-light: #e87d7d;
+    --accent-glow: rgba(199, 62, 58, 0.15);
+    --border: #d4c494;
+    --card-bg: rgba(254, 252, 245, 0.6);
+    --nav-bg: rgba(247, 243, 232, 0.6);
+    --stone: #4a6741;
+    --shadow: rgba(28, 28, 18, 0.06);
+    --glass-border: rgba(212, 196, 148, 0.3);
+    --glass-shine: rgba(255, 255, 255, 0.15);
+    --radius: 8px;
+  }
+  body{
+    min-height: 100vh;
+    background-color: var(--bg-primary);
+    color: var(--text-primary);
+    font-family: "Noto Serif SC", "LXGW WenKai", serif;
+    padding: 24px 16px;
+    transition: background-color 0.3s ease, color 0.3s ease;
+  }
+  ::selection { background-color: var(--accent); color: #f7f3e8; }
+  ::-webkit-scrollbar { width: 4px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb { background: var(--accent); border-radius: 2px; }
 
-/* 密码结果 */
-.result-card{
-  background:linear-gradient(135deg,#eef2ff,#e0e7ff);
-  border:2px dashed var(--primary-light);
-  border-radius:var(--radius);
-  padding:20px;
-  text-align:center;
-  display:none;
-  margin-bottom:20px;
-}
-.result-card.show{display:block;}
-.result-card .label{
-  font-size:13px;
-  color:var(--text-secondary);
-  margin-bottom:6px;
-}
-.result-card .password{
-  font-size:48px;
-  font-weight:800;
-  letter-spacing:6px;
-  color:var(--primary-dark);
-  font-family:"Courier New",monospace;
-  user-select:all;
-  word-break:break-all;
-}
-.result-card .info{
-  margin-top:10px;
-  font-size:14px;
-  color:var(--text-secondary);
-}
-.result-card .info strong{color:var(--text);}
-.copy-btn{
-  margin-top:14px;
-  display:inline-flex;
-  align-items:center;
-  gap:6px;
-  padding:8px 20px;
-  border:none;
-  border-radius:6px;
-  background:var(--primary);
-  color:#fff;
-  font-size:14px;
-  cursor:pointer;
-  transition:background .2s;
-}
-.copy-btn:hover{background:var(--primary-dark);}
-.copy-btn.copied{background:var(--success);}
+  .container { max-width: 800px; margin: 0 auto; }
 
-/* 历史记录 */
-.history-table{
-  width:100%;
-  border-collapse:collapse;
-  font-size:14px;
-}
-.history-table th{
-  background:#f8fafc;
-  text-align:left;
-  padding:10px 8px;
-  font-weight:600;
-  color:var(--text-secondary);
-  font-size:12px;
-  border-bottom:2px solid var(--border);
-}
-.history-table td{
-  padding:10px 8px;
-  border-bottom:1px solid var(--border);
-  vertical-align:middle;
-}
-.history-table tr:hover td{background:#f8fafc;}
-.history-table .badge{
-  display:inline-block;
-  padding:2px 10px;
-  border-radius:20px;
-  font-size:12px;
-  font-weight:600;
-}
-.badge-building{
-  background:#dbeafe;
-  color:#1d4ed8;
-}
-.badge-team{
-  background:#fce7f3;
-  color:#be185d;
-}
-.badge-pwd{
-  font-family:"Courier New",monospace;
-  font-weight:700;
-  font-size:16px;
-  letter-spacing:2px;
-  color:var(--primary-dark);
-}
-.empty-msg{
-  text-align:center;
-  padding:32px 0;
-  color:var(--text-secondary);
-  font-size:14px;
-}
-.empty-msg .icon{font-size:40px;display:block;margin-bottom:8px;}
-.del-btn{
-  background:none;
-  border:none;
-  color:var(--text-secondary);
-  cursor:pointer;
-  font-size:18px;
-  padding:2px 6px;
-  border-radius:4px;
-  transition:background .15s,color .15s;
-}
-.del-btn:hover{background:#fee2e2;color:#ef4444;}
-.clear-row{
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-  margin-bottom:12px;
-}
-.clear-row span{font-size:13px;color:var(--text-secondary);}
-@media(max-width:600px){
-  .form-grid{grid-template-columns:1fr;}
-  .result-card .password{font-size:36px;letter-spacing:4px;}
-  .header h1{font-size:20px;}
-  body{padding:16px 10px;}
-  .card{padding:16px;}
-}
+  /* Header */
+  .header { text-align: center; margin-bottom: 28px; }
+  .header h1 {
+    font-size: 26px; font-weight: 700;
+    font-family: "Ma Shan Zheng", "Noto Serif SC", cursive;
+    color: var(--text-primary); letter-spacing: 0.15em;
+  }
+  .header .accent-bar {
+    width: 40px; height: 3px; margin: 10px auto 8px;
+    background: var(--accent); border-radius: 2px;
+  }
+  .header p { color: var(--text-secondary); font-size: 14px; margin-top: 6px; }
+
+  /* Card */
+  .card {
+    background: var(--card-bg);
+    backdrop-filter: blur(12px) saturate(1.1);
+    -webkit-backdrop-filter: blur(12px) saturate(1.1);
+    border: 1px solid var(--glass-border);
+    box-shadow: 0 1px 3px var(--shadow), 0 1px 2px rgba(0,0,0,0.02), inset 0 1px 0 var(--glass-shine);
+    border-radius: var(--radius);
+    padding: 24px;
+    margin-bottom: 20px;
+    position: relative;
+    overflow: hidden;
+    isolation: isolate;
+    transition: all 0.3s ease;
+  }
+  .card::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    background: linear-gradient(135deg, var(--glass-shine) 0%, transparent 50%);
+    pointer-events: none;
+    opacity: 0.5;
+  }
+  .card:hover { box-shadow: 0 8px 32px var(--shadow), 0 2px 8px rgba(0,0,0,0.04), inset 0 1px 0 var(--glass-shine); }
+
+  .card-title {
+    font-size: 16px; font-weight: 600;
+    margin-bottom: 16px; display: flex; align-items: center; gap: 8px;
+    font-family: "Ma Shan Zheng", "Noto Serif SC", cursive;
+    letter-spacing: 0.1em;
+  }
+  .card-title .accent-line {
+    display: inline-block; width: 4px; height: 20px;
+    background: var(--accent); border-radius: 2px;
+  }
+
+  .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+  .form-group { display: flex; flex-direction: column; gap: 5px; }
+  .form-group.full { grid-column: 1 / -1; }
+  .form-group label {
+    font-size: 13px; font-weight: 600;
+    color: var(--text-secondary); letter-spacing: 0.05em;
+  }
+  .form-group select, .form-group input {
+    padding: 10px 12px;
+    border: 1.5px solid var(--border);
+    border-radius: 6px;
+    font-size: 15px;
+    background: var(--card-bg);
+    color: var(--text-primary);
+    font-family: "Noto Serif SC", "LXGW WenKai", serif;
+    outline: none;
+    transition: border-color 0.2s, box-shadow 0.2s;
+    cursor: pointer;
+  }
+  .form-group select:focus, .form-group input:focus {
+    border-color: var(--accent);
+    box-shadow: 0 0 0 2px var(--accent-glow);
+  }
+  .btn-row { grid-column: 1 / -1; display: flex; gap: 12px; margin-top: 4px; }
+  .btn {
+    flex: 1; padding: 12px; border: none; border-radius: 6px;
+    font-size: 15px; font-weight: 600; cursor: pointer;
+    font-family: "Noto Serif SC", "LXGW WenKai", serif;
+    transition: all 0.3s ease; position: relative; overflow: hidden;
+    letter-spacing: 0.05em;
+  }
+  .btn:active { transform: scale(0.97); }
+  .btn-primary {
+    background: var(--accent); color: #f7f3e8;
+    box-shadow: 0 4px 14px var(--accent-glow);
+  }
+  .btn-primary:hover { box-shadow: 0 6px 20px var(--accent-glow); transform: translateY(-1px); }
+  .btn-outline {
+    background: transparent; color: var(--text-secondary);
+    border: 1.5px solid var(--border);
+  }
+  .btn-outline:hover { background: var(--bg-secondary); border-color: var(--accent); color: var(--accent); }
+
+  /* Result card */
+  .result-card {
+    background: linear-gradient(135deg, rgba(199, 62, 58, 0.04) 0%, rgba(74, 103, 65, 0.03) 100%);
+    border: 2px dashed var(--accent);
+    border-radius: var(--radius);
+    padding: 24px;
+    text-align: center;
+    display: none;
+    margin-bottom: 20px;
+    position: relative;
+  }
+  .result-card.show { display: block; }
+  .result-card .label {
+    font-size: 13px; color: var(--text-secondary);
+    margin-bottom: 8px; letter-spacing: 0.1em;
+  }
+  .result-card .password {
+    font-size: 48px; font-weight: 800; letter-spacing: 8px;
+    color: var(--accent); font-family: "Courier New", monospace;
+    user-select: all; word-break: break-all;
+  }
+  .result-card .info {
+    margin-top: 10px; font-size: 14px; color: var(--text-secondary);
+  }
+  .result-card .info strong { color: var(--text-primary); }
+  .copy-btn {
+    margin-top: 14px; display: inline-flex; align-items: center; gap: 6px;
+    padding: 8px 20px; border: none; border-radius: 6px;
+    background: var(--accent); color: #f7f3e8; font-size: 14px; cursor: pointer;
+    font-family: "Noto Serif SC", "LXGW WenKai", serif;
+    transition: all 0.3s ease;
+  }
+  .copy-btn:hover { background: #b02a26; transform: translateY(-1px); }
+  .copy-btn.copied { background: var(--stone); }
+
+  /* History table */
+  .history-wrapper { overflow-x: auto; }
+  .history-table { width: 100%; border-collapse: collapse; font-size: 14px; }
+  .history-table th {
+    background: var(--bg-secondary);
+    text-align: left; padding: 10px 8px;
+    font-weight: 600; color: var(--text-secondary);
+    font-size: 12px; border-bottom: 2px solid var(--border);
+    white-space: nowrap;
+  }
+  .history-table td {
+    padding: 10px 8px; border-bottom: 1px solid var(--border);
+    vertical-align: middle;
+  }
+  .history-table tr:hover td { background: var(--bg-secondary); }
+  .badge {
+    display: inline-block; padding: 2px 10px; border-radius: 20px;
+    font-size: 12px; font-weight: 600;
+  }
+  .badge-building { background: rgba(74, 103, 65, 0.12); color: var(--stone); }
+  .badge-team { background: rgba(199, 62, 58, 0.1); color: var(--accent); }
+  .badge-pwd {
+    font-family: "Courier New", monospace; font-weight: 700;
+    font-size: 16px; letter-spacing: 2px; color: var(--accent);
+  }
+  .empty-msg {
+    text-align: center; padding: 32px 0;
+    color: var(--text-secondary); font-size: 14px;
+  }
+  .empty-msg .icon { font-size: 40px; display: block; margin-bottom: 8px; }
+  .del-btn {
+    background: none; border: 1px solid var(--border);
+    cursor: pointer; width: 28px; height: 28px; border-radius: 50%;
+    display: inline-flex; align-items: center; justify-content: center;
+    color: var(--text-secondary); font-size: 12px;
+    transition: all 0.3s ease;
+  }
+  .del-btn:hover { background: var(--accent); color: #f7f3e8; border-color: var(--accent); }
+
+  /* Footer quote */
+  .footer-quote { text-align: center; margin-top: 32px; }
+  .footer-quote .line { width: 40px; height: 1px; margin: 0 auto 16px; background: var(--border); }
+  .footer-quote p { font-size: 13px; color: var(--text-secondary); font-family: "LXGW WenKai", serif; letter-spacing: 0.1em; }
+
+  @media (max-width: 640px) {
+    .form-grid { grid-template-columns: 1fr; }
+    .result-card .password { font-size: 36px; letter-spacing: 4px; }
+    .history-table { font-size: 13px; }
+    .history-table th, .history-table td { padding: 8px 6px; }
+    .badge-pwd { font-size: 14px; }
+    body { padding: 16px 12px; }
+  }
+  @media (max-width: 480px) {
+    .btn-row { flex-direction: column; }
+    .result-card .password { font-size: 28px; }
+  }
 </style>
 </head>
 <body>
 <div class="container">
   <div class="header">
-    <h1>🔐 施工队智能门锁密码分配</h1>
-    <p>每日为施工队分配对应楼栋楼层的门锁密码 · 可选 6/7/8 位数字</p>
+    <h1>门锁密码分配</h1>
+    <div class="accent-bar"></div>
+    <p>施工队智能门锁密码分配工具</p>
   </div>
 
-  <!-- 分配表单 -->
+  <!-- 表单卡片 -->
   <div class="card">
-    <div class="card-title"><span class="icon">📋</span> 新建分配</div>
+    <div class="card-title"><span class="accent-line"></span> 分配参数</div>
     <div class="form-grid">
       <div class="form-group">
-        <label for="building">🏢 楼栋</label>
-        <select id="building">
-          <option value="1号教学楼">1号教学楼</option>
-          <option value="2号教学楼">2号教学楼</option>
-          <option value="3号教学楼">3号教学楼</option>
-          <option value="实训中心">实训中心</option>
-          <option value="综合实验楼">综合实验楼</option>
-          <option value="行政楼">行政楼</option>
-          <option value="实验大楼">实验大楼</option>
-        </select>
+        <label>🏢 楼栋</label>
+        <select id="building"><option value="1号教学楼">1号教学楼</option><option value="2号教学楼">2号教学楼</option><option value="3号教学楼">3号教学楼</option><option value="实训中心">实训中心</option><option value="综合实验楼">综合实验楼</option><option value="行政楼">行政楼</option><option value="实验大楼">实验大楼</option></select>
       </div>
       <div class="form-group">
-        <label for="floor">📌 楼层</label>
-        <select id="floor">
-          <option value="1层">1层</option>
-          <option value="2层">2层</option>
-          <option value="3层">3层</option>
-          <option value="4层">4层</option>
-          <option value="5层">5层</option>
-          <option value="6层">6层</option>
-        </select>
+        <label>📌 楼层</label>
+        <select id="floor"><option value="1层">1层</option><option value="2层">2层</option><option value="3层">3层</option><option value="4层">4层</option><option value="5层">5层</option><option value="6层">6层</option></select>
       </div>
       <div class="form-group">
-        <label for="team">👷 施工队</label>
-        <select id="team">
-          <option value="2026暑期施工01">2026暑期施工01</option>
-          <option value="2026暑期施工02">2026暑期施工02</option>
-          <option value="2026暑期施工03">2026暑期施工03</option>
-          <option value="2026暑期施工04">2026暑期施工04</option>
-          <option value="2026暑期施工05">2026暑期施工05</option>
-          <option value="2026暑期施工06">2026暑期施工06</option>
-          <option value="2026暑期施工07">2026暑期施工07</option>
-          <option value="2026暑期施工08">2026暑期施工08</option>
-          <option value="2026暑期施工09">2026暑期施工09</option>
-          <option value="2026暑期施工10">2026暑期施工10</option>
-        </select>
+        <label>👷 施工队</label>
+        <select id="team"><option value="2026暑期施工01">2026暑期施工01</option><option value="2026暑期施工02">2026暑期施工02</option><option value="2026暑期施工03">2026暑期施工03</option><option value="2026暑期施工04">2026暑期施工04</option><option value="2026暑期施工05">2026暑期施工05</option><option value="2026暑期施工06">2026暑期施工06</option><option value="2026暑期施工07">2026暑期施工07</option><option value="2026暑期施工08">2026暑期施工08</option><option value="2026暑期施工09">2026暑期施工09</option><option value="2026暑期施工10">2026暑期施工10</option></select>
       </div>
       <div class="form-group">
-        <label for="pwdLen">🔑 密码位数</label>
-        <select id="pwdLen">
-          <option value="6">6 位</option>
-          <option value="7">7 位</option>
-          <option value="8" selected>8 位</option>
-        </select>
+        <label>🔑 密码位数</label>
+        <select id="pwdLen"><option value="4">4位</option><option value="5">5位</option><option value="6" selected>6位</option><option value="8">8位</option></select>
       </div>
       <div class="btn-row">
-        <button class="btn btn-primary" onclick="generatePassword()">🔑 生成密码</button>
-        <button class="btn btn-outline" onclick="randomFill()">🎲 随机分配</button>
+        <button class="btn btn-primary" onclick="generatePassword()">🎯 生成密码</button>
+        <button class="btn btn-outline" onclick="randomFill()">🎲 随机填充</button>
       </div>
     </div>
   </div>
 
-  <!-- 密码结果 -->
+  <!-- 结果卡片 -->
   <div class="result-card" id="resultCard">
-    <div class="label">🔑 生成的智能门锁密码</div>
+    <div class="label">🔑 生成的密码</div>
     <div class="password" id="passwordDisplay"></div>
     <div class="info" id="passwordInfo"></div>
     <button class="copy-btn" id="copyBtn" onclick="copyPassword()">📋 复制密码</button>
@@ -322,52 +273,43 @@ body{
 
   <!-- 历史记录 -->
   <div class="card">
-    <div class="clear-row">
-      <div class="card-title" style="margin-bottom:0"><span class="icon">📜</span> 今日分配记录</div>
-      <button class="btn btn-outline" style="flex:0;padding:6px 14px;font-size:13px;" onclick="clearHistory()">🗑️ 清空</button>
+    <div class="card-title" style="display:flex;justify-content:space-between;align-items:center;">
+      <span style="display:flex;align-items:center;gap:8px;"><span class="accent-line"></span> 分配记录</span>
+      <button onclick="clearHistory()" class="btn btn-outline" style="flex:none;padding:4px 12px;font-size:12px;">🗑️ 清空</button>
     </div>
-    <table class="history-table">
-      <thead>
-        <tr>
-          <th style="width:14%">🏢 楼栋</th>
-          <th style="width:9%">📌 楼层</th>
-          <th style="width:26%">👷 施工队</th>
-          <th style="width:20%">🔑 密码</th>
-          <th style="width:9%">位数</th>
-          <th style="width:14%">🕐 时间</th>
-          <th style="width:8%"></th>
-        </tr>
-      </thead>
-      <tbody id="historyBody"></tbody>
-    </table>
+    <div class="history-wrapper">
+      <table class="history-table">
+        <thead><tr><th>🏢 楼栋</th><th>📌 楼层</th><th>👷 施工队</th><th>🔑 密码</th><th>位数</th><th>🕐 时间</th><th></th></tr></thead>
+        <tbody id="historyBody"></tbody>
+      </table>
+    </div>
     <div class="empty-msg" id="emptyMsg">
-      <span class="icon">📭</span>
-      暂无分配记录，请先生成密码
+      <span class="icon">📭</span> 暂无分配记录，请先生成密码
     </div>
+  </div>
+
+  <div class="footer-quote">
+    <div class="line"></div>
+    <p>工欲善其事，必先利其器</p>
   </div>
 </div>
 
 <script>
-// ========== 数据 ==========
 const buildings = ["1号教学楼","2号教学楼","3号教学楼","实训中心","综合实验楼","行政楼","实验大楼"];
 const floors = ["1层","2层","3层","4层","5层","6层"];
 const teams = Array.from({length:10},(_,i)=>`2026暑期施工${String(i+1).padStart(2,'0')}`);
 
-// ========== 密码生成 ==========
 function generatePassword(){
   const building = document.getElementById('building').value;
   const floor = document.getElementById('floor').value;
   const team = document.getElementById('team').value;
   const len = parseInt(document.getElementById('pwdLen').value);
-
   let pwd = '';
   for(let i=0;i<len;i++) pwd += Math.floor(Math.random()*10);
-
   showResult(pwd,building,floor,team,len);
   addHistory(building,floor,team,pwd,len);
 }
 
-// ========== 随机分配 ==========
 function randomFill(){
   const b = buildings[Math.floor(Math.random()*buildings.length)];
   const f = floors[Math.floor(Math.random()*floors.length)];
@@ -377,13 +319,11 @@ function randomFill(){
   document.getElementById('team').value = t;
 }
 
-// ========== 显示结果 ==========
 function showResult(pwd,building,floor,team,len){
   const card = document.getElementById('resultCard');
   const display = document.getElementById('passwordDisplay');
   const info = document.getElementById('passwordInfo');
   const copyBtn = document.getElementById('copyBtn');
-
   display.textContent = pwd;
   info.innerHTML = `分配给 <strong>${team}</strong> · ${building} ${floor} · <strong>${len}位</strong>`;
   copyBtn.textContent = '📋 复制密码';
@@ -391,7 +331,6 @@ function showResult(pwd,building,floor,team,len){
   card.classList.add('show');
 }
 
-// ========== 复制 ==========
 function copyPassword(){
   const pwd = document.getElementById('passwordDisplay').textContent;
   if(!pwd) return;
@@ -399,28 +338,18 @@ function copyPassword(){
     const btn = document.getElementById('copyBtn');
     btn.textContent = '✅ 已复制';
     btn.classList.add('copied');
-    setTimeout(()=>{
-      btn.textContent = '📋 复制密码';
-      btn.classList.remove('copied');
-    },2000);
+    setTimeout(()=>{ btn.textContent = '📋 复制密码'; btn.classList.remove('copied'); },2000);
   }).catch(()=>{
     const ta = document.createElement('textarea');
-    ta.value = pwd;
-    document.body.appendChild(ta);
-    ta.select();
-    document.execCommand('copy');
+    ta.value = pwd; document.body.appendChild(ta);
+    ta.select(); document.execCommand('copy');
     document.body.removeChild(ta);
     const btn = document.getElementById('copyBtn');
-    btn.textContent = '✅ 已复制';
-    btn.classList.add('copied');
-    setTimeout(()=>{
-      btn.textContent = '📋 复制密码';
-      btn.classList.remove('copied');
-    },2000);
+    btn.textContent = '✅ 已复制'; btn.classList.add('copied');
+    setTimeout(()=>{ btn.textContent = '📋 复制密码'; btn.classList.remove('copied'); },2000);
   });
 }
 
-// ========== 历史记录 ==========
 let historyData = [];
 
 function addHistory(building,floor,team,pwd,len){
@@ -446,10 +375,7 @@ function renderHistory(){
   const tbody = document.getElementById('historyBody');
   const empty = document.getElementById('emptyMsg');
   tbody.innerHTML = '';
-  if(historyData.length===0){
-    empty.style.display = 'block';
-    return;
-  }
+  if(historyData.length===0){ empty.style.display = 'block'; return; }
   empty.style.display = 'none';
   historyData.forEach(item=>{
     const tr = document.createElement('tr');
@@ -458,15 +384,15 @@ function renderHistory(){
       <td>${item.floor}</td>
       <td><span class="badge badge-team">${item.team}</span></td>
       <td><span class="badge-pwd">${item.pwd}</span></td>
-      <td style="text-align:center"><span class="badge" style="background:#f1f5f9;color:#475569;font-size:13px;">${item.len}位</span></td>
+      <td style="text-align:center"><span class="badge" style="background:var(--bg-secondary);color:var(--text-secondary);font-size:13px;">${item.len}位</span></td>
       <td style="font-size:12px;color:var(--text-secondary)">${item.time}</td>
       <td><button class="del-btn" onclick="deleteHistory(${item.id})" title="删除">✕</button></td>
     `;
     tbody.appendChild(tr);
   });
 }
-
 renderHistory();
 </script>
 </body>
 </html>
+

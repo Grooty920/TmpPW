@@ -1,4 +1,4 @@
----
+﻿---
 import "../styles/global.css";
 import navData from "../data/navigation.json";
 import profile from "../data/profile.json";
@@ -59,55 +59,63 @@ const { title = "小杨王子", description = "个人博客与工具集" } = Ast
 
     <div id="reading-progress" class="reading-progress" style="width:0%"></div>
 
-    <header id="navbar" class="navbar-glass fixed top-0 left-0 right-0 z-50 transition-all duration-500">
+    <header id="navbar" class="navbar-glass fixed top-0 left-0 right-0 z-50 transition-all duration-500" data-scrolled="false">
       <div class="max-w-5xl mx-auto px-6 h-16 flex items-center justify-between">
-        <a href="/" class="text-xl font-serif font-bold tracking-wide" style="color:var(--text-primary); font-family: 'Ma Shan Zheng', 'Noto Serif SC', cursive;">{navData.brand}</a>
-        <div class="hidden md:flex items-center gap-8">
+        <!-- 品牌名 -->
+        <a href="/" class="brand-link text-xl font-serif font-bold tracking-wide flex items-center gap-1" style="color:var(--text-primary); font-family: 'Ma Shan Zheng', 'Noto Serif SC', cursive;"><span class="hidden sm:inline">{navData.brand}</span><span class="sm:hidden">小杨王子</span></a>
+
+        <!-- 桌面导航 -->
+        <div class="hidden md:flex items-center gap-1">
           {navData.items.map((item) => (
-            <a data-astro-reload href={item.url} class="relative text-sm tracking-wide transition-colors duration-300 group" style="color:var(--text-secondary)">
-              {item.label}
-              <span class="absolute -bottom-1 left-0 w-0 h-0.5 transition-all duration-300 group-hover:w-full" style="background-color:var(--accent)"></span>
+            <a href={item.url}
+               class="nav-link relative px-3 py-2 text-sm tracking-wide rounded-md transition-all duration-300 group"
+               style="color:var(--text-secondary);font-family:'LXGW WenKai','Noto Serif SC',serif;">
+              <span class="nav-link-text">{item.label}</span>
+              <span class="absolute bottom-0.5 left-3 w-0 h-0.5 transition-all duration-300 group-hover:w-[calc(100%-1.5rem)]" style="background-color:var(--accent)"></span>
             </a>
           ))}
-          <button id="theme-toggle" class="relative w-10 h-10 rounded-full flex items-center justify-center transition-all duration-300 hover:bg-ink-700 focus:outline-none" aria-label="切换主题">
-            <svg id="sun-icon" class="absolute w-5 h-5 transition-all duration-500" style="color:var(--accent);opacity:1;transform:rotate(0deg) scale(1)" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
-            <svg id="moon-icon" class="absolute w-5 h-5 transition-all duration-500" style="color:var(--accent);opacity:0;transform:rotate(-90deg) scale(0.5)" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
-          </button>
-          <a href="/search" class="relative w-10 h-10 rounded-full flex items-center justify-center transition-all duration-300 hover:bg-ink-700" style="color:var(--text-secondary)" aria-label="搜索">
-            <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+          <div class="w-px h-5 mx-2" style="background-color:var(--border)"></div>
+          <!-- 搜索 -->
+          <a href="/search" class="nav-icon-btn relative w-9 h-9 rounded-full flex items-center justify-center transition-all duration-300 hover:bg-ink-700" style="color:var(--text-secondary)" aria-label="搜索">
+            <svg class="icon-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
               <circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/>
             </svg>
           </a>
-          <button id="theme-toggle-mobile" class="relative w-10 h-10 rounded-full flex items-center justify-center transition-all duration-300 hover:bg-ink-700 focus:outline-none" aria-label="切换主题">
+          <!-- 主题切换 -->
+          <button id="theme-toggle-d" class="nav-icon-btn relative w-9 h-9 rounded-full flex items-center justify-center transition-all duration-300 hover:bg-ink-700 focus:outline-none" aria-label="切换主题">
+            <svg id="sun-icon-d" class="absolute icon-sm transition-all duration-500" style="color:var(--accent);opacity:1;transform:rotate(0deg) scale(1)" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
+            <svg id="moon-icon-d" class="absolute icon-sm transition-all duration-500" style="color:var(--accent);opacity:0;transform:rotate(-90deg) scale(0.5)" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+          </button>
         </div>
-        <div class="md:hidden flex items-center gap-3">
-          <button id="theme-toggle-mobile" class="w-10 h-10 rounded-full flex items-center justify-center" style="color:var(--accent)" aria-label="切换主题">
-            <svg id="sun-icon-m" class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
-          </button>
-          <a href="/search" class="relative w-10 h-10 rounded-full flex items-center justify-center transition-all duration-300 hover:bg-ink-700" style="color:var(--text-secondary)" aria-label="搜索">
-            <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+
+        <!-- 移动端右侧 -->
+        <div class="md:hidden flex items-center gap-2">
+          <a href="/search" class="w-9 h-9 rounded-full flex items-center justify-center transition-all duration-300 hover:bg-ink-700" style="color:var(--text-secondary)" aria-label="搜索">
+            <svg class="icon-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
               <circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/>
             </svg>
           </a>
-          <button id="theme-toggle" class="relative w-10 h-10 rounded-full flex items-center justify-center transition-all duration-300 hover:bg-ink-700 focus:outline-none" aria-label="切换主题">
-          <button id="menu-btn" class="w-10 h-10 rounded-full flex items-center justify-center" style="color:var(--text-primary)" aria-label="菜单">
-            <svg id="menu-icon" class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12h18M3 6h18M3 18h18"/></svg>
+          <button id="theme-toggle-m" class="w-9 h-9 rounded-full flex items-center justify-center transition-all duration-300 hover:bg-ink-700 focus:outline-none" aria-label="切换主题">
+            <svg id="sun-icon-m" class="icon-sm transition-all duration-500" style="color:var(--accent);opacity:1;transform:rotate(0deg) scale(1)" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
+            <svg id="moon-icon-m" class="absolute icon-sm transition-all duration-500" style="color:var(--accent);opacity:0;transform:rotate(-90deg) scale(0.5)" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
           </button>
-          <a href="/search" class="relative w-10 h-10 rounded-full flex items-center justify-center transition-all duration-300 hover:bg-ink-700" style="color:var(--text-secondary)" aria-label="搜索">
-            <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-              <circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/>
-            </svg>
-          </a>
-          <button id="theme-toggle" class="relative w-10 h-10 rounded-full flex items-center justify-center transition-all duration-300 hover:bg-ink-700 focus:outline-none" aria-label="切换主题">
+          <button id="menu-btn" class="w-9 h-9 rounded-full flex items-center justify-center transition-all duration-300 hover:bg-ink-700" style="color:var(--text-primary)" aria-label="菜单">
+            <svg id="menu-icon" class="w-5 h-5 transition-transform duration-300" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12h18M3 6h18M3 18h18"/></svg>
+          </button>
         </div>
       </div>
     </header>
 
-    <div id="mobile-menu" class="fixed inset-0 top-16 z-40 hidden flex-col items-center gap-8 pt-16 text-lg" style="background-color:var(--bg-primary)">
-      <a href="/" class="transition-colors" style="color:var(--text-secondary)" onclick="document.getElementById('mobile-menu').classList.add('hidden')">首页</a>
-      <a data-astro-reload href="/blog" class="transition-colors" style="color:var(--text-secondary)" onclick="document.getElementById('mobile-menu').classList.add('hidden')">随笔</a>
-      <a data-astro-reload href="/tools" class="transition-colors" style="color:var(--text-secondary)" onclick="document.getElementById('mobile-menu').classList.add('hidden')">工具</a>
-      <a data-astro-reload href="/search" class="transition-colors" style="color:var(--text-secondary)" onclick="document.getElementById('mobile-menu').classList.add('hidden')">搜索</a>
+    <!-- 移动菜单 - 玻璃效果覆盖层 -->
+    <div id="mobile-menu" class="fixed inset-0 top-16 z-40 hidden flex-col items-center justify-start gap-2 pt-12 pb-8 px-6 overflow-y-auto" style="background-color:var(--nav-bg);backdrop-filter:blur(24px) saturate(1.3);-webkit-backdrop-filter:blur(24px) saturate(1.3);border-bottom:1px solid var(--glass-border);">
+      {navData.items.map((item) => (
+        <a href={item.url}
+           class="mobile-nav-link block w-full text-center py-4 text-base tracking-wide rounded-lg transition-all duration-300"
+           style="color:var(--text-secondary);font-family:'Ma Shan Zheng','Noto Serif SC',cursive;"
+           onclick="closeMobileMenu()">
+          {item.label}
+        </a>
+      ))}
     </div>
 
     <main class="min-h-screen pt-20">
@@ -146,7 +154,7 @@ const { title = "小杨王子", description = "个人博客与工具集" } = Ast
       function setTheme(t) { document.documentElement.classList.toggle("dark", t === "dark"); localStorage.setItem("theme", t); updateIcons(t); }
       function updateIcons(theme) {
         var isDark = theme === "dark";
-        [["sun-icon","moon-icon"],["sun-icon-m","moon-icon-m"]].forEach(function(p) {
+        [["sun-icon-d","moon-icon-d"],["sun-icon-m","moon-icon-m"]].forEach(function(p) {
           var sun = document.getElementById(p[0]), moon = document.getElementById(p[1]);
           if (!sun || !moon) return;
           sun.style.opacity = isDark ? "0" : "1"; sun.style.transform = isDark ? "rotate(90deg) scale(0.5)" : "rotate(0deg) scale(1)";
@@ -158,30 +166,131 @@ const { title = "小杨王子", description = "个人博客与工具集" } = Ast
       function initLayout() {
         var t = localStorage.getItem("theme") || (window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light");
         setTheme(t);
-        document.getElementById("theme-toggle")?.addEventListener("click", toggleTheme);
-        document.getElementById("theme-toggle-mobile")?.addEventListener("click", toggleTheme);
+        // 主题切换按钮 - 桌面端和移动端独立ID
+        document.getElementById("theme-toggle-d")?.addEventListener("click", toggleTheme);
+        document.getElementById("theme-toggle-m")?.addEventListener("click", toggleTheme);
 
-        var navbar = document.getElementById("navbar");
-        if (navbar) {
-          if (window.scrollY > 20) { navbar.style.backgroundColor = "var(--nav-bg)"; navbar.style.backdropFilter = "blur(24px)"; navbar.style.boxShadow = "0 1px 3px rgba(0,0,0,0.06)"; }
-          else { navbar.style.backgroundColor = "transparent"; navbar.style.backdropFilter = "none"; navbar.style.boxShadow = "none"; }
+        // ===== 导航栏滚动效果（节流） =====
+        function updateNavbar() {
+          var navbar = document.getElementById("navbar");
+          if (!navbar) return;
+          if (window.scrollY > 10) {
+            navbar.style.backgroundColor = "var(--nav-bg)";
+            navbar.style.backdropFilter = "blur(24px)";
+            navbar.style.boxShadow = "0 1px 3px rgba(0,0,0,0.06)";
+          } else {
+            navbar.style.backgroundColor = "transparent";
+            navbar.style.backdropFilter = "none";
+            navbar.style.boxShadow = "none";
+          }
         }
 
-        var pb = document.getElementById("reading-progress");
-        if (pb) {
-          var dh = document.documentElement.scrollHeight - window.innerHeight;
-          if (dh > 0) pb.style.width = Math.min((window.scrollY / dh) * 100, 100) + "%";
-        }
+        // 节流滚动监听
+        var ticking = false;
+        window.addEventListener("scroll", function() {
+          if (!ticking) {
+            requestAnimationFrame(function() {
+              updateNavbar();
+              updateBackToTop();
+              // 阅读进度条
+              var pb = document.getElementById("reading-progress");
+              if (pb) {
+                var dh = document.documentElement.scrollHeight - window.innerHeight;
+                if (dh > 0) pb.style.width = Math.min((window.scrollY / dh) * 100, 100) + "%";
+              }
+              ticking = false;
+            });
+            ticking = true;
+          }
+        });
+        updateNavbar();
 
-        var mb = document.getElementById("menu-btn"), mm = document.getElementById("mobile-menu"), mi = document.getElementById("menu-icon");
+        // ===== 当前页面高亮 =====
+        var currentPath = window.location.pathname;
+        document.querySelectorAll(".nav-link, .mobile-nav-link").forEach(function(link) {
+          var href = link.getAttribute("href");
+          if (href === currentPath || (href !== "/" && currentPath.startsWith(href))) {
+            link.style.color = "var(--accent)";
+            link.style.fontWeight = "600";
+            var underline = link.querySelector("span:last-child");
+            if (underline && underline.classList.contains("absolute")) {
+              underline.style.width = "calc(100% - 1.5rem)";
+            }
+          }
+        });
+
+        // ===== 移动菜单交互 =====
+        var mm = document.getElementById("mobile-menu");
+        var mb = document.getElementById("menu-btn");
+        var mi = document.getElementById("menu-icon");
+
         if (mb && mm) {
           mb.onclick = function() {
-            var open = !mm.classList.contains("hidden"); mm.classList.toggle("hidden");
-            mi.innerHTML = open ? "<path d='M3 12h18M3 6h18M3 18h18'/>" : "<path d='M18 6L6 18M6 6l12 12'/>";
+            toggleMobileMenu();
           };
+        }
+
+        // ESC 关闭
+        document.addEventListener("keydown", function escHandler(e) {
+          if (e.key === "Escape" && mm && !mm.classList.contains("hidden")) {
+            closeMobileMenu();
+          }
+        });
+      }
+
+      // 移动菜单控制（全局函数，供内联onclick调用）
+      window.closeMobileMenu = function() {
+        var mm = document.getElementById("mobile-menu");
+        var mi = document.getElementById("menu-icon");
+        if (mm) {
+          mm.classList.add("hidden");
+          document.body.style.overflow = "";
+        }
+        if (mi) mi.innerHTML = "<path d='M3 12h18M3 6h18M3 18h18'/>";
+      };
+
+      function toggleMobileMenu() {
+        var mm = document.getElementById("mobile-menu");
+        var mi = document.getElementById("menu-icon");
+        if (!mm) return;
+        var open = mm.classList.contains("hidden");
+        if (open) {
+          mm.classList.remove("hidden");
+          document.body.style.overflow = "hidden"; // 锁定滚动
+          if (mi) mi.innerHTML = "<path d='M18 6L6 18M6 6l12 12'/>";
+        } else {
+          closeMobileMenu();
         }
       }
 
+      // ===== 回到顶部按钮 =====
+      var backToTop = document.getElementById("back-to-top");
+      var scrollProgress = document.getElementById("scroll-progress");
+      if (backToTop) {
+        backToTop.addEventListener("click", function() {
+          window.scrollTo({ top: 0, behavior: "smooth" });
+        });
+      }
+      
+      function updateBackToTop() {
+        if (!backToTop || !scrollProgress) return;
+        var scrollY = window.scrollY;
+        var dh = document.documentElement.scrollHeight - window.innerHeight;
+        var progress = dh > 0 ? scrollY / dh : 0;
+        var circumference = 125.6;
+        scrollProgress.style.strokeDashoffset = circumference * (1 - progress);
+        
+        if (scrollY > 300) {
+          backToTop.style.opacity = "1";
+          backToTop.style.pointerEvents = "auto";
+          backToTop.style.transform = "scale(1)";
+        } else {
+          backToTop.style.opacity = "0";
+          backToTop.style.pointerEvents = "none";
+          backToTop.style.transform = "scale(0.8)";
+        }
+      }
+      
       // 首次加载和 ViewTransitions 导航后都执行
       function runLayout() {
         if (document.readyState === 'loading') {
@@ -192,9 +301,55 @@ const { title = "小杨王子", description = "个人博客与工具集" } = Ast
       }
       runLayout();
       document.addEventListener('astro:page-load', runLayout);
+
+      // ===== 全局墨滴涟漪效果 =====
+      function initInkRipple() {
+        document.addEventListener("click", function(e) {
+          // 只对可交互元素生效
+          var target = e.target.closest("a, button, .ink-btn, .card-ink, .ink-tag, .nav-link, .mobile-nav-link, .nav-icon-btn");
+          if (!target) return;
+          // 如果元素已有 ink-drop-effect 类，跳过（让 CSS 处理）
+          if (target.classList.contains("ink-drop-effect")) return;
+          // 避免重复快速点击
+          if (target._inkRippleTimer) return;
+          target._inkRippleTimer = true;
+          setTimeout(function() { target._inkRippleTimer = false; }, 600);
+          
+          var rect = target.getBoundingClientRect();
+          var ripple = document.createElement("span");
+          ripple.className = "ink-ripple";
+          var size = Math.max(rect.width, rect.height) * 0.8;
+          ripple.style.width = size + "px";
+          ripple.style.height = size + "px";
+          ripple.style.left = (e.clientX - rect.left) + "px";
+          ripple.style.top = (e.clientY - rect.top) + "px";
+          ripple.style.position = "absolute";
+          
+          // 确保目标元素有 relative 定位
+          if (getComputedStyle(target).position === "static") {
+            target.style.position = "relative";
+          }
+          target.style.overflow = "hidden";
+          
+          target.appendChild(ripple);
+          setTimeout(function() { ripple.remove(); }, 700);
+        });
+      }
+      
+      // 在页面加载和导航后初始化
+      function runInkRipple() {
+        if (document.readyState === "loading") {
+          document.addEventListener("DOMContentLoaded", initInkRipple);
+        } else {
+          initInkRipple();
+        }
+      }
+      runInkRipple();
+      document.addEventListener("astro:page-load", runInkRipple);
     </script>
   </body>
 </html>
+
 
 
 

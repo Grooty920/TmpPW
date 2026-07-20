@@ -7,6 +7,7 @@ import { formatDate } from "../../utils/date";
 const allPosts = await getCollection("posts", ({ data }) => !data.draft);
 allPosts.sort((a, b) => b.data.date.getTime() - a.data.date.getTime());
 const pageSize = 5;
+const categories = [...new Set(allPosts.map(p => p.data.category))].sort();
 const totalPosts = allPosts.length;
 const lastPage = Math.ceil(totalPosts / pageSize);
 const posts = allPosts.slice(0, pageSize);
@@ -26,9 +27,22 @@ const posts = allPosts.slice(0, pageSize);
       </div>
     )}
 
-    <div class="max-w-3xl mx-auto space-y-6">
+        <!-- 分类/标签筛选 -->
+    <div class="max-w-3xl mx-auto mb-10 reveal">
+      <div id="filter-count" class="text-xs mb-3" style="color:var(--accent);font-family:LXGW WenKai,serif;display:none;"></div>
+      <div class="flex flex-wrap items-center gap-2">
+        <span class="text-xs mr-1" style="color:var(--text-secondary);letter-spacing:0.1em;">分类：</span>
+        <a href="/blog" class="filter-link inline-block px-3 py-1 text-xs rounded-full transition-all duration-300" style="border:1px solid var(--accent);color:var(--accent);background:var(--accent-glow);">全部</a>
+        {categories.map((cat) => (
+          <a href={"/categories/" + cat} class="inline-block px-3 py-1 text-xs rounded-full transition-all duration-300 hover:scale-105" style="border:1px solid var(--border);color:var(--text-secondary);">
+            {cat}
+          </a>
+        ))}
+      </div>
+    </div>
+<div class="max-w-3xl mx-auto space-y-6">
       {posts.map((post, index) => (
-        <div class="reveal" style={"animation-delay:" + (0.1 + index * 0.08) + "s"}>
+        <div class="blog-card-item reveal" data-tags={(post.data.tags || []).join(",")} data-category={post.data.category} style={"animation-delay:" + (0.1 + index * 0.08) + "s"}>
           <BlogListCard
             title={post.data.title}
             description={post.data.description}
@@ -37,6 +51,7 @@ const posts = allPosts.slice(0, pageSize);
             category={post.data.category}
             coverImage={post.data.coverImage}
             readingTime={post.data.readingTime}
+            tags={post.data.tags}
           />
         </div>
       ))}
@@ -82,4 +97,88 @@ const posts = allPosts.slice(0, pageSize);
       </div>
     </div>
   </div>
+  
+  <script>
+  // ===== 客户端标签/分类筛选 =====
+  (function() {
+    function initFilter() {
+      var params = new URLSearchParams(window.location.search);
+      var activeTag = params.get("tag");
+      var activeCategory = params.get("category");
+      
+      // 更新筛选按钮高亮状态
+      var filterLinks = document.querySelectorAll(".filter-link");
+      filterLinks.forEach(function(link) {
+        link.classList.remove("active-filter");
+        link.style.background = "";
+        link.style.color = "";
+        link.style.borderColor = "";
+      });
+      
+      // 高亮当前激活的筛选按钮
+      if (activeTag) {
+        var tagBtn = document.querySelector('[data-filter-tag="' + activeTag + '"]');
+        if (tagBtn) {
+          tagBtn.style.background = "var(--accent-glow)";
+          tagBtn.style.color = "var(--accent)";
+          tagBtn.style.borderColor = "var(--accent)";
+        }
+      }
+      if (activeCategory) {
+        var catBtn = document.querySelector('[data-filter-cat="' + activeCategory + '"]');
+        if (catBtn) {
+          catBtn.style.background = "var(--accent-glow)";
+          catBtn.style.color = "var(--accent)";
+          catBtn.style.borderColor = "var(--accent)";
+        }
+      }
+      
+      // 筛选文章卡片
+      var cards = document.querySelectorAll(".blog-card-item");
+      cards.forEach(function(card) {
+        var show = true;
+        if (activeTag) {
+          var cardTags = card.getAttribute("data-tags");
+          if (!cardTags || cardTags.indexOf(activeTag) === -1) show = false;
+        }
+        if (activeCategory) {
+          var cardCat = card.getAttribute("data-category");
+          if (cardCat !== activeCategory) show = false;
+        }
+        card.style.display = show ? "" : "none";
+      });
+      
+      // 更新计数
+      var visibleCount = 0;
+      cards.forEach(function(c) { if (c.style.display !== "none") visibleCount++; });
+      var countEl = document.getElementById("filter-count");
+      if (countEl) {
+        if (activeTag || activeCategory) {
+          countEl.textContent = "\u7b5b\u9009\u7ed3\u679c: " + visibleCount + " \u7bc7";
+          countEl.style.display = "";
+        } else {
+          countEl.style.display = "none";
+        }
+      }
+    }
+    
+    initFilter();
+    
+    // 点击筛选链接时更新 URL 并重新筛选
+    document.querySelectorAll(".filter-link").forEach(function(link) {
+      link.addEventListener("click", function(e) {
+        e.preventDefault();
+        var href = link.getAttribute("href");
+        if (href) {
+          history.pushState(null, "", href);
+          initFilter();
+        }
+      });
+    });
+    
+    // 监听浏览器前进/后退
+    window.addEventListener("popstate", initFilter);
+  })();
+  </script>
+
 </Layout>

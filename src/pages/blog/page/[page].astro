@@ -38,6 +38,7 @@ const next = currentPage < lastPage ? "/blog/page/" + (currentPage + 1) : null;
             category={post.data.category}
             coverImage={post.data.coverImage}
             readingTime={post.data.readingTime}
+            tags={post.data.tags}
           />
         </div>
       ))}

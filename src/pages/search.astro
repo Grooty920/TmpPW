@@ -1,4 +1,4 @@
----
+﻿---
 import Layout from "../layouts/Layout.astro";
 import { getCollection } from "astro:content";
 
@@ -35,7 +35,11 @@ const searchData = posts.map(p => ({
       </div>
 
       <div id="search-results" class="space-y-4"></div>
-      <div id="search-empty" class="hidden text-center py-16">
+      <div id="search-skeleton" class="hidden space-y-4 mb-4">
+      <div class="p-5 card-ink"><div class="skeleton-pulse h-4 w-16 mb-3"></div><div class="skeleton-pulse h-5 w-48 mb-2"></div><div class="skeleton-pulse h-4 w-full mb-3"></div><div class="skeleton-pulse h-3 w-32"></div></div>
+      <div class="p-5 card-ink"><div class="skeleton-pulse h-4 w-16 mb-3"></div><div class="skeleton-pulse h-5 w-40 mb-2"></div><div class="skeleton-pulse h-4 w-full mb-3"></div><div class="skeleton-pulse h-3 w-28"></div></div>
+    </div>
+    <div id="search-empty" class="hidden text-center py-16">
         <p class="text-sm" style="color:var(--text-secondary)">未找到相关笔墨</p>
       </div>
     </div>
@@ -48,6 +52,7 @@ const searchData = posts.map(p => ({
 <script is:inline>
 (function() {
   function initSearch() {
+    var debounceTimer = null;
     var store = document.getElementById("search-data-store");
     var searchData = store ? JSON.parse(store.textContent) : [];
     var input = document.getElementById("search-input");
@@ -56,6 +61,16 @@ const searchData = posts.map(p => ({
     if (!input || !results) return;
 
     function render(items) {
+      // 更新搜索结果数量
+      var countEl = document.getElementById("search-count");
+      if (!countEl) {
+        countEl = document.createElement("div");
+        countEl.id = "search-count";
+        countEl.style.cssText = "color:var(--text-secondary);font-size:0.75rem;letter-spacing:0.05em;margin-bottom:0.75rem;";
+        results.parentNode.insertBefore(countEl, results);
+      }
+      countEl.textContent = items.length > 0 ? "共找到 " + items.length + " 篇相关笔墨" : "";
+      countEl.style.display = items.length > 0 ? "block" : "none";
       if (items.length === 0) {
         results.innerHTML = "";
         if (empty) empty.classList.remove("hidden");
@@ -99,9 +114,18 @@ const searchData = posts.map(p => ({
 
     // 移除旧的事件监听器（避免重复绑定）
     input.removeEventListener("input", input._searchHandler);
-    input._searchHandler = function() { search(this.value); };
+    input._searchHandler = function() {
+      if (debounceTimer) clearTimeout(debounceTimer);
+      debounceTimer = setTimeout(function() { if (input.value.trim()) {
+      if (debounceTimer) clearTimeout(debounceTimer);
+      debounceTimer = setTimeout(function() { search(input.value); }, 300);
+    } }, 300);
+    };
     input.addEventListener("input", input._searchHandler);
-    search(input.value);
+    if (input.value.trim()) {
+      if (debounceTimer) clearTimeout(debounceTimer);
+      debounceTimer = setTimeout(function() { search(input.value); }, 300);
+    }
   }
 
   if (document.readyState === "loading") {
@@ -112,3 +136,7 @@ const searchData = posts.map(p => ({
   document.addEventListener("astro:page-load", initSearch);
 })();
 </script>
+
+
+
+

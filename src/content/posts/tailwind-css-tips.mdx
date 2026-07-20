@@ -1,0 +1,53 @@
+---
+title: "Tailwind CSS 实战技巧"
+description: "分享几个我在实际项目中使用 Tailwind CSS 的实用技巧，让样式开发更高效。"
+date: 2026-07-15
+tags: ["前端", "CSS", "Tailwind"]
+category: "技术"
+readingTime: 5
+---
+
+## 1. 善用 group 修饰符
+
+Tailwind 的 `group` 修饰符可以让你在父元素悬停时控制子元素的样式：
+
+```html
+<div class="group cursor-pointer">
+  <p class="text-gray-500 group-hover:text-red-500">
+    鼠标悬停时我会变红
+  </p>
+</div>
+```
+
+## 2. 自定义主题色
+
+在 `tailwind.config.mjs` 中扩展主题色，让设计语言更统一：
+
+```javascript
+export default {
+  theme: {
+    extend: {
+      colors: {
+        ink: {
+          50: "#f7f3e8",
+          100: "#efe8d0",
+          500: "#c73e3a",
+          900: "#1c1c1c",
+        },
+      },
+    },
+  },
+};
+```
+
+## 3. 现代 CSS 特性
+
+Tailwind 对现代 CSS 特性的支持非常好：
+
+- `aspect-ratio` 控制宽高比
+- `container queries` 容器查询
+- `@apply` 提取复用样式
+
+## 小结
+
+Tailwind CSS 的核心优势在于**约束中创造**，它提供了一个设计系统的基础框架，让你专注于功能而非样式命名。

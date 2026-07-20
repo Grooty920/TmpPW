@@ -1,0 +1,46 @@
+---
+title: "Astro 5 新特性速览"
+description: "Astro 5 带来了内容层(Content Layer)、更快的构建速度和更好的开发体验，一起看看这个静态站点生成器的最新版本。"
+date: 2026-07-18
+tags: ["前端", "Astro", "技术"]
+category: "技术"
+readingTime: 6
+---
+
+## 前言
+
+Astro 5 于近期正式发布，作为一个已经在生产环境中使用 Astro 的开发者，自然要第一时间体验新版本的变化。
+
+## 内容层 (Content Layer)
+
+Astro 5 最重磅的更新是全新的 **Content Layer** 系统，它让内容管理从"约定"走向了"标准"：
+
+```typescript
+import { defineCollection, z } from "astro:content";
+
+const posts = defineCollection({
+  type: "content",
+  schema: z.object({
+    title: z.string(),
+    description: z.string(),
+    date: z.date(),
+    tags: z.array(z.string()),
+  }),
+});
+```
+
+## 更快的构建速度
+
+根据官方基准测试，Astro 5 的构建速度提升了约 **30%**，这得益于 Vite 6 的底层升级和更智能的静态分析。
+
+## 升级指南
+
+从 Astro 4 升级到 5 非常简单：
+
+```bash
+npx @astrojs/upgrade
+```
+
+## 小结
+
+如果你还没尝试过 Astro，现在是最好的时机。

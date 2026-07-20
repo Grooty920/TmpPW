@@ -1,4 +1,4 @@
----
+﻿---
 import Layout from "../layouts/Layout.astro";
 import BlogCard from "../components/BlogCard.astro";
 import AuthorCard from "../components/AuthorCard.astro";
@@ -14,7 +14,7 @@ const categories = [...new Set(posts.map(p => p.data.category))];
 <Layout title="小杨王子 · 山海之间，自在如风" description="寄蜉蝣于天地，渺沧海之一粟 — 小杨王子的水墨博客">
   <!-- ===== Hero 江湖水墨 - 视频背景 ===== -->
   <section class="relative min-h-[85vh] flex items-center overflow-hidden" style="background: #0a0a0a;">
-    <video autoplay muted loop playsinline preload="none" poster="/AI-???-?.png" class="absolute inset-0 w-full h-full object-cover" style="filter: grayscale(100%) brightness(0.4) contrast(1.1);">
+    <video autoplay muted loop playsinline preload="none" poster="/AI-中国风-山.png" class="absolute inset-0 w-full h-full object-cover" style="filter: grayscale(100%) brightness(0.4) contrast(1.1);">
       <source src="/hero-bg.mp4" type="video/mp4" />
     </video>
     <div class="absolute inset-0" style="background: linear-gradient(180deg, rgba(0,0,0,0.2) 0%, transparent 30%, transparent 70%, rgba(0,0,0,0.4) 100%);"></div>
@@ -63,22 +63,43 @@ const categories = [...new Set(posts.map(p => p.data.category))];
         {latest.length > 0 ? latest.map((post, i) => (
         <a
           href={"/blog/" + post.slug}
-          class="group card-ink p-6 transition-all duration-300 hover:scale-[1.01] reveal"
+          class="group card-ink p-0 overflow-hidden transition-all duration-300 hover:scale-[1.02] hover:shadow-xl reveal "
           style={"animation-delay: " + (0.1 + i * 0.1) + "s; border-left: 3px solid var(--accent);"}
         >
           {post.data.coverImage && (
-          <div class="mb-4 h-40 overflow-hidden rounded-sm">
-            <img src={post.data.coverImage} alt={post.data.title} class="w-full h-full object-cover transition-all duration-500 group-hover:scale-110" />
+          <div class="relative h-44 overflow-hidden">
+            <img src={post.data.coverImage} alt={post.data.title} class="w-full h-full object-cover transition-all duration-500 group-hover:scale-110" loading="lazy" decoding="async" />
+            <div class="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent"></div>
+            <span class="absolute top-3 right-3 inline-block px-2.5 py-1 text-xs font-medium rounded-md" style="background:var(--accent);color:#f7f3e8;font-family:'LXGW WenKai',serif;letter-spacing:0.05em;">
+              {post.data.category}
+            </span>
           </div>
           )}
-          <span class="inline-block px-2 py-0.5 text-xs mb-2 ink-tag" style="font-size:0.65rem;">{post.data.category}</span>
-          <h3 class="text-base font-serif font-semibold mb-1.5 line-clamp-1 transition-colors duration-300 group-hover:text-gradient" style="color:var(--text-primary)">{post.data.title}</h3>
-          <p class="text-xs leading-relaxed line-clamp-2 mb-3" style="color:var(--text-secondary)">{post.data.description}</p>
-          <div class="flex items-center gap-3 text-xs" style="color:var(--text-secondary)">
-            <span>{formatDate(post.data.date)}</span>
-            <span>·</span>
-            <span>{post.data.readingTime || 5} 分</span>
+          <div class="p-5">
+            {!post.data.coverImage && (
+            <span class="inline-block px-2 py-0.5 text-xs mb-2 ink-tag" style="font-size:0.65rem;">{post.data.category}</span>
+            )}
+            <h3 class="text-base font-serif font-semibold mb-1.5 line-clamp-1 transition-colors duration-300 group-hover:text-gradient" style="color:var(--text-primary)">{post.data.title}</h3>
+            <p class="text-xs leading-relaxed line-clamp-2 mb-3" style="color:var(--text-secondary)">{post.data.description}</p>
+            <div class="flex items-center justify-between text-xs" style="color:var(--text-secondary)">
+              <div class="flex items-center gap-3">
+                <span class="relative-time" data-date={post.data.date.toISOString()}>{formatDate(post.data.date)}</span>
+                <span>·</span>
+                <span class="flex items-center gap-1">
+                  <svg class="w-3 h-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                  {post.data.readingTime || 5} 分
+                </span>
+              </div>
+              {post.data.tags && post.data.tags.length > 0 && (
+              <div class="flex items-center gap-1.5">
+                {post.data.tags.slice(0, 2).map(tag => (
+                  <span class="text-[10px] px-1.5 py-0.5 rounded-sm" style="background:var(--ink-light);color:var(--text-secondary);">#{tag}</span>
+                ))}
+              </div>
+              )}
+            </div>
           </div>
+          <div class="absolute bottom-0 left-0 right-0 h-0.5 bg-gradient-to-r from-transparent via-[var(--accent)] to-transparent scale-x-0 group-hover:scale-x-100 transition-transform duration-500"></div>
         </a>
         )) : (
         <div class="col-span-2 text-center py-16">
@@ -89,8 +110,9 @@ const categories = [...new Set(posts.map(p => p.data.category))];
 
       {latest.length > 0 && (
       <div class="mt-10 text-center reveal">
-        <a href="/blog" class="ink-btn px-6 py-2.5 text-sm" style="border:1px solid var(--accent);color:var(--accent);">
-          阅全文 →
+        <a href="/blog" class="group inline-flex items-center gap-2 px-6 py-2.5 text-sm transition-all duration-300 hover:gap-3" style="border:1px solid var(--accent);color:var(--accent);border-radius:6px;font-family:'LXGW WenKai','Noto Serif SC',serif;">
+          阅全文
+          <svg class="w-4 h-4 transition-transform duration-300 group-hover:translate-x-1" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
         </a>
       </div>
       )}
@@ -111,9 +133,9 @@ const categories = [...new Set(posts.map(p => p.data.category))];
           <h4 class="text-xs font-semibold mb-4 tracking-wider" style="color:var(--text-secondary); letter-spacing: 0.2em;">文章分类</h4>
           <div class="flex flex-wrap gap-2">
             {categories.length > 0 ? categories.map(cat => (
-            <span class="ink-tag px-3 py-1 text-xs cursor-pointer" style="border:1px solid var(--border);color:var(--text-secondary);">
+            <a href={"/blog?category=" + cat} class="ink-tag px-3 py-1 text-xs transition-all duration-300 hover:scale-105 hover:text-gradient" style="border:1px solid var(--border);color:var(--text-secondary);">
               {cat}
-            </span>
+            </a>
             )) : (
             <span class="text-xs" style="color:var(--text-secondary)">暂无分类</span>
             )}
@@ -181,7 +203,47 @@ const categories = [...new Set(posts.map(p => p.data.category))];
       }
     }, 2200);
   })();
+
+<script>
+// ===== 相对时间显示 =====
+(function() {
+  function updateRelativeTimes() {
+    document.querySelectorAll(".relative-time").forEach(function(el) {
+      var dateStr = el.getAttribute("data-date");
+      if (!dateStr) return;
+      var d = new Date(dateStr);
+      var now = new Date();
+      var diff = now - d;
+      var seconds = Math.floor(diff / 1000);
+      var minutes = Math.floor(seconds / 60);
+      var hours = Math.floor(minutes / 60);
+      var days = Math.floor(hours / 24);
+      var text;
+      if (days === 0) {
+        if (hours === 0) {
+          text = minutes < 1 ? "刚刚" : minutes + "分钟前";
+        } else {
+          text = hours + "小时前";
+        }
+      } else if (days < 7) {
+        text = days + "天前";
+      } else if (days < 30) {
+        text = Math.floor(days / 7) + "周前";
+      } else if (days < 365) {
+        text = Math.floor(days / 30) + "个月前";
+      } else {
+        text = d.getFullYear() + "年" + (d.getMonth() + 1) + "月" + d.getDate() + "日";
+      }
+      el.textContent = text;
+    });
+  }
+  updateRelativeTimes();
+  // 每60秒更新一次
+  setInterval(updateRelativeTimes, 60000);
+})();
 </script>
+</script>
+
 
 
 

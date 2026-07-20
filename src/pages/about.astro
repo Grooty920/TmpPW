@@ -1,4 +1,4 @@
----
+﻿---
 import Layout from "../layouts/Layout.astro";
 import profile from "../data/profile.json";
 ---
@@ -17,7 +17,7 @@ import profile from "../data/profile.json";
       <div class="flex flex-col md:flex-row items-center gap-10 p-8 card-ink reveal" style="border-left: 3px solid var(--accent);">
         <div class="shrink-0">
           <div class="w-28 h-28 rounded-full border-4 overflow-hidden transition-all duration-500 hover:rotate-12 hover:scale-105" style="border-color:var(--accent)">
-            <img src="/avatar.jpg" alt="头像" class="w-full h-full object-cover" />
+            <img src="/avatar.jpg" alt="头像" class="w-full h-full object-cover" loading="lazy" decoding="async" />
           </div>
         </div>
         <div class="text-center md:text-left">
@@ -73,5 +73,6 @@ import profile from "../data/profile.json";
     </div>
   </div>
 </Layout>
+
 
 

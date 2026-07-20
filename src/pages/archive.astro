@@ -1,0 +1,71 @@
+---
+import Layout from "../layouts/Layout.astro";
+import { getCollection } from "astro:content";
+import { formatDate } from "../utils/date";
+
+const posts = await getCollection("posts", ({ data }) => !data.draft);
+posts.sort((a, b) => b.data.date.getTime() - a.data.date.getTime());
+
+// 按年月分组
+const grouped = {};
+for (const post of posts) {
+  const key = post.data.date.getFullYear() + "年" + (post.data.date.getMonth() + 1) + "月";
+  if (!grouped[key]) grouped[key] = [];
+  grouped[key].push(post);
+}
+const keys = Object.keys(grouped).sort().reverse();
+---
+
+<Layout title="归档 · 小杨王子" description="笔墨存档，按年月检索">
+  <div class="container-page py-20">
+    <div class="text-center mb-16 reveal">
+      <h1 class="text-3xl md:text-4xl font-serif font-bold" style="color:var(--text-primary)">归档</h1>
+      <div class="mt-4 mx-auto w-12 h-0.5" style="background-color:var(--accent)"></div>
+      <p class="text-xs mt-4" style="color:var(--text-secondary); font-family: 'LXGW WenKai', serif; letter-spacing: 0.2em;">笔墨存档，按年月检索</p>
+    </div>
+
+    {posts.length === 0 && (
+      <div class="text-center py-20 reveal">
+        <p class="text-lg" style="color:var(--text-secondary)">笔墨未干，且待来日...</p>
+      </div>
+    )}
+
+    <div class="max-w-3xl mx-auto space-y-12">
+      {keys.map((key) => (
+        <div class="reveal">
+          <div class="flex items-center gap-3 mb-6">
+            <span class="w-1 h-5" style="background-color:var(--accent)"></span>
+            <h2 class="text-lg font-serif font-semibold" style="color:var(--text-primary)">{key}</h2>
+            <span class="text-xs" style="color:var(--text-secondary)">({grouped[key].length} 篇)</span>
+          </div>
+          <div class="space-y-3">
+            {grouped[key].map((post, i) => (
+              <a
+                href={"/blog/" + post.slug}
+                class="group flex items-center gap-4 p-4 card-ink transition-all duration-300 hover:scale-[1.01]"
+                style={"animation-delay: " + (0.05 + i * 0.05) + "s"}
+              >
+                <span class="text-xs font-mono shrink-0" style="color:var(--text-secondary);min-width:5em;">
+                  {String(post.data.date.getMonth() + 1).padStart(2, "0")}-{String(post.data.date.getDate()).padStart(2, "0")}
+                </span>
+                <span class="inline-block px-2 py-0.5 text-xs shrink-0 ink-tag">{post.data.category}</span>
+                <span class="text-sm font-serif font-medium transition-colors duration-300 group-hover:text-gradient truncate" style="color:var(--text-primary)">
+                  {post.data.title}
+                </span>
+                <svg class="w-4 h-4 shrink-0 ml-auto transition-all duration-300 group-hover:translate-x-1" style="color:var(--text-secondary)" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+              </a>
+            ))}
+          </div>
+        </div>
+      ))}
+    </div>
+
+    <!-- 寄语 -->
+    <div class="mt-20 text-center reveal">
+      <div class="max-w-lg mx-auto">
+        <div class="w-12 h-[1px] mx-auto mb-6" style="background:var(--border);"></div>
+        <p class="text-sm" style="color:var(--text-secondary); font-family: 'LXGW WenKai', serif;">温故而知新，可以为师矣</p>
+      </div>
+    </div>
+  </div>
+</Layout>

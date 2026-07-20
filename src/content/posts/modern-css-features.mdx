@@ -1,0 +1,66 @@
+---
+title: "现代 CSS 让前端开发更优雅"
+description: "CSS 已经不再是那个只能写写颜色的样式语言了，看看这些新特性如何改变我们的开发方式。"
+date: 2026-07-10
+tags: ["前端", "CSS", "技术"]
+category: "技术"
+readingTime: 7
+---
+
+## CSS 嵌套
+
+终于，CSS 有了原生的嵌套语法：
+
+```css
+.card {
+  background: var(--bg);
+  border-radius: 8px;
+  
+  & .title {
+    font-size: 1.25rem;
+    font-weight: 600;
+  }
+  
+  & .content {
+    color: var(--text-secondary);
+    line-height: 1.6;
+  }
+}
+```
+
+## 容器查询
+
+媒体查询的升级版，基于容器大小而非视口：
+
+```css
+.container {
+  container-type: inline-size;
+}
+
+@container (min-width: 400px) {
+  .card {
+    display: grid;
+    grid-template-columns: 1fr 2fr;
+  }
+}
+```
+
+## 滚动驱动动画
+
+CSS 动画可以基于滚动位置控制了：
+
+```css
+@keyframes fade-in {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.element {
+  animation: fade-in linear;
+  animation-timeline: view();
+}
+```
+
+## 总结
+
+CSS 正在变得越来越强大，很多以前需要 JavaScript 才能实现的效果，现在用 CSS 就能优雅解决。

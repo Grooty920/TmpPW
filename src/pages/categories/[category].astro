@@ -1,0 +1,66 @@
+---
+import Layout from "../../layouts/Layout.astro";
+import BlogListCard from "../../components/BlogListCard.astro";
+import { getCollection } from "astro:content";
+
+export async function getStaticPaths() {
+  const posts = await getCollection("posts", ({ data }) => !data.draft);
+  const catSet = new Set();
+  for (const post of posts) {
+    catSet.add(post.data.category || "随笔");
+  }
+  return [...catSet].map((cat) => ({
+    params: { category: cat },
+    props: { category: cat },
+  }));
+}
+
+const { category } = Astro.props;
+const allPosts = await getCollection("posts", ({ data }) => !data.draft);
+const posts = allPosts
+  .filter((post) => (post.data.category || "随笔") === category)
+  .sort((a, b) => b.data.date.getTime() - a.data.date.getTime());
+---
+
+<Layout title={category + " · 小杨王子"} description={"分类 " + category + " 下的文章"}>
+  <div class="container-page py-20">
+    <div class="text-center mb-16 reveal">
+      <div class="inline-flex items-center gap-2 mb-4">
+        <a href="/categories" class="text-xs transition-all duration-300 hover:text-gradient" style="color:var(--text-secondary)">分类</a>
+        <span class="text-xs" style="color:var(--text-secondary)">/</span>
+      </div>
+      <h1 class="text-3xl md:text-4xl font-serif font-bold" style="color:var(--text-primary)">{category}</h1>
+      <div class="mt-4 mx-auto w-12 h-0.5" style="background-color:var(--accent)"></div>
+      <p class="text-xs mt-4" style="color:var(--text-secondary); font-family: 'LXGW WenKai', serif; letter-spacing: 0.2em;">共 {posts.length} 篇文章</p>
+    </div>
+
+    {posts.length === 0 && (
+      <div class="text-center py-20 reveal">
+        <p class="text-lg" style="color:var(--text-secondary)">此分类下暂无文章...</p>
+      </div>
+    )}
+
+    <div class="max-w-3xl mx-auto space-y-6">
+      {posts.map((post, index) => (
+        <div class="reveal" style={"animation-delay:" + (0.1 + index * 0.08) + "s"}>
+          <BlogListCard
+            title={post.data.title}
+            description={post.data.description}
+            date={post.data.date}
+            slug={post.slug}
+            category={post.data.category}
+            coverImage={post.data.coverImage}
+            readingTime={post.data.readingTime}
+            tags={post.data.tags}
+          />
+        </div>
+      ))}
+    </div>
+
+    <div class="mt-12 text-center reveal">
+      <a href="/categories" class="ink-btn px-5 py-2.5 text-sm" style="border:1px solid var(--accent);color:var(--accent);">
+        所有分类  →
+      </a>
+    </div>
+  </div>
+</Layout>

@@ -1,4 +1,4 @@
-@import url("https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;500;600;700&display=swap");
+﻿@import url("https://fonts.googleapis.com/css2?family=Noto+Serif+SC&display=swap:wght@400;500;600;700&display=swap");
 @import url("https://fonts.googleapis.com/css2?family=Ma+Shan+Zheng&display=swap");
 @import "@chinese-fonts/lxgwwenkai/dist/LXGWWenKai-Regular/result.css";
 
@@ -28,7 +28,7 @@
     --bg-primary: #0f0f0f;
     --bg-secondary: #1a1510;
     --text-primary: #f0ebe0;
-    --text-secondary: #8a7e65;
+    --text-secondary: #b8a88a;
     --accent: #d44a45;
     --accent-light: #8a2824;
     --accent-glow: rgba(212, 74, 69, 0.2);
@@ -226,8 +226,8 @@
 /* ===== 页面过渡 ===== */
 @keyframes pageIn { from { opacity: 0; transform: translateY(8px); filter: blur(2px); } to { opacity: 1; transform: translateY(0); filter: blur(0); } }
 @keyframes pageOut { from { opacity: 1; transform: translateY(0); filter: blur(0); } to { opacity: 0; transform: translateY(-8px); filter: blur(2px); } }
-::view-transition-old(root) { animation: 0.2s ease-out both pageOut; }
-::view-transition-new(root) { animation: 0.35s ease-out 0.05s both pageIn; }
+::view-transition-old(root) { animation: 0.25s ease-out both pageOut; }
+::view-transition-new(root) { animation: 0.4s ease-out 0.05s both pageIn; }
 
 /* ===== 加载骨架 ===== */
 .skeleton-pulse { background: linear-gradient(90deg, var(--card-bg) 25%, var(--border) 50%, var(--card-bg) 75%); background-size: 200% 100%; animation: skeleton 1.8s ease-in-out infinite; border-radius: 2px; }
@@ -251,6 +251,21 @@
 .ink-drop-effect { position: relative; overflow: hidden; }
 .ink-drop-effect::after { content: ""; position: absolute; width: 4px; height: 4px; background: var(--accent); border-radius: 50%; top: 50%; left: 50%; transform: translate(-50%, -50%) scale(0); opacity: 0; pointer-events: none; }
 .ink-drop-effect:active::after { animation: ink-spread 0.6s ease-out forwards; }
+
+/* ===== 全局墨滴涟漪 (JS驱动，跟随鼠标位置) ===== */
+.ink-ripple {
+  position: absolute;
+  border-radius: 50%;
+  background: var(--accent);
+  pointer-events: none;
+  transform: translate(-50%, -50%) scale(0);
+  animation: ink-ripple-anim 0.6s ease-out forwards;
+  z-index: 999;
+}
+@keyframes ink-ripple-anim {
+  0% { transform: translate(-50%, -50%) scale(0); opacity: 0.5; }
+  100% { transform: translate(-50%, -50%) scale(4); opacity: 0; }
+}
 
 /* ===== 书法笔触标题 ===== */
 .brush-title { font-family: "Ma Shan Zheng", "Noto Serif SC", cursive; letter-spacing: 0.15em; position: relative; display: inline-block; }
@@ -294,7 +309,256 @@
 }
 
 /* ===== 响应式 ===== */
-@media (max-width: 768px) {
+
+/* ===== 导航栏增强 ===== */
+.nav-link {
+  position: relative;
+  font-family: 'LXGW WenKai', 'Noto Serif SC', serif;
+  letter-spacing: 0.05em;
+  transition: color 0.3s ease, background-color 0.3s ease;
+  border-radius: 6px;
+}
+.nav-link:hover {
+  background-color: var(--ink-light);
+  color: var(--accent) !important;
+}
+.nav-link .nav-link-text {
+  position: relative;
+  z-index: 1;
+}
+
+.nav-icon-btn {
+  font-family: 'LXGW WenKai', 'Noto Serif SC', serif;
+  transition: all 0.3s ease;
+  border-radius: 50%;
+}
+.nav-icon-btn:hover {
+  background-color: var(--ink-light);
+  transform: scale(1.1);
+}
+
+.brand-link {
+  transition: opacity 0.3s ease;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 70vw;
+}
+.brand-link:hover {
+  opacity: 0.8;
+}
+
+/* ===== 移动菜单动画 ===== */
+#mobile-menu {
+  transition: opacity 0.3s ease, transform 0.3s ease;
+  opacity: 0;
+  transform: translateY(-8px);
+  pointer-events: none;
+}
+#mobile-menu:not(.hidden) {
+  opacity: 1;
+  transform: translateY(0);
+  pointer-events: auto;
+}
+#mobile-menu.hidden {
+  display: flex !important;
+  opacity: 0;
+  transform: translateY(-8px);
+  pointer-events: none;
+  visibility: hidden;
+  transition: opacity 0.25s ease, transform 0.25s ease, visibility 0s 0.25s;
+}
+#mobile-menu:not(.hidden) {
+  display: flex !important;
+  visibility: visible;
+  transition: opacity 0.3s ease, transform 0.3s ease;
+}
+
+.mobile-nav-link {
+  position: relative;
+  font-family: "Ma Shan Zheng", "Noto Serif SC", cursive;
+  letter-spacing: 0.1em;
+  border-bottom: 1px solid transparent;
+}
+.mobile-nav-link:hover {
+  background-color: var(--ink-light);
+  color: var(--accent) !important;
+  padding-left: 1rem;
+  padding-right: 1rem;
+}
+.mobile-nav-link:active {
+  transform: scale(0.98);
+}
+
+/* ===== 桌面端导航分隔线 ===== */
+.nav-divider {
+  width: 1px;
+  height: 20px;
+  background-color: var(--border);
+  margin: 0 8px;
+}
+.bg-ink-700 { background-color: var(--ink-light); }
+
+
+.hover\\:bg-ink-700:hover { background-color: var(--ink-light); }
+
+
+/* ===== 图片懒加载占位优化 ===== */
+img[loading="lazy"] {
+  background-color: var(--card-bg);
+  position: relative;
+}
+img[loading="lazy"]::before {
+  content: "";
+  display: block;
+  padding-bottom: 56.25%;
+}
+/* 文章封面统一宽高比 */
+.card-ink img, .blog-card-image {
+  aspect-ratio: 16 / 9;
+  object-fit: cover;
+  background-color: var(--bg-secondary);
+}
+.author-avatar img {
+  aspect-ratio: 1 / 1;
+  object-fit: cover;
+}
+
+/* ===== 卡片底部渐变线动画 ===== */
+.card-ink .group-hover\:scale-x-100 {
+  transform-origin: left;
+}
+
+/* ===== 卡片悬停增强 ===== */
+.card-ink:hover {
+  border-color: var(--accent) !important;
+}
+
+/* ===== 分类标签气泡 ===== */
+.category-badge {
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+  box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+}
+
+/* ===== 相对时间闪烁动画 ===== */
+.relative-time {
+  display: inline-block;
+}
+
+/* ===== 卡片间距优化 ===== */
+@media (max-width: 640px) {
+  .card-ink .text-xs {
+    font-size: 0.7rem;
+  }
+}@media (max-width: 768px) {
   .container-page { @apply px-4; }
   .card-ink { border-radius: 6px; }
+}
+
+
+
+
+
+
+
+
+
+
+/* ===== 导航栏滚动效果 ===== */
+header[data-scrolled="true"] {
+  transform: translateY(0);
+  border-bottom: 1px solid var(--glass-border);
+}
+header[data-scrolled="false"] {
+  border-bottom: 1px solid transparent;
+}
+
+/* ===== 骨架屏加载动画 ===== */
+.skeleton {
+  background: linear-gradient(90deg, var(--card-bg) 25%, var(--ink-light) 50%, var(--card-bg) 75%);
+  background-size: 200% 100%;
+  animation: skeleton-shimmer 1.5s ease-in-out infinite;
+  border-radius: 4px;
+}
+@keyframes skeleton-shimmer {
+  0% { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+
+/* ===== 回到顶部按钮增强 ===== */
+#back-to-top {
+  transform: scale(0.8);
+  transition: opacity 0.3s ease, transform 0.3s ease, background-color 0.3s ease;
+}
+#back-to-top:hover {
+  background: var(--accent) !important;
+  color: #f7f3e8 !important;
+  border-color: var(--accent) !important;
+  transform: scale(1.1) !important;
+  box-shadow: 0 4px 20px var(--accent-glow);
+}
+#back-to-top .progress-circle-container {
+  transform: rotate(-90deg);
+}
+#scroll-progress {
+  transition: stroke-dashoffset 0.1s ease;
+}
+
+/* ===== 文章内容排版增强 ===== */
+.prose-content h2 {
+  margin-top: 2.5em;
+  margin-bottom: 0.75em;
+  font-size: 1.5rem;
+  font-weight: 600;
+  font-family: "Ma Shan Zheng", "Noto Serif SC", serif;
+  color: var(--text-primary);
+  border-bottom: 1px solid var(--border);
+  padding-bottom: 0.4em;
+}
+.prose-content h3 {
+  margin-top: 2em;
+  margin-bottom: 0.5em;
+  font-size: 1.2rem;
+  font-weight: 600;
+  font-family: "Noto Serif SC", "LXGW WenKai", serif;
+  color: var(--text-primary);
+}
+.prose-content p {
+  margin-bottom: 1.25em;
+  line-height: 1.8;
+  color: var(--text-primary);
+}
+.prose-content a {
+  color: var(--accent);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+  text-decoration-thickness: 1px;
+  transition: color 0.3s ease;
+}
+.prose-content a:hover {
+  color: var(--accent-light);
+}
+.prose-content blockquote {
+  border-left: 3px solid var(--accent);
+  padding-left: 1em;
+  margin: 1.5em 0;
+  color: var(--text-secondary);
+  font-style: italic;
+  background: var(--ink-light);
+  padding: 0.75em 1em;
+  border-radius: 0 4px 4px 0;
+}
+.prose-content ul, .prose-content ol {
+  padding-left: 1.5em;
+  margin-bottom: 1.25em;
+  line-height: 1.8;
+}
+.prose-content li {
+  margin-bottom: 0.25em;
+}
+.prose-content img {
+  border-radius: 6px;
+  margin: 1.5em auto;
+  box-shadow: 0 2px 12px var(--shadow);
 }

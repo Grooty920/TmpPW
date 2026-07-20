@@ -1,4 +1,4 @@
----
+﻿---
 export interface Props {
   title: string;
   description: string;
@@ -12,7 +12,7 @@ export interface Props {
 
 import { formatDate } from "../utils/date";
 
-const { title, description, date, slug, category, coverImage, readingTime, index = 0 } = Astro.props;
+const { title, description, date, slug, category, coverImage, readingTime, tags = [], index = 0 } = Astro.props;
 ---
 
 <a
@@ -22,7 +22,7 @@ const { title, description, date, slug, category, coverImage, readingTime, index
 >
   <div class="relative -mx-6 -mt-6 mb-5 overflow-hidden h-48">
     {coverImage ? (
-      <img src={coverImage} alt={title} class="w-full h-full object-cover transition-all duration-500 group-hover:scale-110" />
+      <img src={coverImage} alt={title} class="w-full h-full object-cover transition-all duration-500 group-hover:scale-110" loading="lazy" decoding="async" />
     ) : (
       <div class="w-full h-full flex items-center justify-center" style="background-color:var(--accent-light)">
         <span class="text-3xl">📝</span>
@@ -44,3 +44,4 @@ const { title, description, date, slug, category, coverImage, readingTime, index
     <span>{readingTime || 5} 分</span>
   </div>
 </a>
+

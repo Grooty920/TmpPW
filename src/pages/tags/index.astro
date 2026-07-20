@@ -1,4 +1,4 @@
----
+﻿---
 import Layout from "../../layouts/Layout.astro";
 import { getCollection } from "astro:content";
 
@@ -18,7 +18,7 @@ const tags = [...tagMap.entries()].sort((a, b) => b[1] - a[1]);
 const totalTags = tags.length;
 ---
 
-<Layout title="标签 路 小杨王子" description="笔墨标签，按图索骥">
+<Layout title="标签 · 小杨王子" description="笔墨标签，按图索骥">
   <div class="container-page py-20">
     <div class="text-center mb-16 reveal">
       <h1 class="text-3xl md:text-4xl font-serif font-bold" style="color:var(--text-primary)">笔墨标签</h1>
@@ -33,17 +33,25 @@ const totalTags = tags.length;
     )}
 
     <div class="max-w-3xl mx-auto">
-      <div class="flex flex-wrap justify-center gap-4">
-        {tags.map(([tag, count], index) => (
+      <div class="flex flex-wrap justify-center gap-3">
+        {tags.map(([tag, count], index) => {
+          // 根据文章数计算标签大小，最大标签为基准
+          const maxCount = tags.length > 0 ? tags[0][1] : 1;
+          const ratio = count / maxCount;
+          const fontSize = 0.8 + ratio * 0.5; // 0.8rem ~ 1.3rem
+          const opacity = 0.6 + ratio * 0.4; // 0.6 ~ 1.0
+          const padding = 0.5 + ratio * 0.5; // 0.5rem ~ 1.0rem
+          return (
           <a
             href={"/tags/" + tag}
-            class="group card-ink px-5 py-3 transition-all duration-300 hover:scale-105 reveal"
-            style={"animation-delay:" + (0.05 + index * 0.03) + "s"}
+            class="group transition-all duration-300 hover:scale-110 reveal"
+            style={"animation-delay:" + (0.03 + index * 0.02) + "s;padding:" + padding + "rem 1rem;border-radius:8px;background:rgba(199,62,58," + (0.04 + ratio * 0.08) + ");border:1px solid rgba(199,62,58," + (0.1 + ratio * 0.2) + ");"}
           >
-            <span class="text-base font-serif font-semibold group-hover:text-gradient" style="color:var(--text-primary)">#{tag}</span>
-            <span class="text-xs ml-2" style="color:var(--text-secondary)">({count} 篇)</span>
+            <span class="font-serif font-semibold transition-colors duration-300 group-hover:text-gradient" style="font-size:" + fontSize + "rem;color:var(--text-primary);">#{tag}</span>
+            <span class="ml-1.5" style="font-size:" + (fontSize * 0.75) + "rem;color:var(--accent);opacity:" + opacity + ";">{count}</span>
           </a>
-        ))}
+          );
+        })}
       </div>
     </div>
 
