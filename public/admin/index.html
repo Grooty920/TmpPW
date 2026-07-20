@@ -924,7 +924,8 @@ label{
         <div id="tab-upload" class="tab-content hidden"></div>
         <div id="tab-medialib" class="tab-content hidden"></div>
         <div id="tab-friendlinks" class="tab-content hidden"></div>
-        <div id="tab-analytics" class="tab-content hidden"></div>
+        <div id="tab-analytics" class="tab-content hidden">
+        <div id="tab-custompages" class="tab-content hidden"></div></div>
         <div id="tab-backup" class="tab-content hidden"></div>
       </main>
     </div>
@@ -1058,10 +1059,15 @@ async function renderDashboard() {
     var files = r.ok ? await r.json() : [];
     var posts = files.filter(function(f) { return f.name.endsWith(".mdx") || f.name.endsWith(".md"); });
     var cats = {}, tags = {};
-    posts.forEach(function(f) {
+    // Use download_url to fetch each file's content for stats
+    for (var fi = 0; fi < posts.length; fi++) {
       try {
-        var c = b64Decode(f.content);
-        var parts = c.split("---");
+        var f = posts[fi];
+        if (!f.download_url) continue;
+        var cr = await fetch(f.download_url);
+        if (!cr.ok) continue;
+        var ct = await cr.text();
+        var parts = ct.split("---");
         if (parts.length >= 3) {
           var fm = parts[1];
           var m = fm.match(/category:\s*["']([^"']+)["']/);
@@ -1073,17 +1079,22 @@ async function renderDashboard() {
           });
         }
       } catch(e) {}
-    });
+    }
     var uploadR = await fetch("https://api.github.com/repos/"+REPO+"/contents/public/uploads?ref="+BRANCH, {
       headers: { "Authorization": "Bearer " + TOKEN, "Accept": "application/vnd.github.v3+json" }
     });
     var uploadFiles = uploadR.ok ? (await uploadR.json()).length : 0;
     var recentPosts = posts.slice(-5).reverse();
     var recentHtml = "";
-    recentPosts.forEach(function(f) {
+    for (var ri = 0; ri < recentPosts.length; ri++) {
       try {
-        var c = b64Decode(f.content);
-        var parts = c.split("---");
+        var f = recentPosts[ri];
+        var fc = "";
+        if (f.download_url) {
+          var cr = await fetch(f.download_url);
+          if (cr.ok) fc = await cr.text();
+        }
+        var parts = fc.split("---");
         var title = "", date = "";
         if (parts.length >= 3) {
           var fm = parts[1];
@@ -1094,36 +1105,7 @@ async function renderDashboard() {
         }
         recentHtml += "<div class='post-card card'><div class='post-card-info'><div class='post-card-title'>" + (title || esc(f.name)) + "</div><div class='post-card-meta'>" + esc(f.name) + (date ? " <span class='post-date-tag'>" + date + "</span>" : "") + "</div></div></div>";
       } catch(e) {}
-    });
-    if (!recentHtml) recentHtml = "<p class='text-sm text-muted'>暂无文章</p>";
-    el.innerHTML = `
-      <div class="dashboard-grid">
-        <div class="stat-card card"><div class="stat-icon">📄</div><div class="stat-number">${posts.length}</div><div class="stat-label">文章总数</div></div>
-        <div class="stat-card card"><div class="stat-icon">📂</div><div class="stat-number">${Object.keys(cats).length}</div><div class="stat-label">分类</div></div>
-        <div class="stat-card card"><div class="stat-icon">🏷️</div><div class="stat-number">${Object.keys(tags).length}</div><div class="stat-label">标签</div></div>
-        <div class="stat-card card"><div class="stat-icon">📤</div><div class="stat-number">${uploadFiles}</div><div class="stat-label">文件</div></div>
-      </div>
-      <div class="card mb-4"><h3 style="font-size:15px;margin-bottom:12px">📈 最近发布</h3>${recentHtml}</div>
-      <div class="card"><h3 style="font-size:15px;margin-bottom:12px">⚡ 快捷操作</h3>
-        <div class="flex gap-2 flex-wrap">
-          <button onclick="switchTab('editor')" class="btn btn-primary btn-sm">✏️ 写文章</button>
-          <button onclick="switchTab('upload')" class="btn btn-outline btn-sm">📤 上传文件</button>
-          <button onclick="switchTab('tools')" class="btn btn-outline btn-sm">🔧 管理工具</button>
-          <button onclick="switchTab('site')" class="btn btn-outline btn-sm">⚙️ 站点设置</button>
-        </div>
-      </div>`;
-  } catch(e) { el.innerHTML = "<p class='text-sm text-accent'>加载失败: " + e.message + "</p>"; }
-}// ===== 拖拽工具 =====
-function makeDraggable(listId, dataArray, onReorder) {
-  const container = document.getElementById(listId);
-  if (!container) return;
-  let dragEl = null;
-  container.addEventListener("dragstart", e => {
-    dragEl = e.target.closest(".drag-item");
-    if (!dragEl) return;
-    dragEl.classList.add("dragging");
-    e.dataTransfer.effectAllowed = "move";
-  });
+    };
   container.addEventListener("dragend", e => {
     const el = e.target.closest(".drag-item");
     if (el) el.classList.remove("dragging");
@@ -1278,18 +1260,61 @@ async function renderPosts() {
     });
     if (!r.ok) { el.innerHTML = "<p class='text-sm text-accent'>加载失败</p>"; return; }
     const files = await r.json();
-  let html = `<div class="card mt-4"><h3 style="font-size:15px;margin-bottom:12px">🏷️ 文章分类与标签</h3>
+  // Fetch file contents for frontmatter parsing
+  var postContents = {};
+  for (var fi = 0; fi < files.length; fi++) {
+    var f = files[fi];
+    if ((f.name.endsWith(".mdx") || f.name.endsWith(".md")) && f.download_url) {
+      try {
+        var cr = await fetch(f.download_url);
+        if (cr.ok) postContents[f.name] = await cr.text();
+      } catch(e) {}
+    }
+  }
+  // Parse frontmatter helper
+  function parseFm(content) {
+    var parts = content.split("---");
+    if (parts.length < 3) return {};
+    var fm = {};
+    parts[1].split("\n").forEach(function(line) {
+      line = line.trim();
+      if (!line) return;
+      var m = line.match(/^\s*(\w+):\s*["'](.+)["']\s*$/);
+      if (m) { fm[m[1]] = m[2]; return; }
+      var m2 = line.match(/^\s*(\w+):\s*(\S+)\s*$/);
+      if (m2) { fm[m2[1]] = m2[2]; return; }
+      var m3 = line.match(/^\s*(\w+):\s*(\[.*\])\s*$/);
+      if (m3) { fm[m3[1]] = m3[2]; }
+    });
+    return fm;
+  }
+  // Build category and tag stats from fetched content
+  var catKeys = [], tagKeys = [];
+  var cats = {}, tags = {};
+  Object.keys(postContents).forEach(function(name) {
+    var fm = parseFm(postContents[name]);
+    if (fm.category) cats[fm.category] = (cats[fm.category] || 0) + 1;
+    if (fm.tags) {
+      fm.tags.replace(/[\[\]"']/g, "").split(",").forEach(function(t) {
+        var tg = t.trim();
+        if (tg) tags[tg] = (tags[tg] || 0) + 1;
+      });
+    }
+  });
+  catKeys = Object.keys(cats).sort();
+  tagKeys = Object.keys(tags).sort();
+let html = `<div class="card mt-4"><h3 style="font-size:15px;margin-bottom:12px">🏷️ 文章分类与标签</h3>
       <div class="flex gap-4 flex-wrap mb-3">
         <div class="flex-1" style="min-width:200px">
           <p class="text-xs text-muted mb-2">分类</p>
           <div class="flex flex-wrap gap-2">
-            ${(()=>{var cats={};files.filter(f=>f.name.endsWith(".mdx")).forEach(f=>{try{var c=b64Decode(f.content);var m=c.match(/category:\s*["'"]([^"']+)["'"]/);if(m)cats[m[1]]=(cats[m[1]]||0)+1}catch(e){}});return Object.keys(cats).sort().map(cat=>"<span class=\"btn btn-outline btn-xs\" style=\"cursor:default;background:rgba(199,62,58,0.08);border-color:rgba(199,62,58,0.2);color:#c73e3a\">"+cat+" ("+cats[cat]+")</span>").join(" ")})()}
+            ${catKeys.length > 0 ? catKeys.map(function(cat) { return "<span class=\"btn btn-outline btn-xs\" style=\"cursor:default;background:rgba(199,62,58,0.08);border-color:rgba(199,62,58,0.2);color:#c73e3a\">" + cat + " (" + cats[cat] + ")</span>"; }).join(" ") : "<span class=\"text-xs text-muted\">暂无分类</span>"}
           </div>
         </div>
         <div class="flex-1" style="min-width:200px">
           <p class="text-xs text-muted mb-2">标签</p>
           <div class="flex flex-wrap gap-2">
-            ${(()=>{var tagMap={};files.filter(f=>f.name.endsWith(".mdx")).forEach(f=>{try{var c=b64Decode(f.content);var r=c.match(/tags:\s*\[([^\]]+)\]/);if(r){r[1].split(",").forEach(t=>{var tag=t.trim().replace(/["'"]/g,"");if(tag)tagMap[tag]=(tagMap[tag]||0)+1})}}catch(e){}});return Object.keys(tagMap).sort().map(t=>"<span class=\"btn btn-outline btn-xs\" style=\"cursor:default\">#"+t+" ("+tagMap[t]+")</span>").join(" ")})()}
+            ${tagKeys.length > 0 ? tagKeys.map(function(t) { return "<span class=\"btn btn-outline btn-xs\" style=\"cursor:default\">#" + t + " (" + tags[t] + ")</span>"; }).join(" ") : "<span class=\"text-xs text-muted\">暂无标签</span>"}
           </div>
         </div>
       </div>
@@ -1297,11 +1322,11 @@ async function renderPosts() {
     </div>`;
         if (files.length === 0) { html += "<p class='text-sm text-muted'>暂无文章</p>"; }
     else {
-      html += "<div style='display:flex;align-items:center;gap:8px;margin-bottom:8px'><input type='checkbox' id='select-all' onchange='toggleSelectAll()' style='width:16px;height:16px;cursor:pointer'> <label for='select-all' style='font-size:12px;color:#6b5f45;cursor:pointer'>全选</label></div><div id='batch-bar' class='hidden' style='display:none;padding:8px 12px;background:rgba(199,62,58,0.06);border:1px solid rgba(199,62,58,0.15);border-radius:4px;margin-bottom:8px;font-size:12px;color:#6b5f45;align-items:center;gap:8px'></div><div style='display:grid;gap:8px'>";
+      html += "<div class=\"search-bar\"><input id=\"post-search\" type=\"text\" placeholder=\"搜索文章标题...\" oninput=\"filterPosts()\"><select id=\"post-cat-filter\" onchange=\"filterPosts()\"><option value=\"\">全部分类</option></select></div><div style=\"display:flex;align-items:center;gap:8px;margin-bottom:8px\"><input type='checkbox' id='select-all' onchange='toggleSelectAll()' style='width:16px;height:16px;cursor:pointer'> <label for='select-all' style='font-size:12px;color:#6b5f45;cursor:pointer'>全选</label></div><div id='batch-bar' class='hidden' style='display:none;padding:8px 12px;background:rgba(199,62,58,0.06);border:1px solid rgba(199,62,58,0.15);border-radius:4px;margin-bottom:8px;font-size:12px;color:#6b5f45;align-items:center;gap:8px'></div><div style='display:grid;gap:8px'>";
       for (const f of files) {
         if (f.name.endsWith(".mdx") || f.name.endsWith(".md")) {
           try {
-            var c = b64Decode(f.content);
+            var c = postContents[f.name] || b64Decode(f.content);
             var parts = c.split("---");
             var frontmatter = {};
             if (parts.length >= 3) {
@@ -1324,7 +1349,7 @@ async function renderPosts() {
             if (date) {
               try { var d = new Date(date); date = d.getFullYear() + "-" + String(d.getMonth()+1).padStart(2,"0") + "-" + String(d.getDate()).padStart(2,"0"); } catch(e) {}
             }
-            html += `<div class="card" style="padding:12px 16px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px">
+            html += `<div class="card" style="padding:12px 16px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px" data-title="${esc(title)}" data-category="${esc(category)}">
               <div style="display:flex;align-items:center;gap:8px;flex:1;min-width:200px">
                 <input type="checkbox" class="post-select" data-name="${esc(f.name)}" onchange="updateBatchBar()" style="width:16px;height:16px;cursor:pointer;flex-shrink:0">
                 <div style="flex:1">
@@ -1466,12 +1491,14 @@ function filterPosts() {
   q = q.value.toLowerCase();
   var cat = document.getElementById("post-cat-filter");
   cat = cat ? cat.value : "";
-  var cards = document.querySelectorAll("#post-list .post-card");
+  var cards = document.querySelectorAll("#tab-posts .card");
   cards.forEach(function(card) {
-    var title = (card.getAttribute("data-title") || "").toLowerCase();
-    var cats = card.getAttribute("data-category") || "";
+    var titleEl = card.querySelector("[style*=\"font-size:13px;font-weight:500\"]");
+    var title = titleEl ? titleEl.textContent.toLowerCase() : "";
+    var catEl = card.querySelector("[style*=\"background:rgba(199,62,58,0.08)\"]");
+    var cats = catEl ? catEl.textContent.toLowerCase() : "";
     var show = (!q || title.indexOf(q) >= 0) && (!cat || cats.indexOf(cat) >= 0);
-    card.style.display = show ? "flex" : "none";
+    card.style.display = show ? "" : "none";
   });
 }function mdRender(text) {
   var t = text
@@ -1515,7 +1542,7 @@ async function previewPost(name) {
 
 // ===== 文章管理 =====
 function showNewPost() {
-  const el = document.getElementById("new-post-form");
+  var el = document.getElementById("new-post-form"); if (!el) { document.getElementById("tab-editor").innerHTML = "<div id=\'new-post-form\'></div>"; el = document.getElementById("new-post-form"); }
   el.classList.toggle("hidden");
   if (el.classList.contains("hidden")) return;
   el.innerHTML = `<h3 style="font-size:15px;margin-bottom:12px">✏️ 新建文章</h3>
@@ -2003,20 +2030,20 @@ e.innerHTML=h}catch(ex){e.innerHTML="<p>"+ex.message+"</p>"}}
 // THEMES
 async function renderThemes(){var e=document.getElementById("tab-themes");if(!e){setTimeout(function(){renderThemes()},100);return}
 var themes=[{name:"朱砂",accent:"#c73e3a",bg:"#f7f3e8",text:"#1c1c1c",desc:"经典中国红"},{name:"青竹",accent:"#2d5a27",bg:"#f4f1ea",text:"#1a1a1a",desc:"自然清新"},{name:"秋杏",accent:"#8b6914",bg:"#faf6ed",text:"#2c2c1c",desc:"温润秋色"},{name:"远山",accent:"#4a6fa5",bg:"#f8f6f2",text:"#1c1c2c",desc:"沉静蓝调"},{name:"棠粉",accent:"#8b3a62",bg:"#f7f0f3",text:"#2c1c24",desc:"淡雅粉韵"},{name:"墨青",accent:"#3d5a5c",bg:"#f0efe8",text:"#1c2424",desc:"水墨意境"}]
-var h="<div class=\"card\"><h3>💾 数据备份</h3><p>导出博客数据</p><div style=\"display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:12px\">"
+var h="<div class=\"card\"><h3>💾 主题配色</h3><p>切换博客主题配色</p><div style=\"display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:12px\">"
 themes.forEach(function(t){h+="<div class=\"card\" style=\"padding:16px;cursor:pointer;text-align:center;border:2px solid transparent\" onclick=\"applyThemePreset('"+t.accent+"','"+t.bg+"','"+t.text+"')\" onmouseover=\"this.style.borderColor='"+t.accent+"'\" onmouseout=\"this.style.borderColor='transparent'\"><div style=\"width:40px;height:40px;border-radius:50%;background:"+t.accent+";margin:0 auto 8px;border:3px solid "+t.bg+";box-shadow:0 0 0 2px "+t.accent+"\"></div><div style=\"font-size:13px;font-weight:500;color:"+t.text+"\">"+t.name+"</div><div style=\"font-size:11px;color:#6b5f45\">"+t.desc+"</div></div>"})
 h+="</div></div><div class=\"card\"><button onclick=\"switchTab('site')\" class=\"btn btn-outline btn-sm\">自定义配色</button></div>";e.innerHTML=h}
 function applyThemePreset(a,b,t){if(!confirm("应用此主题？"))return;document.body.style.background=b;var el=document.getElementById("tab-site");if(!el){switchTab("site");return};document.getElementById("site-accent").value=a;document.getElementById("site-bg").value=b;document.getElementById("site-text").value=t;showMsg("主题已应用","ok");switchTab("site")}
 
 // BACKUP
 async function renderBackup(){var e=document.getElementById("tab-backup");if(!e){setTimeout(function(){renderBackup()},100);return}
-var h="<div class=\"card\"><h3>💾 数据备份</h3><p>导出博客数据</p><div style=\"display:grid;gap:12px;grid-template-columns:repeat(auto-fill,minmax(200px,1fr))\">"
+var h="<div class=\"card\"><h3>💾 数据备份</h3><p>导出博客数据备份</p><div style=\"display:grid;gap:12px;grid-template-columns:repeat(auto-fill,minmax(200px,1fr))\">"
 h+="<div class=\"card\" style=\"padding:16px;text-align:center\"><div style=\"font-size:28px\">📄</div><h4>导出文章</h4><p class=\"text-xs text-muted mb-3\">JSON格式</p><button onclick=\"exportPosts()\" class=\"btn btn-ok btn-sm\">导出</button></div>"
 h+="<div class=\"card\" style=\"padding:16px;text-align:center\"><div style=\"font-size:28px\">⚙️</div><h4>导出配置</h4><p class=\"text-xs text-muted mb-3\">JSON格式</p><button onclick=\"exportConfig()\" class=\"btn btn-ok btn-sm\">导出</button></div>"
 h+="<div class=\"card\" style=\"padding:16px;text-align:center\"><div style=\"font-size:28px\">📦</div><h4>全部导出</h4><p class=\"text-xs text-muted mb-3\">文章+配置</p><button onclick=\"exportAll()\" class=\"btn btn-primary btn-sm\">全部导出</button></div>"
 h+="</div></div>";e.innerHTML=h}
 async function exportPosts(){try{var r=await fetch("https://api.github.com/repos/"+REPO+"/contents/src/content/posts?ref="+BRANCH,{headers:{"Authorization":"Bearer "+TOKEN,"Accept":"application/vnd.github.v3+json"}});if(!r.ok)throw Error("获取失败");var fs=await r.json();var posts=[]
-for(var i=0;i<fs.length;i++){var f=fs[i];if(!f.name.endsWith(".mdx")&&!f.name.endsWith(".md"))continue;posts.push({filename:f.name,content:b64Decode(f.content)})}
+for(var i=0;i<fs.length;i++){var f=fs[i];if(!f.name.endsWith(".mdx")&&!f.name.endsWith(".md"))continue;try{var cr=await fetch(f.download_url);if(cr.ok){var ct=await cr.text();posts.push({filename:f.name,content:ct})}}catch(e){}}
 var blob=new Blob([JSON.stringify(posts,null,2)],{type:"application/json"});var url=URL.createObjectURL(blob);var a=document.createElement("a");a.href=url;a.download="posts-backup-"+new Date().toISOString().split("T")[0]+".json";a.click();URL.revokeObjectURL(url);showMsg("已导出 "+posts.length+" 篇","ok")}catch(ex){showMsg(ex.message,"err")}}
 async function exportConfig(){try{var configs={};var cfgs=["src/data/tools.json","src/data/navigation.json","src/data/profile.json","src/data/site.json","src/data/social.json","src/data/about.json"]
 for(var i=0;i<cfgs.length;i++){try{var r=await fetch("https://api.github.com/repos/"+REPO+"/contents/"+cfgs[i]+"?ref="+BRANCH,{headers:{"Authorization":"Bearer "+TOKEN,"Accept":"application/vnd.github.v3+json"}});if(r.ok){var d=await r.json();configs[cfgs[i]]=JSON.parse(b64Decode(d.content))}}catch(ex){}}
