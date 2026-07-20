@@ -1164,18 +1164,18 @@ function renderTools() {
       <div class="flex gap-2 items-center mb-3 flex-wrap">
         <label style="margin:0">分类</label>
         <input value="${esc(cat.name)}" onchange="toolsData.categories[${ci}].name=this.value" style="width:120px">
-        <input value="${esc(cat.subtitle||"")}" onchange="toolsData.categories[${ci}].subtitle=this.value||null" style="width:180px" placeholder="副标题">
+        <input value="${esc(cat.subtitle||"")}" onchange="toolsData.categories[${ci}].subtitle=this.value||null" style="width:180px" placeholder=\"副标题\">
         <button onclick="deleteToolCategory(${ci})" class="btn btn-outline btn-xs">✕</button>
       </div>
       <div id="tool-items-${ci}" class="grid-2">`;
     cat.items.forEach((item, ii) => {
       html += `<div class="drag-item card" style="padding:10px;background:#f7f3e8;border:1px solid #e8e0cc" draggable="true" data-index="${ii}">
         <div class="flex items-center mb-2"><span class="drag-handle">⠿</span>
-          <input value="${esc(item.title)}" onchange="toolsData.categories[${ci}].items[${ii}].title=this.value" placeholder="名称" style="flex:1">
+          <input value="${esc(item.title)}" onchange="toolsData.categories[${ci}].items[${ii}].title=this.value" placeholder=\"名称\" style="flex:1">
         </div>
-        <div class="mb-2"><input value="${esc(item.description||"")}" onchange="toolsData.categories[${ci}].items[${ii}].description=this.value" placeholder="描述"></div>
+        <div class="mb-2"><input value="${esc(item.description||"")}" onchange="toolsData.categories[${ci}].items[${ii}].description=this.value" placeholder=\"描述\"></div>
         <div class="flex gap-2 items-center">
-          <input value="${esc(item.url)}" onchange="toolsData.categories[${ci}].items[${ii}].url=this.value" placeholder="URL" style="flex:1">
+          <input value="${esc(item.url)}" onchange="toolsData.categories[${ci}].items[${ii}].url=this.value" placeholder=\"URL\" style="flex:1">
           <button onclick="deleteItem(${ci},${ii})" class="btn btn-outline btn-xs">✕</button>
         </div>
       </div>`;
@@ -1520,16 +1520,16 @@ function showNewPost() {
   if (el.classList.contains("hidden")) return;
   el.innerHTML = `<h3 style="font-size:15px;margin-bottom:12px">✏️ 新建文章</h3>
     <div class="grid-2 mb-2">
-      <div><label>文件名 (英文)</label><input id="np-slug" placeholder="my-new-post" style="font-family:monospace"></div>
-      <div><label>标题</label><input id="np-title" placeholder="文章标题"></div>
+      <div><label>文件名 (英文)</label><input id="np-slug" placeholder=\"my-new-post\" style="font-family:monospace"></div>
+      <div><label>标题</label><input id="np-title" placeholder=\"文章标题\"></div>
     </div>
-    <div class="mb-2"><label>描述</label><input id="np-desc" placeholder="简短描述"></div>
+    <div class="mb-2"><label>描述</label><input id="np-desc" placeholder=\"简短描述\"></div>
     <div class="grid-2 mb-2">
-      <div><label>分类</label><input id="np-cat" value="随笔" placeholder="如：随笔、技术、生活"></div>
+      <div><label>分类</label><input id="np-cat" value="随笔" placeholder=\"如：随笔、技术、生活\"></div>
       <div><label>标签 (逗号分隔)</label><input id="np-tags" value="随笔"></div>
     </div>
-    <div class="mb-2"><label>封面图URL (可选，可先上传再粘贴)</label><input id="np-cover" placeholder="https://... 或 /uploads/xxx.jpg"></div>
-    <div class="mb-2"><label>正文 (Markdown)</label><textarea id="np-body" rows="8" placeholder="在此输入文章内容..."></textarea></div>
+    <div class="mb-2"><label>封面图URL (可选，可先上传再粘贴)</label><input id="np-cover" placeholder=\"https://... 或 /uploads/xxx.jpg\"></div>
+    <div class="mb-2"><label>正文 (Markdown)</label><textarea id="np-body" rows="8" placeholder=\"在此输入文章内容...\"></textarea></div>
     <button onclick="publishPost()" class="btn btn-primary btn-sm">📤 发布文章</button>
     <div id="np-msg" class="text-xs mt-2 text-muted"></div>`;
 }
@@ -1874,7 +1874,7 @@ async function saveSite() {
 }
 
 
-RECYCLE BIN ===
+// RECYCLE BIN ===
 let recycleBin=[];
 async function renderRecycle(){var e=document.getElementById("tab-recycle");if(!e){setTimeout(function(){renderRecycle()},100);return}
 try{var r=await fetch("https://api.github.com/repos/"+REPO+"/contents/src/data/recycle.json?ref="+BRANCH,{headers:{"Authorization":"Bearer "+TOKEN,"Accept":"application/vnd.github.v3+json"}})
@@ -1908,7 +1908,7 @@ try{var ct=b64Decode(f.content);var p=ct.split("---");if(p.length<3)return;var f
 var tl=(fm.match(/title:\s*["']([^"']+)["']/)||[])[1]||f.name
 t[1].split(",").forEach(function(tg){var tag=tg.trim().replace(/["']/g,"");if(tag){if(!m[tag])m[tag]={count:0,posts:[]};m[tag].count++;m[tag].posts.push(tl)}})}catch(ex){}})
 var sk=Object.keys(m).sort()
-var h="<div class=\"card\"><h3>🏷️ 标签管理</h3><p>? "+sk.length+" 个标签</p><div class=\"flex gap-2 mb-3\"><input id=\"new-tag-name\" placeholder="新标签名" style=\"flex:1;max-width:200px\"><button onclick=\"addTag()\" class=\"btn btn-ok btn-sm\">＋ 添加</button></div><div style=\"display:grid;gap:8px\">"
+var h="<div class=\"card\"><h3>🏷️ 标签管理</h3><p>? "+sk.length+" 个标签</p><div class=\"flex gap-2 mb-3\"><input id=\"new-tag-name\" placeholder=\"新标签名\" style=\"flex:1;max-width:200px\"><button onclick=\"addTag()\" class=\"btn btn-ok btn-sm\">＋ 添加</button></div><div style=\"display:grid;gap:8px\">"
 sk.forEach(function(tag){var info=m[tag];h+="<div class=\"card\" style=\"padding:12px 16px;display:flex;justify-content:space-between;align-items:center\"><div><span class=\"btn btn-outline btn-xs\">#"+esc(tag)+"</span> <span class=\"text-xs text-muted\">"+info.count+"篇</span></div><div class=\"flex gap-2\"><button onclick=\"renameTag(\'"+esc(tag)+"\')\" class=\"btn btn-outline btn-xs\">重命名</button><button onclick=\"deleteTag(\'"+esc(tag)+"\',"+info.count+")\" class=\"btn btn-primary btn-xs\">删除</button></div></div>"})
 h+="</div></div>";e.innerHTML=h}catch(ex){e.innerHTML="<p>"+ex.message+"</p>"}}
 function addTag(){var n=document.getElementById("new-tag-name").value.trim();if(!n){showMsg("请输入标签名","err");return}
@@ -1925,7 +1925,7 @@ try{var ct=b64Decode(f.content);var p=ct.split("---");if(p.length<3)return;var f
 var tl=(fm.match(/title:\s*["']([^"']+)["']/)||[])[1]||f.name;var cat=ctg[1]
 if(!m[cat])m[cat]={count:0,posts:[]};m[cat].count++;m[cat].posts.push(tl)}catch(ex){}})
 var sk=Object.keys(m).sort()
-var h="<div class=\"card\"><h3>🏷️ 标签管理</h3><p>? "+sk.length+" 个标签</p><div class=\"flex gap-2 mb-3\"><input id=\"new-cat-name\" placeholder="新标签名" style=\"flex:1;max-width:200px\"><button onclick=\"addCategory()\" class=\"btn btn-ok btn-sm\">＋ 添加</button></div><div style=\"display:grid;gap:8px\">"
+var h="<div class=\"card\"><h3>🏷️ 标签管理</h3><p>? "+sk.length+" 个标签</p><div class=\"flex gap-2 mb-3\"><input id=\"new-cat-name\" placeholder=\"新标签名\" style=\"flex:1;max-width:200px\"><button onclick=\"addCategory()\" class=\"btn btn-ok btn-sm\">＋ 添加</button></div><div style=\"display:grid;gap:8px\">"
 sk.forEach(function(cat){var info=m[cat];h+="<div class=\"card\" style=\"padding:12px 16px;display:flex;justify-content:space-between;align-items:center\"><div><span class=\"btn btn-outline btn-xs\" style=\"background:rgba(78,105,68,0.08);color:#4a6741\">"+esc(cat)+"</span> <span class=\"text-xs text-muted\">"+info.count+"篇</span></div><div class=\"flex gap-2\"><button onclick=\"renameCategory(\'"+esc(cat)+"\')\" class=\"btn btn-outline btn-xs\">重命名</button><button onclick=\"deleteCategory(\'"+esc(cat)+"\')\" class=\"btn btn-primary btn-xs\">删除</button></div></div>"})
 h+="</div></div>";e.innerHTML=h}catch(ex){e.innerHTML="<p>"+ex.message+"</p>"}}
 function addCategory(){var n=document.getElementById("new-cat-name").value.trim();if(!n){showMsg("请输入标签名","err");return}
