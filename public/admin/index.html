@@ -175,17 +175,81 @@ h3{font-family:"Ma Shan Zheng","Noto Serif SC",cursive;letter-spacing:0.05em}
   </div>
 
   <!-- 主界面 -->
-  <div id="main-screen" class="hidden" style="max-width:960px;margin:0 auto;padding:24px 16px">
-    <div class="flex items-center justify-between mb-4">
-      <div>
-        <h1 style="font-size:20px;letter-spacing:0.1em">后台管理</h1>
-        <p class="text-sm text-muted" style="margin-top:2px">小杨王子 · 水墨博客</p>
+  <div id="main-screen" class="hidden" style="max-width:960px;margin:0 auto;padding:0">
+    <!-- 顶栏 -->
+    <div class="admin-header">
+      <div class="admin-header-left">
+        <button id="sidebar-toggle" class="btn btn-outline btn-sm" onclick="toggleSidebar()">☰</button>
+        <h1 class="admin-title">水墨后台</h1>
       </div>
-      <div class="flex gap-2 items-center">
-        <span id="status-dot" style="width:8px;height:8px;border-radius:50%;background:#d4c494;display:inline-block"></span>
-        <span id="status-text" class="text-xs text-muted">未连接</span>
+      <div class="admin-header-right">
+        <span id="status-dot" class="status-dot"></span>
+        <span id="status-text" class="status-text">未连接</span>
+        <span class="admin-version">v2.0</span>
       </div>
     </div>
+
+    <div id="token-bar" class="card" style="margin:16px">
+      <div class="flex gap-3 items-center flex-wrap">
+        <input id="token-input" type="password" placeholder="GitHub Personal Access Token (ghp_...)" style="flex:1;min-width:200px">
+        <button id="token-btn" class="btn btn-primary">连接</button>
+        <a href="https://github.com/settings/tokens" target="_blank" class="text-xs text-accent" style="text-decoration:none">生成 Token</a>
+      </div>
+      <div id="token-err" class="text-xs text-accent mt-2 hidden" style="display:none"></div>
+    </div>
+
+    <div id="global-msg" style="margin:0 16px"></div>
+
+    <!-- 主体：侧边栏 + 内容区 -->
+    <div class="admin-body">
+      <!-- 侧边栏 -->
+      <aside id="sidebar" class="sidebar">
+        <nav class="sidebar-nav">
+          <button class="sidebar-btn active" data-tab="dashboard" onclick="switchTab('dashboard')">
+            <span class="sidebar-icon">📊</span> 仪表盘
+          </button>
+          <button class="sidebar-btn" data-tab="posts" onclick="switchTab('posts')">
+            <span class="sidebar-icon">📝</span> 文章
+          </button>
+          <button class="sidebar-btn" data-tab="editor" onclick="switchTab('editor')">
+            <span class="sidebar-icon">✏️</span> 写文章
+          </button>
+          <button class="sidebar-btn" data-tab="tools" onclick="switchTab('tools')">
+            <span class="sidebar-icon">🔧</span> 工具
+          </button>
+          <button class="sidebar-btn" data-tab="nav" onclick="switchTab('nav')">
+            <span class="sidebar-icon">🧭</span> 导航
+          </button>
+          <button class="sidebar-btn" data-tab="profile" onclick="switchTab('profile')">
+            <span class="sidebar-icon">👤</span> 简介
+          </button>
+          <button class="sidebar-btn" data-tab="upload" onclick="switchTab('upload')">
+            <span class="sidebar-icon">📤</span> 上传
+          </button>
+          <button class="sidebar-btn" data-tab="site" onclick="switchTab('site')">
+            <span class="sidebar-icon">⚙️</span> 站点
+          </button>
+        </nav>
+        <div class="sidebar-footer">
+          <a href="/" target="_blank" class="sidebar-btn" style="text-decoration:none;display:flex;align-items:center;gap:8px;padding:10px 16px;font-size:12px;color:#6b5f45;border:none;background:none;width:100%;cursor:pointer">
+            <span>🏠</span> 查看博客
+          </a>
+        </div>
+      </aside>
+
+      <!-- 内容区 -->
+      <main class="admin-content">
+        <div id="tab-dashboard" class="tab-content"></div>
+        <div id="tab-posts" class="tab-content hidden"></div>
+        <div id="tab-editor" class="tab-content hidden"></div>
+        <div id="tab-tools" class="tab-content hidden"></div>
+        <div id="tab-nav" class="tab-content hidden"></div>
+        <div id="tab-profile" class="tab-content hidden"></div>
+        <div id="tab-upload" class="tab-content hidden"></div>
+        <div id="tab-site" class="tab-content hidden"></div>
+      </main>
+    </div>
+  </div>
 
     <div id="token-bar" class="card mb-4">
       <div class="flex gap-3 items-center flex-wrap">
@@ -268,16 +332,30 @@ async function doConnect() {
   } catch(e) { err.textContent = e.message; err.classList.remove("hidden"); }
 }
 
-document.querySelectorAll(".tab-btn").forEach(btn => {
-  btn.onclick = () => {
-    document.querySelectorAll(".tab-btn").forEach(b => { b.className = "tab-btn btn btn-outline btn-sm"; });
-    btn.className = "tab-btn btn btn-primary btn-sm";
-    document.querySelectorAll(".tab-content").forEach(t => t.classList.add("hidden"));
-    document.getElementById("tab-" + btn.dataset.tab).classList.remove("hidden");
-    if (btn.dataset.tab === "upload") renderUpload();
-    if (btn.dataset.tab === "site") renderSite();
-  };
-});
+// 侧边栏切换
+function switchTab(tab) {
+  document.querySelectorAll(".sidebar-btn").forEach(b => b.classList.remove("active"));
+  document.querySelectorAll(".tab-content").forEach(t => t.classList.add("hidden"));
+  var activeBtn = document.querySelector(".sidebar-btn[data-tab=\"" + tab + "\"]");
+  if (activeBtn) activeBtn.classList.add("active");
+  var contentEl = document.getElementById("tab-" + tab);
+  if (contentEl) contentEl.classList.remove("hidden");
+  document.getElementById("sidebar").classList.remove("open");
+  switch(tab) {
+    case "dashboard": renderDashboard(); break;
+    case "posts": renderPosts(); break;
+    case "editor": showNewPost(); break;
+    case "tools": renderTools(); break;
+    case "nav": renderNav(); break;
+    case "profile": renderProfile(); break;
+    case "upload": renderUpload(); break;
+    case "site": renderSite(); break;
+  }
+}
+
+function toggleSidebar() {
+  document.getElementById("sidebar").classList.toggle("open");
+}
 
 // GitHub API
 async function ghGet(path) {
@@ -309,7 +387,74 @@ async function loadAll() {
   } catch(e) { showMsg("❌ " + e.message, "err"); }
 }
 
-// ===== 拖拽工具 =====
+
+// ===== 仪表盘 =====
+async function renderDashboard() {
+  var el = document.getElementById("tab-dashboard");
+  if (!el) return;
+  try {
+    var r = await fetch("https://api.github.com/repos/"+REPO+"/contents/src/content/posts?ref="+BRANCH, {
+      headers: { "Authorization": "Bearer " + TOKEN, "Accept": "application/vnd.github.v3+json" }
+    });
+    var files = r.ok ? await r.json() : [];
+    var posts = files.filter(function(f) { return f.name.endsWith(".mdx") || f.name.endsWith(".md"); });
+    var cats = {}, tags = {};
+    posts.forEach(function(f) {
+      try {
+        var c = b64Decode(f.content);
+        var parts = c.split("---");
+        if (parts.length >= 3) {
+          var fm = parts[1];
+          var m = fm.match(/category:\s*["']([^"']+)["']/);
+          if (m) cats[m[1]] = (cats[m[1]] || 0) + 1;
+          var t = fm.match(/tags:\s*\[([^\]]+)\]/);
+          if (t) t[1].split(",").forEach(function(tag) {
+            var tg = tag.trim().replace(/["']/g, "");
+            if (tg) tags[tg] = (tags[tg] || 0) + 1;
+          });
+        }
+      } catch(e) {}
+    });
+    var uploadR = await fetch("https://api.github.com/repos/"+REPO+"/contents/public/uploads?ref="+BRANCH, {
+      headers: { "Authorization": "Bearer " + TOKEN, "Accept": "application/vnd.github.v3+json" }
+    });
+    var uploadFiles = uploadR.ok ? (await uploadR.json()).length : 0;
+    var recentPosts = posts.slice(-5).reverse();
+    var recentHtml = "";
+    recentPosts.forEach(function(f) {
+      try {
+        var c = b64Decode(f.content);
+        var parts = c.split("---");
+        var title = "", date = "";
+        if (parts.length >= 3) {
+          var fm = parts[1];
+          var tm = fm.match(/title:\s*["']([^"']+)["']/);
+          if (tm) title = tm[1];
+          var dm = fm.match(/date:\s*["']?([^"'\s]+)["']?/);
+          if (dm) date = dm[1];
+        }
+        recentHtml += "<div class='post-card card'><div class='post-card-info'><div class='post-card-title'>" + (title || esc(f.name)) + "</div><div class='post-card-meta'>" + esc(f.name) + (date ? " <span class='post-date-tag'>" + date + "</span>" : "") + "</div></div></div>";
+      } catch(e) {}
+    });
+    if (!recentHtml) recentHtml = "<p class='text-sm text-muted'>暂无文章</p>";
+    el.innerHTML = `
+      <div class="dashboard-grid">
+        <div class="stat-card card"><div class="stat-icon">📄</div><div class="stat-number">${posts.length}</div><div class="stat-label">文章总数</div></div>
+        <div class="stat-card card"><div class="stat-icon">📂</div><div class="stat-number">${Object.keys(cats).length}</div><div class="stat-label">分类</div></div>
+        <div class="stat-card card"><div class="stat-icon">🏷️</div><div class="stat-number">${Object.keys(tags).length}</div><div class="stat-label">标签</div></div>
+        <div class="stat-card card"><div class="stat-icon">📤</div><div class="stat-number">${uploadFiles}</div><div class="stat-label">文件</div></div>
+      </div>
+      <div class="card mb-4"><h3 style="font-size:15px;margin-bottom:12px">📈 最近发布</h3>${recentHtml}</div>
+      <div class="card"><h3 style="font-size:15px;margin-bottom:12px">⚡ 快捷操作</h3>
+        <div class="flex gap-2 flex-wrap">
+          <button onclick="switchTab('editor')" class="btn btn-primary btn-sm">✏️ 写文章</button>
+          <button onclick="switchTab('upload')" class="btn btn-outline btn-sm">📤 上传文件</button>
+          <button onclick="switchTab('tools')" class="btn btn-outline btn-sm">🔧 管理工具</button>
+          <button onclick="switchTab('site')" class="btn btn-outline btn-sm">⚙️ 站点设置</button>
+        </div>
+      </div>`;
+  } catch(e) { el.innerHTML = "<p class='text-sm text-accent'>加载失败: " + e.message + "</p>"; }
+}// ===== 拖拽工具 =====
 function makeDraggable(listId, dataArray, onReorder) {
   const container = document.getElementById(listId);
   if (!container) return;
@@ -479,13 +624,13 @@ async function renderPosts() {
         <div class="flex-1" style="min-width:200px">
           <p class="text-xs text-muted mb-2">分类</p>
           <div class="flex flex-wrap gap-2">
-            ${(()=>{var cats={};files.filter(f=>f.name.endsWith(".mdx")).forEach(f=>{try{var c=atob(f.content.replace(/\\n/g,""));var m=c.match(/category:\s*["'"]([^"']+)["'"]/);if(m)cats[m[1]]=(cats[m[1]]||0)+1}catch(e){}});return Object.keys(cats).sort().map(cat=>"<span class=\"btn btn-outline btn-xs\" style=\"cursor:default;background:rgba(199,62,58,0.08);border-color:rgba(199,62,58,0.2);color:#c73e3a\">"+cat+" ("+cats[cat]+")</span>").join(" ")})()}
+            ${(()=>{var cats={};files.filter(f=>f.name.endsWith(".mdx")).forEach(f=>{try{var c=b64Decode(f.content);var m=c.match(/category:\s*["'"]([^"']+)["'"]/);if(m)cats[m[1]]=(cats[m[1]]||0)+1}catch(e){}});return Object.keys(cats).sort().map(cat=>"<span class=\"btn btn-outline btn-xs\" style=\"cursor:default;background:rgba(199,62,58,0.08);border-color:rgba(199,62,58,0.2);color:#c73e3a\">"+cat+" ("+cats[cat]+")</span>").join(" ")})()}
           </div>
         </div>
         <div class="flex-1" style="min-width:200px">
           <p class="text-xs text-muted mb-2">标签</p>
           <div class="flex flex-wrap gap-2">
-            ${(()=>{var tagMap={};files.filter(f=>f.name.endsWith(".mdx")).forEach(f=>{try{var c=atob(f.content.replace(/\\n/g,""));var r=c.match(/tags:\s*\[([^\]]+)\]/);if(r){r[1].split(",").forEach(t=>{var tag=t.trim().replace(/["'"]/g,"");if(tag)tagMap[tag]=(tagMap[tag]||0)+1})}}catch(e){}});return Object.keys(tagMap).sort().map(t=>"<span class=\"btn btn-outline btn-xs\" style=\"cursor:default\">#"+t+" ("+tagMap[t]+")</span>").join(" ")})()}
+            ${(()=>{var tagMap={};files.filter(f=>f.name.endsWith(".mdx")).forEach(f=>{try{var c=b64Decode(f.content);var r=c.match(/tags:\s*\[([^\]]+)\]/);if(r){r[1].split(",").forEach(t=>{var tag=t.trim().replace(/["'"]/g,"");if(tag)tagMap[tag]=(tagMap[tag]||0)+1})}}catch(e){}});return Object.keys(tagMap).sort().map(t=>"<span class=\"btn btn-outline btn-xs\" style=\"cursor:default\">#"+t+" ("+tagMap[t]+")</span>").join(" ")})()}
           </div>
         </div>
       </div>
@@ -655,7 +800,21 @@ async function togglePostDraft(name) {
     renderPosts();
   } catch(e) { showMsg("错误: " + e.message, "err"); }
 }
-function mdRender(text) {
+
+function filterPosts() {
+  var q = document.getElementById("post-search");
+  if (!q) return;
+  q = q.value.toLowerCase();
+  var cat = document.getElementById("post-cat-filter");
+  cat = cat ? cat.value : "";
+  var cards = document.querySelectorAll("#post-list .post-card");
+  cards.forEach(function(card) {
+    var title = (card.getAttribute("data-title") || "").toLowerCase();
+    var cats = card.getAttribute("data-category") || "";
+    var show = (!q || title.indexOf(q) >= 0) && (!cat || cats.indexOf(cat) >= 0);
+    card.style.display = show ? "flex" : "none";
+  });
+}function mdRender(text) {
   var t = text
     .replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;")
     .replace(/^### (.+)$/gm, "<h3 style='margin:1em 0 0.5em;font-size:1.1em;color:#1c1c1c'>$1</h3>")
