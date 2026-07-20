@@ -3,6 +3,7 @@ import Layout from "../layouts/Layout.astro";
 import BlogCard from "../components/BlogCard.astro";
 import AuthorCard from "../components/AuthorCard.astro";
 import { getCollection } from "astro:content";
+import { formatDate } from "../utils/date";
 
 const posts = await getCollection("posts", ({ data }) => !data.draft);
 posts.sort((a, b) => b.data.date.getTime() - a.data.date.getTime());
@@ -42,7 +43,8 @@ const categories = [...new Set(posts.map(p => p.data.category))];
           </a>
         </div>
       </div>
-    <div class="absolute bottom-0 left-0 right-0 h-32" style="background: linear-gradient(to top, var(--bg-primary), transparent);"></div>
+    
+  
   </section>
 
   <!-- ===== 内容区域 ===== -->
@@ -73,7 +75,7 @@ const categories = [...new Set(posts.map(p => p.data.category))];
           <h3 class="text-base font-serif font-semibold mb-1.5 line-clamp-1 transition-colors duration-300 group-hover:text-gradient" style="color:var(--text-primary)">{post.data.title}</h3>
           <p class="text-xs leading-relaxed line-clamp-2 mb-3" style="color:var(--text-secondary)">{post.data.description}</p>
           <div class="flex items-center gap-3 text-xs" style="color:var(--text-secondary)">
-            <span>{post.data.date.toLocaleDateString("zh-CN")}</span>
+            <span>{formatDate(post.data.date)}</span>
             <span>·</span>
             <span>{post.data.readingTime || 5} 分</span>
           </div>

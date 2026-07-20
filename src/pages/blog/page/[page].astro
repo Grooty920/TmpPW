@@ -1,0 +1,95 @@
+---
+import Layout from "../../../layouts/Layout.astro";
+import BlogListCard from "../../../components/BlogListCard.astro";
+import { getCollection } from "astro:content";
+
+export async function getStaticPaths({ paginate }) {
+  const posts = await getCollection("posts", ({ data }) => !data.draft);
+  posts.sort((a, b) => b.data.date.getTime() - a.data.date.getTime());
+  const allPages = paginate(posts, { pageSize: 5 });
+  // 跳过 page=1，由 /blog/index 处理，避免重复
+  return allPages.filter(p => String(p.params.page) !== "1");
+}
+
+const { page } = Astro.props;
+const { currentPage, lastPage, start, end, total } = page;
+const prev = currentPage > 1 ? (currentPage === 2 ? "/blog" : "/blog/page/" + (currentPage - 1)) : null;
+const next = currentPage < lastPage ? "/blog/page/" + (currentPage + 1) : null;
+---
+
+<Layout title={"第" + currentPage + "页 路 随笔 路 小杨王子"} description={"小杨王子的博客，第" + currentPage + "页"}>
+  <div class="container-page py-16">
+    <div class="text-center mb-16 reveal">
+      <h1 class="text-3xl md:text-4xl font-serif font-bold" style="color:var(--text-primary)">随笔</h1>
+      <div class="mt-4 mx-auto w-12 h-0.5" style="background-color:var(--accent)"></div>
+      {currentPage > 1 && (
+        <p class="text-xs mt-4" style="color:var(--text-secondary); font-family: 'LXGW WenKai', serif; letter-spacing: 0.2em;">第 {currentPage} 页</p>
+      )}
+    </div>
+
+    <div class="max-w-3xl mx-auto space-y-6">
+      {page.data.map((post, index) => (
+        <div class="reveal" style={"animation-delay:" + (0.1 + index * 0.08) + "s"}>
+          <BlogListCard
+            title={post.data.title}
+            description={post.data.description}
+            date={post.data.date}
+            slug={post.slug}
+            category={post.data.category}
+            coverImage={post.data.coverImage}
+            readingTime={post.data.readingTime}
+          />
+        </div>
+      ))}
+    </div>
+
+    <!-- 分页导航 -->
+    <div class="mt-16 reveal">
+      <div class="flex items-center justify-center gap-3">
+        {prev ? (
+          <a href={prev} class="ink-btn px-4 py-2 text-sm transition-all duration-300 hover:scale-105" style="border:1px solid var(--accent);color:var(--accent);">
+            <svg class="w-4 h-4 mr-1 inline" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+            上一页
+          </a>
+        ) : (
+          <span class="px-4 py-2 text-sm opacity-30" style="color:var(--text-secondary)">上一页</span>
+        )}
+
+        <div class="flex items-center gap-2">
+          {Array.from({ length: lastPage }, (_, i) => i + 1).map((p) => (
+            p === currentPage ? (
+              <span class="w-8 h-8 rounded-full flex items-center justify-center text-xs font-medium" style="background:var(--accent);color:#f7f3e8;">{p}</span>
+            ) : (
+              <a
+                href={p === 1 ? "/blog" : "/blog/page/" + p}
+                class="w-8 h-8 rounded-full flex items-center justify-center text-xs transition-all duration-300 hover:scale-110"
+                style="color:var(--text-secondary);border:1px solid var(--border);"
+              >{p}</a>
+            )
+          ))}
+        </div>
+
+        {next ? (
+          <a href={next} class="ink-btn px-4 py-2 text-sm transition-all duration-300 hover:scale-105" style="border:1px solid var(--accent);color:var(--accent);">
+            下一页
+            <svg class="w-4 h-4 ml-1 inline" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+          </a>
+        ) : (
+          <span class="px-4 py-2 text-sm opacity-30" style="color:var(--text-secondary)">下一页</span>
+        )}
+      </div>
+
+      <div class="text-center mt-4">
+        <span class="text-xs" style="color:var(--text-secondary)">共 {total} 篇，第 {currentPage}/{lastPage} 页</span>
+      </div>
+    </div>
+
+    <!-- 底部寄语 -->
+    <div class="mt-20 text-center reveal">
+      <div class="max-w-lg mx-auto">
+        <div class="w-12 h-[1px] mx-auto mb-6" style="background:var(--border);"></div>
+        <p class="text-sm" style="color:var(--text-secondary); font-family: 'LXGW WenKai', serif;">我手写我心，笔墨皆性情</p>
+      </div>
+    </div>
+  </div>
+</Layout>

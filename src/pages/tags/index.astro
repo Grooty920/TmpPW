@@ -1,0 +1,58 @@
+---
+import Layout from "../../layouts/Layout.astro";
+import { getCollection } from "astro:content";
+
+const posts = await getCollection("posts", ({ data }) => !data.draft);
+
+// 收集所有标签并统计文章数
+const tagMap = new Map<string, number>();
+for (const post of posts) {
+  if (post.data.tags) {
+    for (const tag of post.data.tags) {
+      tagMap.set(tag, (tagMap.get(tag) || 0) + 1);
+    }
+  }
+}
+// 按文章数排序
+const tags = [...tagMap.entries()].sort((a, b) => b[1] - a[1]);
+const totalTags = tags.length;
+---
+
+<Layout title="标签 路 小杨王子" description="笔墨标签，按图索骥">
+  <div class="container-page py-20">
+    <div class="text-center mb-16 reveal">
+      <h1 class="text-3xl md:text-4xl font-serif font-bold" style="color:var(--text-primary)">笔墨标签</h1>
+      <div class="mt-4 mx-auto w-12 h-0.5" style="background-color:var(--accent)"></div>
+      <p class="text-xs mt-4" style="color:var(--text-secondary); font-family: 'LXGW WenKai', serif; letter-spacing: 0.2em;">按图索骥，寻笔墨踪迹</p>
+    </div>
+
+    {totalTags === 0 && (
+      <div class="text-center py-20 reveal">
+        <p class="text-lg" style="color:var(--text-secondary)">暂无标签...</p>
+      </div>
+    )}
+
+    <div class="max-w-3xl mx-auto">
+      <div class="flex flex-wrap justify-center gap-4">
+        {tags.map(([tag, count], index) => (
+          <a
+            href={"/tags/" + tag}
+            class="group card-ink px-5 py-3 transition-all duration-300 hover:scale-105 reveal"
+            style={"animation-delay:" + (0.05 + index * 0.03) + "s"}
+          >
+            <span class="text-base font-serif font-semibold group-hover:text-gradient" style="color:var(--text-primary)">#{tag}</span>
+            <span class="text-xs ml-2" style="color:var(--text-secondary)">({count} 篇)</span>
+          </a>
+        ))}
+      </div>
+    </div>
+
+    <!-- 寄语 -->
+    <div class="mt-20 text-center reveal">
+      <div class="max-w-lg mx-auto">
+        <div class="w-12 h-[1px] mx-auto mb-6" style="background:var(--border);"></div>
+        <p class="text-sm" style="color:var(--text-secondary); font-family: 'LXGW WenKai', serif;">字里行间，皆有回响</p>
+      </div>
+    </div>
+  </div>
+</Layout>

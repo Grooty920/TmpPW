@@ -2,9 +2,14 @@
 import Layout from "../../layouts/Layout.astro";
 import BlogListCard from "../../components/BlogListCard.astro";
 import { getCollection } from "astro:content";
+import { formatDate } from "../../utils/date";
 
-const posts = await getCollection("posts", ({ data }) => !data.draft);
-posts.sort((a, b) => b.data.date.getTime() - a.data.date.getTime());
+const allPosts = await getCollection("posts", ({ data }) => !data.draft);
+allPosts.sort((a, b) => b.data.date.getTime() - a.data.date.getTime());
+const pageSize = 5;
+const totalPosts = allPosts.length;
+const lastPage = Math.ceil(totalPosts / pageSize);
+const posts = allPosts.slice(0, pageSize);
 ---
 
 <Layout title="随笔 · 小杨王子" description="沿途风景，以笔录之">
@@ -36,6 +41,38 @@ posts.sort((a, b) => b.data.date.getTime() - a.data.date.getTime());
         </div>
       ))}
     </div>
+
+    <!-- 分页导航 -->
+    {lastPage > 1 && (
+    <div class="mt-16 reveal">
+      <div class="flex items-center justify-center gap-3">
+        <span class="px-4 py-2 text-sm opacity-30" style="color:var(--text-secondary)">上一页</span>
+
+        <div class="flex items-center gap-2">
+          {Array.from({ length: lastPage }, (_, i) => i + 1).map((p) => (
+            p === 1 ? (
+              <span class="w-8 h-8 rounded-full flex items-center justify-center text-xs font-medium" style="background:var(--accent);color:#f7f3e8;">{p}</span>
+            ) : (
+              <a
+                href={"/blog/page/" + p}
+                class="w-8 h-8 rounded-full flex items-center justify-center text-xs transition-all duration-300 hover:scale-110"
+                style="color:var(--text-secondary);border:1px solid var(--border);"
+              >{p}</a>
+            )
+          ))}
+        </div>
+
+        <a href={"/blog/page/2"} class="ink-btn px-4 py-2 text-sm transition-all duration-300 hover:scale-105" style="border:1px solid var(--accent);color:var(--accent);">
+          下一页
+          <svg class="w-4 h-4 ml-1 inline" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+        </a>
+      </div>
+
+      <div class="text-center mt-4">
+        <span class="text-xs" style="color:var(--text-secondary)">共 {totalPosts} 篇，第 1/{lastPage} 页</span>
+      </div>
+    </div>
+    )}
 
     <!-- 底部寄语 -->
     <div class="mt-20 text-center reveal">

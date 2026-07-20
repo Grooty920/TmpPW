@@ -9,6 +9,8 @@ export interface Props {
   readingTime?: number;
 }
 
+import { formatDate } from "../utils/date";
+
 const { title, description, date, slug, category, coverImage, readingTime = 5 } = Astro.props;
 ---
 
@@ -37,7 +39,7 @@ const { title, description, date, slug, category, coverImage, readingTime = 5 } 
       {description}
     </p>
     <div class="flex items-center gap-4 text-xs" style="color:var(--text-secondary)">
-      <span>{date.toLocaleDateString("zh-CN")}</span>
+      <span>{formatDate(date)}</span>
       <span>·</span>
       <span>{readingTime} 分</span>
     </div>

@@ -1,0 +1,60 @@
+---
+import Layout from "../layouts/Layout.astro";
+---
+
+<Layout title="404 路 小杨王子" description="此间笔墨未干，且待来日">
+  <div class="container-page py-20 min-h-[70vh] flex items-center">
+    <div class="max-w-2xl mx-auto w-full">
+      <div class="text-center reveal">
+        <!-- 水墨风格的404 -->
+        <div class="relative mb-12 inline-block">
+          <div class="text-[8rem] md:text-[10rem] font-serif font-bold leading-none select-none" style="color:var(--text-primary); opacity:0.06; font-family: 'Ma Shan Zheng', cursive;">
+            404
+          </div>
+          <div class="absolute inset-0 flex items-center justify-center">
+            <div class="space-y-2">
+              <p class="text-4xl md:text-5xl font-serif font-bold" style="color:var(--text-primary); font-family: 'Ma Shan Zheng', cursive; letter-spacing: 0.15em;">
+                笔墨未干
+              </p>
+              <div class="flex items-center justify-center gap-3">
+                <span class="block w-8 h-[1px]" style="background:var(--border)"></span>
+                <span class="block w-1 h-1 rounded-full" style="background:var(--accent)"></span>
+                <span class="block w-8 h-[1px]" style="background:var(--border)"></span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 墨滴装饰 -->
+        <div class="flex justify-center gap-2 mb-10">
+          <span class="block w-2 h-2 rounded-full" style="background:var(--accent); opacity:0.3; animation: inkPulse 2s ease-in-out infinite"></span>
+          <span class="block w-1.5 h-1.5 rounded-full" style="background:var(--accent); opacity:0.2; animation: inkPulse 2s ease-in-out 0.3s infinite"></span>
+          <span class="block w-1 h-1 rounded-full" style="background:var(--accent); opacity:0.15; animation: inkPulse 2s ease-in-out 0.6s infinite"></span>
+        </div>
+
+        <p class="text-sm mb-10 leading-relaxed" style="color:var(--text-secondary); font-family: 'LXGW WenKai', serif; letter-spacing: 0.1em;">
+          此间笔墨未干，且待来日<br/>
+          或许你寻的那页文章，还在酝酿之中
+        </p>
+
+        <div class="flex flex-col sm:flex-row items-center justify-center gap-4">
+          <a href="/" class="ink-btn-primary ink-btn px-6 py-3 text-sm" style="background:var(--accent);color:#f7f3e8;">
+            <svg class="w-4 h-4 mr-2" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+            回到首页
+          </a>
+          <a href="/blog" class="ink-btn px-6 py-3 text-sm" style="border:1px solid var(--accent);color:var(--accent);">
+            <svg class="w-4 h-4 mr-2" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 19V5M5 12l7-7 7 7"/></svg>
+            浏览文章
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <style is:global>
+    @keyframes inkPulse {
+      0%, 100% { transform: scale(1); opacity: 0.3; }
+      50% { transform: scale(1.5); opacity: 0.6; }
+    }
+  </style>
+</Layout>
