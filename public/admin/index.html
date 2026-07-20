@@ -317,8 +317,6 @@ document.getElementById("login-btn").onclick = () => { console.log("Login clicke
   if (document.getElementById("pwd-input").value === "Grooty920") { console.log("Password correct");
     document.getElementById("login-screen").classList.add("hidden");
     document.getElementById("main-screen").classList.remove("hidden");
-    const saved = sessionStorage.getItem("gh_token");
-    if (saved) { TOKEN = saved; document.getElementById("token-input").value = saved; doConnect(); }
   } else { console.log("Password wrong"); document.getElementById("login-err").style.display = "block"; }
 };
 document.getElementById("pwd-input").addEventListener("keydown", e => { if(e.key==="Enter") document.getElementById("login-btn").click(); });
