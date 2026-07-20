@@ -1007,6 +1007,8 @@ function switchTab(tab) {
     case "analytics": renderAnalytics(); break;
     case "themes": renderThemes(); break;
     case "backup": renderBackup(); break;
+      case "tags": renderTags(); break;
+      case "categories": renderCategories(); break;
   }
 }
 
@@ -1900,53 +1902,53 @@ if(!del.ok)throw Error("删除失败");showMsg("已删除 "+name,"ok");renderPos
 // TAGS CRUD
 async function renderTags(){var e=document.getElementById("tab-tags");if(!e){setTimeout(function(){renderTags()},100);return}
 try{var r=await fetch("https://api.github.com/repos/"+REPO+"/contents/src/content/posts?ref="+BRANCH,{headers:{"Authorization":"Bearer "+TOKEN,"Accept":"application/vnd.github.v3+json"}})
-if(!r.ok){e.innerHTML="<p>????</p>";return}
+if(!r.ok){e.innerHTML="<p>加载失败</p>";return}
 var fs=await r.json();var m={};fs.forEach(function(f){if(!f.name.endsWith(".mdx")&&!f.name.endsWith(".md"))return
 try{var ct=b64Decode(f.content);var p=ct.split("---");if(p.length<3)return;var fm=p[1];var t=fm.match(/tags:\s*\[([^\]]+)\]/);if(!t)return
 var tl=(fm.match(/title:\s*["']([^"']+)["']/)||[])[1]||f.name
 t[1].split(",").forEach(function(tg){var tag=tg.trim().replace(/["']/g,"");if(tag){if(!m[tag])m[tag]={count:0,posts:[]};m[tag].count++;m[tag].posts.push(tl)}})}catch(ex){}})
 var sk=Object.keys(m).sort()
-var h="<div class=\"card\"><h3>????</h3><p>? "+sk.length+" ???</p><div class=\"flex gap-2 mb-3\"><input id=\"new-tag-name\" placeholder=\"???\" style=\"flex:1;max-width:200px\"><button onclick=\"addTag()\" class=\"btn btn-ok btn-sm\">+ ??</button></div><div style=\"display:grid;gap:8px\">"
-sk.forEach(function(tag){var info=m[tag];h+="<div class=\"card\" style=\"padding:12px 16px;display:flex;justify-content:space-between;align-items:center\"><div><span class=\"btn btn-outline btn-xs\">#"+esc(tag)+"</span> <span class=\"text-xs text-muted\">"+info.count+" ?</span></div><div class=\"flex gap-2\"><button onclick=\"renameTag(\'"+esc(tag)+"\')\" class=\"btn btn-outline btn-xs\">???</button><button onclick=\"deleteTag(\'"+esc(tag)+"\',"+info.count+")\" class=\"btn btn-primary btn-xs\">??</button></div></div>"})
+var h="<div class=\"card\"><h3>🏷️ 标签管理</h3><p>? "+sk.length+" 个标签</p><div class=\"flex gap-2 mb-3\"><input id=\"new-tag-name\" placeholder="新标签名" style=\"flex:1;max-width:200px\"><button onclick=\"addTag()\" class=\"btn btn-ok btn-sm\">＋ 添加</button></div><div style=\"display:grid;gap:8px\">"
+sk.forEach(function(tag){var info=m[tag];h+="<div class=\"card\" style=\"padding:12px 16px;display:flex;justify-content:space-between;align-items:center\"><div><span class=\"btn btn-outline btn-xs\">#"+esc(tag)+"</span> <span class=\"text-xs text-muted\">"+info.count+"篇</span></div><div class=\"flex gap-2\"><button onclick=\"renameTag(\'"+esc(tag)+"\')\" class=\"btn btn-outline btn-xs\">重命名</button><button onclick=\"deleteTag(\'"+esc(tag)+"\',"+info.count+")\" class=\"btn btn-primary btn-xs\">删除</button></div></div>"})
 h+="</div></div>";e.innerHTML=h}catch(ex){e.innerHTML="<p>"+ex.message+"</p>"}}
-function addTag(){var n=document.getElementById("new-tag-name").value.trim();if(!n){showMsg("??????","err");return}
-showMsg("?? "+n+" ???","ok");document.getElementById("new-tag-name").value="";renderTags()}
-function renameTag(o){var n=prompt("????",o);if(!n||n===o)return;showMsg("?????????? "+o+" ?? "+n,"ok")}
-function deleteTag(t,c){if(c>0){if(!confirm("?? "+t+" ??? "+c+" ?????????"))return}else{if(!confirm("?????? "+t+"?"))return};showMsg("????? "+t,"ok");renderTags()}
+function addTag(){var n=document.getElementById("new-tag-name").value.trim();if(!n){showMsg("请输入标签名","err");return}
+showMsg("✅ "+n+" 已添加","ok");document.getElementById("new-tag-name").value="";renderTags()}
+function renameTag(o){var n=prompt("新名称",o);if(!n||n===o)return;showMsg("分类已重命名 "+o+" ? "+n","ok")}
+function deleteTag(t,c){if(c>0){if(!confirm("标签 "+t+" 有 "+c+" 篇文章，确定删除？"))return}else{if(!confirm("确定删除 "+t+"?"))return};showMsg("已删除 "+t,"ok");renderTags()}
 
 // CATEGORIES CRUD
 async function renderCategories(){var e=document.getElementById("tab-categories");if(!e){setTimeout(function(){renderCategories()},100);return}
 try{var r=await fetch("https://api.github.com/repos/"+REPO+"/contents/src/content/posts?ref="+BRANCH,{headers:{"Authorization":"Bearer "+TOKEN,"Accept":"application/vnd.github.v3+json"}})
-if(!r.ok){e.innerHTML="<p>????</p>";return}
+if(!r.ok){e.innerHTML="<p>加载失败</p>";return}
 var fs=await r.json();var m={};fs.forEach(function(f){if(!f.name.endsWith(".mdx")&&!f.name.endsWith(".md"))return
 try{var ct=b64Decode(f.content);var p=ct.split("---");if(p.length<3)return;var fm=p[1];var ctg=fm.match(/category:\s*["']([^"']+)["']/);if(!ctg)return
 var tl=(fm.match(/title:\s*["']([^"']+)["']/)||[])[1]||f.name;var cat=ctg[1]
 if(!m[cat])m[cat]={count:0,posts:[]};m[cat].count++;m[cat].posts.push(tl)}catch(ex){}})
 var sk=Object.keys(m).sort()
-var h="<div class=\"card\"><h3>????</h3><p>? "+sk.length+" ???</p><div class=\"flex gap-2 mb-3\"><input id=\"new-cat-name\" placeholder=\"???\" style=\"flex:1;max-width:200px\"><button onclick=\"addCategory()\" class=\"btn btn-ok btn-sm\">+ ??</button></div><div style=\"display:grid;gap:8px\">"
-sk.forEach(function(cat){var info=m[cat];h+="<div class=\"card\" style=\"padding:12px 16px;display:flex;justify-content:space-between;align-items:center\"><div><span class=\"btn btn-outline btn-xs\" style=\"background:rgba(78,105,68,0.08);color:#4a6741\">"+esc(cat)+"</span> <span class=\"text-xs text-muted\">"+info.count+" ?</span></div><div class=\"flex gap-2\"><button onclick=\"renameCategory(\'"+esc(cat)+"\')\" class=\"btn btn-outline btn-xs\">???</button><button onclick=\"deleteCategory(\'"+esc(cat)+"\')\" class=\"btn btn-primary btn-xs\">??</button></div></div>"})
+var h="<div class=\"card\"><h3>🏷️ 标签管理</h3><p>? "+sk.length+" 个标签</p><div class=\"flex gap-2 mb-3\"><input id=\"new-cat-name\" placeholder="新标签名" style=\"flex:1;max-width:200px\"><button onclick=\"addCategory()\" class=\"btn btn-ok btn-sm\">＋ 添加</button></div><div style=\"display:grid;gap:8px\">"
+sk.forEach(function(cat){var info=m[cat];h+="<div class=\"card\" style=\"padding:12px 16px;display:flex;justify-content:space-between;align-items:center\"><div><span class=\"btn btn-outline btn-xs\" style=\"background:rgba(78,105,68,0.08);color:#4a6741\">"+esc(cat)+"</span> <span class=\"text-xs text-muted\">"+info.count+"篇</span></div><div class=\"flex gap-2\"><button onclick=\"renameCategory(\'"+esc(cat)+"\')\" class=\"btn btn-outline btn-xs\">重命名</button><button onclick=\"deleteCategory(\'"+esc(cat)+"\')\" class=\"btn btn-primary btn-xs\">删除</button></div></div>"})
 h+="</div></div>";e.innerHTML=h}catch(ex){e.innerHTML="<p>"+ex.message+"</p>"}}
-function addCategory(){var n=document.getElementById("new-cat-name").value.trim();if(!n){showMsg("??????","err");return}
-showMsg("?? "+n+" ???","ok");document.getElementById("new-cat-name").value="";renderCategories()}
-function renameCategory(o){var n=prompt("????",o);if(!n||n===o)return;showMsg("?????????? "+o+" ?? "+n,"ok")}
-function deleteCategory(c){if(!confirm("?????? "+c+"?"))return;showMsg("????? "+c,"ok");renderCategories()}
+function addCategory(){var n=document.getElementById("new-cat-name").value.trim();if(!n){showMsg("请输入标签名","err");return}
+showMsg("✅ "+n+" 已添加","ok");document.getElementById("new-cat-name").value="";renderCategories()}
+function renameCategory(o){var n=prompt("新名称",o);if(!n||n===o)return;showMsg("分类已重命名 "+o+" ? "+n","ok")}
+function deleteCategory(c){if(!confirm("确定删除 "+c+"?"))return;showMsg("已删除 "+c,"ok");renderCategories()}
 
 // FRIEND LINKS
 let friendLinks=[],friendLinksSha=null
 async function renderFriendLinks(){var e=document.getElementById("tab-friendlinks");if(!e){setTimeout(function(){renderFriendLinks()},100);return}
 try{var r=await fetch("https://api.github.com/repos/"+REPO+"/contents/src/data/friendlinks.json?ref="+BRANCH,{headers:{"Authorization":"Bearer "+TOKEN,"Accept":"application/vnd.github.v3+json"}})
 var d=[];if(r.ok){var j=await r.json();d=JSON.parse(b64Decode(j.content));friendLinksSha=j.sha}else{friendLinksSha=null}
-friendLinks=d;var h="<div class=\"card\"><h3>????</h3><p>? "+d.length+" ???</p>"
-h+="<div class=\"card\" style=\"padding:16px;background:rgba(199,62,58,0.03);border:1px dashed rgba(199,62,58,0.2)\"><h4>????</h4>"
-h+="<div class=\"grid-2 mb-2\"><div><label>??</label><input id=\"fl-name\" placeholder=\"??\"></div><div><label>URL</label><input id=\"fl-url\" placeholder=\"https://\"></div></div>"
-h+="<div class=\"grid-2 mb-2\"><div><label>??</label><input id=\"fl-desc\" placeholder=\"??\"></div><div><label>??URL</label><input id=\"fl-avatar\" placeholder=\"??\"></div></div>"
-h+="<button onclick=\"addFriendLink()\" class=\"btn btn-ok btn-sm\">+ ??</button></div>"
-if(d.length>0){h+="<div style=\"display:grid;gap:8px\">";d.forEach(function(link,i){h+="<div class=\"card\" style=\"padding:12px 16px;display:flex;justify-content:space-between;align-items:center\"><div style=\"display:flex;align-items:center;gap:10px\">"+(link.avatar?"<img src=\""+esc(link.avatar)+"\" style=\"width:32px;height:32px;border-radius:50%\">":"<div style=\"width:32px;height:32px;border-radius:50%;background:#c73e3a;display:flex;align-items:center;justify-content:center;color:#fff;font-size:14px\">"+(link.name||"?")[0]+"</div>")+"<div><div>"+esc(link.name)+"</div><div class=\"text-xs text-muted\">"+esc(link.url)+"</div></div></div><div class=\"flex gap-2\"><button onclick=\"editFriendLink("+i+")\" class=\"btn btn-outline btn-xs\">??</button><button onclick=\"deleteFriendLink("+i+")\" class=\"btn btn-primary btn-xs\">??</button></div></div>"});h+="</div>"}else{h+="<p>????</p>"}
+friendLinks=d;var h="<div class=\"card\"><h3>🏷️ 标签管理</h3><p>? "+d.length+" 个标签</p>"
+h+="<div class=\"card\" style=\"padding:16px;background:rgba(199,62,58,0.03);border:1px dashed rgba(199,62,58,0.2)\"><h4>添加新链接</h4>"
+h+="<div class=\"grid-2 mb-2\"><div><label>名称</label><input id=\"fl-name\" placeholder=\"名称\"></div><div><label>URL</label><input id=\"fl-url\" placeholder=\"https://\"></div></div>"
+h+="<div class=\"grid-2 mb-2\"><div><label>名称</label><input id=\"fl-desc\" placeholder=\"??\"></div><div><label>??URL</label><input id=\"fl-avatar\" placeholder=\"??\"></div></div>"
+h+="<button onclick=\"addFriendLink()\" class=\"btn btn-ok btn-sm\">＋ 添加</button></div>"
+if(d.length>0){h+="<div style=\"display:grid;gap:8px\">";d.forEach(function(link,i){h+="<div class=\"card\" style=\"padding:12px 16px;display:flex;justify-content:space-between;align-items:center\"><div style=\"display:flex;align-items:center;gap:10px\">"+(link.avatar?"<img src=\""+esc(link.avatar)+"\" style=\"width:32px;height:32px;border-radius:50%\">":"<div style=\"width:32px;height:32px;border-radius:50%;background:#c73e3a;display:flex;align-items:center;justify-content:center;color:#fff;font-size:14px\">"+(link.name||"?")[0]+"</div>")+"<div><div>"+esc(link.name)+"</div><div class=\"text-xs text-muted\">"+esc(link.url)+"</div></div></div><div class=\"flex gap-2\"><button onclick=\"editFriendLink("+i+")\" class=\"btn btn-outline btn-xs\">??</button><button onclick=\"deleteFriendLink("+i+")\" class=\"btn btn-primary btn-xs\">删除</button></div></div>"});h+="</div>"}else{h+="<p>暂无链接</p>"}
 h+="</div>";e.innerHTML=h}catch(ex){e.innerHTML="<p>"+ex.message+"</p>"}}
-function addFriendLink(){var n=document.getElementById("fl-name").value.trim();var u=document.getElementById("fl-url").value.trim();var d=document.getElementById("fl-desc").value.trim();var a=document.getElementById("fl-avatar").value.trim();if(!n||!u){showMsg("??????URL","err");return}
-friendLinks.push({name:n,url:u,desc:d,avatar:a});saveFriendLinks();showMsg("???","ok");renderFriendLinks()}
-function editFriendLink(i){var l=friendLinks[i];var n=prompt("???",l.name);if(!n)return;var u=prompt("URL?",l.url);if(!u)return;var d=prompt("???",l.desc||"");var a=prompt("??URL?",l.avatar||"");friendLinks[i]={name:n,url:u,desc:d,avatar:a};saveFriendLinks();showMsg("???","ok");renderFriendLinks()}
-function deleteFriendLink(i){if(!confirm("???? "+friendLinks[i].name+"?"))return;friendLinks.splice(i,1);saveFriendLinks();showMsg("???","ok");renderFriendLinks()}
+function addFriendLink(){var n=document.getElementById("fl-name").value.trim();var u=document.getElementById("fl-url").value.trim();var d=document.getElementById("fl-desc").value.trim();var a=document.getElementById("fl-avatar").value.trim();if(!n||!u){showMsg("请输入名称和URL","err");return}
+friendLinks.push({name:n,url:u,desc:d,avatar:a});saveFriendLinks();showMsg("已添加","ok");renderFriendLinks()}
+function editFriendLink(i){var l=friendLinks[i];var n=prompt("名称",l.name);if(!n)return;var u=prompt("URL?",l.url);if(!u)return;var d=prompt("描述",l.desc||"");var a=prompt("头像URL",l.avatar||"");friendLinks[i]={name:n,url:u,desc:d,avatar:a};saveFriendLinks();showMsg("已添加","ok");renderFriendLinks()}
+function deleteFriendLink(i){if(!confirm("确定删除 "+friendLinks[i].name+"?"))return;friendLinks.splice(i,1);saveFriendLinks();showMsg("已添加","ok");renderFriendLinks()}
 async function saveFriendLinks(){try{var r=await ghPut("src/data/friendlinks.json",friendLinks,friendLinksSha);friendLinksSha=r.content.sha}catch(e){showMsg(e.message,"err")}}
 
 // CUSTOM PAGES
@@ -1954,72 +1956,72 @@ let customPages=[],customPagesSha=null
 async function renderCustomPages(){var e=document.getElementById("tab-custompages");if(!e){setTimeout(function(){renderCustomPages()},100);return}
 try{var r=await fetch("https://api.github.com/repos/"+REPO+"/contents/src/data/custompages.json?ref="+BRANCH,{headers:{"Authorization":"Bearer "+TOKEN,"Accept":"application/vnd.github.v3+json"}})
 var d=[];if(r.ok){var j=await r.json();d=JSON.parse(b64Decode(j.content));customPagesSha=j.sha}else{customPagesSha=null}
-customPages=d;var h="<div class=\"card\"><h3>?????</h3><p>??????</p>"
-h+="<div class=\"card\" style=\"padding:16px;background:rgba(199,62,58,0.03);border:1px dashed rgba(199,62,58,0.2)\"><h4>????</h4>"
-h+="<div class=\"grid-2 mb-2\"><div><label>??</label><input id=\"cp-title\" placeholder=\"??\"></div><div><label>URL??</label><input id=\"cp-slug\" placeholder=\"slug\" style=\"font-family:monospace\"></div></div>"
-h+="<div class=\"mb-2\"><label>?? (Markdown)</label><textarea id=\"cp-body\" rows=\"6\" placeholder=\"??\"></textarea></div>"
-h+="<button onclick=\"addCustomPage()\" class=\"btn btn-ok btn-sm\">????</button></div>"
-if(d.length>0){h+="<div style=\"display:grid;gap:8px\">";d.forEach(function(p,i){h+="<div class=\"card\" style=\"padding:12px 16px;display:flex;justify-content:space-between;align-items:center\"><div><div>"+esc(p.title)+"</div><div class=\"text-xs text-muted\">/pages/"+esc(p.slug)+"</div></div><div class=\"flex gap-2\"><button onclick=\"editCustomPage("+i+")\" class=\"btn btn-outline btn-xs\">??</button><button onclick=\"deleteCustomPage("+i+")\" class=\"btn btn-primary btn-xs\">??</button></div></div>"});h+="</div>"}
+customPages=d;var h="<div class=\"card\"><h3>📄 自定义页面</h3><p>管理自定义页面</p>"
+h+="<div class=\"card\" style=\"padding:16px;background:rgba(199,62,58,0.03);border:1px dashed rgba(199,62,58,0.2)\"><h4>添加新链接</h4>"
+h+="<div class=\"grid-2 mb-2\"><div><label>名称</label><input id=\"cp-title\" placeholder=\"名称\"></div><div><label>URL??</label><input id=\"cp-slug\" placeholder=\"slug\" style=\"font-family:monospace\"></div></div>"
+h+="<div class=\"mb-2\"><label>内容 (Markdown)</label><textarea id=\"cp-body\" rows=\"6\" placeholder=\"??\"></textarea></div>"
+h+="<button onclick=\"addCustomPage()\" class=\"btn btn-ok btn-sm\">创建页面</button></div>"
+if(d.length>0){h+="<div style=\"display:grid;gap:8px\">";d.forEach(function(p,i){h+="<div class=\"card\" style=\"padding:12px 16px;display:flex;justify-content:space-between;align-items:center\"><div><div>"+esc(p.title)+"</div><div class=\"text-xs text-muted\">/pages/"+esc(p.slug)+"</div></div><div class=\"flex gap-2\"><button onclick=\"editCustomPage("+i+")\" class=\"btn btn-outline btn-xs\">??</button><button onclick=\"deleteCustomPage("+i+")\" class=\"btn btn-primary btn-xs\">删除</button></div></div>"});h+="</div>"}
 h+="</div>";e.innerHTML=h}catch(ex){e.innerHTML="<p>"+ex.message+"</p>"}}
-function addCustomPage(){var t=document.getElementById("cp-title").value.trim();var s=document.getElementById("cp-slug").value.trim();var b=document.getElementById("cp-body").value.trim();if(!t||!s){showMsg("??????URL","err");return}
-customPages.push({title:t,slug:s,body:b,createdAt:new Date().toISOString(),updatedAt:new Date().toISOString()});saveCustomPages();showMsg("???","ok");renderCustomPages()}
-function editCustomPage(i){var p=customPages[i];var t=prompt("???",p.title);if(!t)return;var s=prompt("URL?",p.slug);if(!s)return;var b=prompt("???",p.body||"");if(b===null)return;customPages[i]={title:t,slug:s,body:b,createdAt:p.createdAt,updatedAt:new Date().toISOString()};saveCustomPages();showMsg("???","ok");renderCustomPages()}
-function deleteCustomPage(i){if(!confirm("???? "+customPages[i].title+"?"))return;customPages.splice(i,1);saveCustomPages();showMsg("???","ok");renderCustomPages()}
+function addCustomPage(){var t=document.getElementById("cp-title").value.trim();var s=document.getElementById("cp-slug").value.trim();var b=document.getElementById("cp-body").value.trim();if(!t||!s){showMsg("请输入标题和URL","err");return}
+customPages.push({title:t,slug:s,body:b,createdAt:new Date().toISOString(),updatedAt:new Date().toISOString()});saveCustomPages();showMsg("已添加","ok");renderCustomPages()}
+function editCustomPage(i){var p=customPages[i];var t=prompt("标题",p.title);if(!t)return;var s=prompt("URL",p.slug);if(!s)return;var b=prompt("内容",p.body||"");if(b===null)return;customPages[i]={title:t,slug:s,body:b,createdAt:p.createdAt,updatedAt:new Date().toISOString()};saveCustomPages();showMsg("已更新","ok");renderCustomPages()}
+function deleteCustomPage(i){if(!confirm("确定删除 "+customPages[i].title+"?"))return;customPages.splice(i,1);saveCustomPages();showMsg("已删除","ok");renderCustomPages()}
 async function saveCustomPages(){try{var r=await ghPut("src/data/custompages.json",customPages,customPagesSha);customPagesSha=r.content.sha}catch(e){showMsg(e.message,"err")}}
 
 // MEDIA LIBRARY
 async function renderMediaLib(){var e=document.getElementById("tab-medialib");if(!e){setTimeout(function(){renderMediaLib()},100);return}
 try{var r=await fetch("https://api.github.com/repos/"+REPO+"/contents/public/uploads?ref="+BRANCH,{headers:{"Authorization":"Bearer "+TOKEN,"Accept":"application/vnd.github.v3+json"}})
-if(!r.ok){e.innerHTML="<div class=\"card\"><h3>???</h3><p>????</p></div>";return}
+if(!r.ok){e.innerHTML="<div class=\"card\"><h3>🖼️ 媒体库</h3><p>加载失败</p></div>";return}
 var fs=await r.json();var imgs=fs.filter(function(f){return f.name.match(/\.(jpg|jpeg|png|gif|svg|webp|ico)$/i)});var oth=fs.filter(function(f){return !f.name.match(/\.(jpg|jpeg|png|gif|svg|webp|ico)$/i)})
-var h="<div class=\"card\"><h3>???</h3><p>? "+fs.length+" ???</p>"
-if(imgs.length>0){h+="<h4>?? ("+imgs.length+")</h4><div class=\"file-grid\">"
+var h="<div class=\"card\"><h3>🖼️ 媒体库</h3><p>共 "+fs.length+" 个标签</p>"
+if(imgs.length>0){h+="<h4>图片 ("+imgs.length+")</h4><div class=\"file-grid\">"
 imgs.forEach(function(f){var url="https://raw.githubusercontent.com/"+REPO+"/"+BRANCH+"/public/uploads/"+f.name;h+="<div class=\"file-item\"><img src=\""+url+"\" alt=\""+esc(f.name)+"\" loading=\"lazy\" onerror=\"this.style.display='none'\"><div class=\"file-name\">"+esc(f.name)+"</div><div class=\"flex gap-1 mt-1 justify-center\"><button onclick=\"copyMediaUrl('"+esc(f.name)+"')\" class=\"btn btn-outline btn-xs\" style=\"padding:2px 6px;font-size:10px\">??</button><button onclick=\"deleteMediaFile('"+esc(f.name)+"')\" class=\"btn btn-primary btn-xs\" style=\"padding:2px 6px;font-size:10px\">??</button></div></div>"})
 h+="</div>"}
-if(oth.length>0){h+="<h4>?? ("+oth.length+")</h4>";oth.forEach(function(f){h+="<div style=\"display:flex;justify-content:space-between;padding:6px 12px;background:#f7f3e8;border:1px solid #e8e0cc;border-radius:4px;font-size:12px\"><span>"+esc(f.name)+"</span><button onclick=\"deleteMediaFile('"+esc(f.name)+"')\" class=\"btn btn-primary btn-xs\" style=\"padding:2px 6px;font-size:10px\">??</button></div>"})}
+if(oth.length>0){h+="<h4>图片 ("+oth.length+")</h4>";oth.forEach(function(f){h+="<div style=\"display:flex;justify-content:space-between;padding:6px 12px;background:#f7f3e8;border:1px solid #e8e0cc;border-radius:4px;font-size:12px\"><span>"+esc(f.name)+"</span><button onclick=\"deleteMediaFile('"+esc(f.name)+"')\" class=\"btn btn-primary btn-xs\" style=\"padding:2px 6px;font-size:10px\">??</button></div>"})}
 h+="</div>";e.innerHTML=h}catch(ex){e.innerHTML="<p>"+ex.message+"</p>"}}
-function copyMediaUrl(n){var u="/uploads/"+n;try{navigator.clipboard.writeText(u)}catch(e){}showMsg("???: "+u,"ok")}
-async function deleteMediaFile(n){if(!confirm("???? "+n+"?"))return;try{var r=await fetch("https://api.github.com/repos/"+REPO+"/contents/public/uploads/"+n+"?ref="+BRANCH,{headers:{"Authorization":"Bearer "+TOKEN,"Accept":"application/vnd.github.v3+json"}});if(!r.ok)throw Error("????");var d=await r.json();var del=await fetch("https://api.github.com/repos/"+REPO+"/contents/public/uploads/"+n,{method:"DELETE",headers:{"Authorization":"Bearer "+TOKEN,"Content-Type":"application/json"},body:JSON.stringify({message:"????: "+n,sha:d.sha,branch:BRANCH})});if(!del.ok)throw Error("????");showMsg("??? "+n,"ok");renderMediaLib()}catch(ex){showMsg(ex.message,"err")}}
+function copyMediaUrl(n){var u="/uploads/"+n;try{navigator.clipboard.writeText(u)}catch(e){}showMsg("已复制: "+u","ok")}
+async function deleteMediaFile(n){if(!confirm("确定删除 "+n+"?"))return;try{var r=await fetch("https://api.github.com/repos/"+REPO+"/contents/public/uploads/"+n+"?ref="+BRANCH,{headers:{"Authorization":"Bearer "+TOKEN,"Accept":"application/vnd.github.v3+json"}});if(!r.ok)throw Error("文件不存在");var d=await r.json();var del=await fetch("https://api.github.com/repos/"+REPO+"/contents/public/uploads/"+n,{method:"DELETE",headers:{"Authorization":"Bearer "+TOKEN,"Content-Type":"application/json"},body:JSON.stringify({message:"删除文件: "+n,sha:d.sha,branch:BRANCH})});if(!del.ok)throw Error("删除失败");showMsg("已删除 "+n,"ok");renderMediaLib()}catch(ex){showMsg(ex.message,"err")}}
 // ANALYTICS
 async function renderAnalytics(){var e=document.getElementById("tab-analytics");if(!e){setTimeout(function(){renderAnalytics()},100);return}
-try{var r=await fetch("https://api.github.com/repos/"+REPO+"/contents/src/content/posts?ref="+BRANCH,{headers:{"Authorization":"Bearer "+TOKEN,"Accept":"application/vnd.github.v3+json"}});if(!r.ok){e.innerHTML="<p>????</p>";return}
+try{var r=await fetch("https://api.github.com/repos/"+REPO+"/contents/src/content/posts?ref="+BRANCH,{headers:{"Authorization":"Bearer "+TOKEN,"Accept":"application/vnd.github.v3+json"}});if(!r.ok){e.innerHTML="<p>加载失败</p>";return}
 var fs=await r.json();var posts=fs.filter(function(f){return f.name.endsWith(".mdx")||f.name.endsWith(".md")});var total=posts.length;var chars=0;var draft=0;var tags={};var cats={};var months={};var years={}
 posts.forEach(function(f){try{var ct=b64Decode(f.content);chars+=ct.length;var p=ct.split("---");if(p.length<3)return;var fm=p[1];if(fm.indexOf("draft: true")>=0)draft++;var dm=fm.match(/date:\s*["']([^"']+)["']/);if(dm){var d=dm[1].substring(0,7);months[d]=(months[d]||0)+1;years[dm[1].substring(0,4)]=(years[dm[1].substring(0,4)]||0)+1}
 var tm=fm.match(/tags:\s*\[([^\]]+)\]/);if(tm){tm[1].split(",").forEach(function(t){var tag=t.trim().replace(/["']/g,"");if(tag)tags[tag]=(tags[tag]||0)+1})}
 var cm=fm.match(/category:\s*["']([^"']+)["']/);if(cm)cats[cm[1]]=(cats[cm[1]]||0)+1}catch(ex){}})
-var h="<div class=\"card\"><h3>????</h3><div style=\"display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:12px\">"
+var h="<div class=\"card\"><h3>📈 统计分析</h3><div style=\"display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:12px\">"
 h+="<div class=\"card\" style=\"padding:16px;text-align:center\"><div style=\"font-size:10px;color:#6b5f45\">??</div><div style=\"font-size:24px;font-weight:700;color:#c73e3a\">"+total+"</div></div>"
 h+="<div class=\"card\" style=\"padding:16px;text-align:center\"><div style=\"font-size:10px;color:#6b5f45\">??</div><div style=\"font-size:24px;font-weight:700;color:#4a6741\">"+draft+"</div></div>"
 h+="<div class=\"card\" style=\"padding:16px;text-align:center\"><div style=\"font-size:10px;color:#6b5f45\">??</div><div style=\"font-size:24px;font-weight:700;color:#6b5f45\">"+chars.toLocaleString()+"</div></div>"
 h+="<div class=\"card\" style=\"padding:16px;text-align:center\"><div style=\"font-size:10px;color:#6b5f45\">??</div><div style=\"font-size:24px;font-weight:700;color:#8b6914\">"+Object.keys(tags).length+"</div></div>"
 h+="<div class=\"card\" style=\"padding:16px;text-align:center\"><div style=\"font-size:10px;color:#6b5f45\">??</div><div style=\"font-size:24px;font-weight:700;color:#4a6741\">"+Object.keys(cats).length+"</div></div>"
 h+="</div></div>"
-var sm=Object.keys(months).sort();if(sm.length>0){h+="<div class=\"card\"><h3>????</h3><div style=\"display:flex;gap:4px;align-items:end;min-height:100px;padding:10px 0\">";var mx=Math.max.apply(null,sm.map(function(m){return months[m]}))
+var sm=Object.keys(months).sort();if(sm.length>0){h+="<div class=\"card\"><h3>发布趋势</h3><div style=\"display:flex;gap:4px;align-items:end;min-height:100px;padding:10px 0\">";var mx=Math.max.apply(null,sm.map(function(m){return months[m]}))
 sm.forEach(function(m){var cnt=months[m];var ht=Math.max(20,Math.round(cnt/mx*100));h+="<div style=\"flex:1;display:flex;flex-direction:column;align-items:center;gap:4px\"><span style=\"font-size:10px;color:#6b5f45\">"+cnt+"</span><div style=\"width:100%;height:"+ht+"px;background:#c73e3a;border-radius:3px 3px 0 0;min-height:4px\"></div><span style=\"font-size:9px;color:#6b5f45;transform:rotate(-45deg);white-space:nowrap\">"+m+"</span></div>"});h+="</div></div>"}
 e.innerHTML=h}catch(ex){e.innerHTML="<p>"+ex.message+"</p>"}}
 
 // THEMES
 async function renderThemes(){var e=document.getElementById("tab-themes");if(!e){setTimeout(function(){renderThemes()},100);return}
-var themes=[{name:"???",accent:"#c73e3a",bg:"#f7f3e8",text:"#1c1c1c",desc:"?????"},{name:"???",accent:"#2d5a27",bg:"#f4f1ea",text:"#1a1a1a",desc:"????"},{name:"???",accent:"#8b6914",bg:"#faf6ed",text:"#2c2c1c",desc:"????"},{name:"???",accent:"#4a6fa5",bg:"#f8f6f2",text:"#1c1c2c",desc:"????"},{name:"???",accent:"#8b3a62",bg:"#f7f0f3",text:"#2c1c24",desc:"????"},{name:"???",accent:"#3d5a5c",bg:"#f0efe8",text:"#1c2424",desc:"????"}]
-var h="<div class=\"card\"><h3>????</h3><p>??????</p><div style=\"display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:12px\">"
+var themes=[{name:"朱砂",accent:"#c73e3a",bg:"#f7f3e8",text:"#1c1c1c",desc:"经典中国红"},{name:"青竹",accent:"#2d5a27",bg:"#f4f1ea",text:"#1a1a1a",desc:"自然清新"},{name:"秋杏",accent:"#8b6914",bg:"#faf6ed",text:"#2c2c1c",desc:"温润秋色"},{name:"远山",accent:"#4a6fa5",bg:"#f8f6f2",text:"#1c1c2c",desc:"沉静蓝调"},{name:"棠粉",accent:"#8b3a62",bg:"#f7f0f3",text:"#2c1c24",desc:"淡雅粉韵"},{name:"墨青",accent:"#3d5a5c",bg:"#f0efe8",text:"#1c2424",desc:"水墨意境"}]
+var h="<div class=\"card\"><h3>💾 数据备份</h3><p>导出博客数据</p><div style=\"display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:12px\">"
 themes.forEach(function(t){h+="<div class=\"card\" style=\"padding:16px;cursor:pointer;text-align:center;border:2px solid transparent\" onclick=\"applyThemePreset('"+t.accent+"','"+t.bg+"','"+t.text+"')\" onmouseover=\"this.style.borderColor='"+t.accent+"'\" onmouseout=\"this.style.borderColor='transparent'\"><div style=\"width:40px;height:40px;border-radius:50%;background:"+t.accent+";margin:0 auto 8px;border:3px solid "+t.bg+";box-shadow:0 0 0 2px "+t.accent+"\"></div><div style=\"font-size:13px;font-weight:500;color:"+t.text+"\">"+t.name+"</div><div style=\"font-size:11px;color:#6b5f45\">"+t.desc+"</div></div>"})
-h+="</div></div><div class=\"card\"><button onclick=\"switchTab('site')\" class=\"btn btn-outline btn-sm\">??????</button></div>";e.innerHTML=h}
-function applyThemePreset(a,b,t){if(!confirm("??????"))return;document.body.style.background=b;var el=document.getElementById("tab-site");if(!el){switchTab("site");return};document.getElementById("site-accent").value=a;document.getElementById("site-bg").value=b;document.getElementById("site-text").value=t;showMsg("?????????","ok");switchTab("site")}
+h+="</div></div><div class=\"card\"><button onclick=\"switchTab('site')\" class=\"btn btn-outline btn-sm\">自定义配色</button></div>";e.innerHTML=h}
+function applyThemePreset(a,b,t){if(!confirm("应用此主题？"))return;document.body.style.background=b;var el=document.getElementById("tab-site");if(!el){switchTab("site");return};document.getElementById("site-accent").value=a;document.getElementById("site-bg").value=b;document.getElementById("site-text").value=t;showMsg("主题已应用","ok");switchTab("site")}
 
 // BACKUP
 async function renderBackup(){var e=document.getElementById("tab-backup");if(!e){setTimeout(function(){renderBackup()},100);return}
-var h="<div class=\"card\"><h3>????</h3><p>??????</p><div style=\"display:grid;gap:12px;grid-template-columns:repeat(auto-fill,minmax(200px,1fr))\">"
-h+="<div class=\"card\" style=\"padding:16px;text-align:center\"><div style=\"font-size:28px\">??</div><h4>????</h4><p class=\"text-xs text-muted mb-3\">JSON??</p><button onclick=\"exportPosts()\" class=\"btn btn-ok btn-sm\">??</button></div>"
-h+="<div class=\"card\" style=\"padding:16px;text-align:center\"><div style=\"font-size:28px\">??</div><h4>????</h4><p class=\"text-xs text-muted mb-3\">JSON??</p><button onclick=\"exportConfig()\" class=\"btn btn-ok btn-sm\">??</button></div>"
-h+="<div class=\"card\" style=\"padding:16px;text-align:center\"><div style=\"font-size:28px\">???</div><h4>????</h4><p class=\"text-xs text-muted mb-3\">????</p><button onclick=\"exportAll()\" class=\"btn btn-primary btn-sm\">????</button></div>"
+var h="<div class=\"card\"><h3>💾 数据备份</h3><p>导出博客数据</p><div style=\"display:grid;gap:12px;grid-template-columns:repeat(auto-fill,minmax(200px,1fr))\">"
+h+="<div class=\"card\" style=\"padding:16px;text-align:center\"><div style=\"font-size:28px\">📄</div><h4>导出文章</h4><p class=\"text-xs text-muted mb-3\">JSON格式</p><button onclick=\"exportPosts()\" class=\"btn btn-ok btn-sm\">导出</button></div>"
+h+="<div class=\"card\" style=\"padding:16px;text-align:center\"><div style=\"font-size:28px\">⚙️</div><h4>导出配置</h4><p class=\"text-xs text-muted mb-3\">JSON格式</p><button onclick=\"exportConfig()\" class=\"btn btn-ok btn-sm\">导出</button></div>"
+h+="<div class=\"card\" style=\"padding:16px;text-align:center\"><div style=\"font-size:28px\">📦</div><h4>全部导出</h4><p class=\"text-xs text-muted mb-3\">文章+配置</p><button onclick=\"exportAll()\" class=\"btn btn-primary btn-sm\">全部导出</button></div>"
 h+="</div></div>";e.innerHTML=h}
-async function exportPosts(){try{var r=await fetch("https://api.github.com/repos/"+REPO+"/contents/src/content/posts?ref="+BRANCH,{headers:{"Authorization":"Bearer "+TOKEN,"Accept":"application/vnd.github.v3+json"}});if(!r.ok)throw Error("????");var fs=await r.json();var posts=[]
+async function exportPosts(){try{var r=await fetch("https://api.github.com/repos/"+REPO+"/contents/src/content/posts?ref="+BRANCH,{headers:{"Authorization":"Bearer "+TOKEN,"Accept":"application/vnd.github.v3+json"}});if(!r.ok)throw Error("获取失败");var fs=await r.json();var posts=[]
 for(var i=0;i<fs.length;i++){var f=fs[i];if(!f.name.endsWith(".mdx")&&!f.name.endsWith(".md"))continue;posts.push({filename:f.name,content:b64Decode(f.content)})}
-var blob=new Blob([JSON.stringify(posts,null,2)],{type:"application/json"});var url=URL.createObjectURL(blob);var a=document.createElement("a");a.href=url;a.download="posts-backup-"+new Date().toISOString().split("T")[0]+".json";a.click();URL.revokeObjectURL(url);showMsg("??? "+posts.length+" ?","ok")}catch(ex){showMsg(ex.message,"err")}}
+var blob=new Blob([JSON.stringify(posts,null,2)],{type:"application/json"});var url=URL.createObjectURL(blob);var a=document.createElement("a");a.href=url;a.download="posts-backup-"+new Date().toISOString().split("T")[0]+".json";a.click();URL.revokeObjectURL(url);showMsg("已导出 ts.length+" ?" 篇","ok"))}catch(ex){showMsg(ex.message,"err")}}
 async function exportConfig(){try{var configs={};var cfgs=["src/data/tools.json","src/data/navigation.json","src/data/profile.json","src/data/site.json","src/data/social.json","src/data/about.json"]
 for(var i=0;i<cfgs.length;i++){try{var r=await fetch("https://api.github.com/repos/"+REPO+"/contents/"+cfgs[i]+"?ref="+BRANCH,{headers:{"Authorization":"Bearer "+TOKEN,"Accept":"application/vnd.github.v3+json"}});if(r.ok){var d=await r.json();configs[cfgs[i]]=JSON.parse(b64Decode(d.content))}}catch(ex){}}
-var blob=new Blob([JSON.stringify(configs,null,2)],{type:"application/json"});var url=URL.createObjectURL(blob);var a=document.createElement("a");a.href=url;a.download="config-backup-"+new Date().toISOString().split("T")[0]+".json";a.click();URL.revokeObjectURL(url);showMsg("?????","ok")}catch(ex){showMsg(ex.message,"err")}}
-async function exportAll(){try{await exportPosts();await exportConfig();showMsg("?????","ok")}catch(ex){showMsg(ex.message,"err")}}
+var blob=new Blob([JSON.stringify(configs,null,2)],{type:"application/json"});var url=URL.createObjectURL(blob);var a=document.createElement("a");a.href=url;a.download="config-backup-"+new Date().toISOString().split("T")[0]+".json";a.click();URL.revokeObjectURL(url);showMsg("配置已导出"","ok")}catch(ex){showMsg(ex.message,"err")}}
+async function exportAll(){try{await exportPosts();await exportConfig();showMsg("配置已导出"","ok")}catch(ex){showMsg(ex.message,"err")}}
 
 </script>
 </body>
