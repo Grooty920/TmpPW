@@ -118,7 +118,7 @@ h3{font-family:"Ma Shan Zheng","Noto Serif SC",cursive;letter-spacing:0.05em}
 </div>
 
 <script>
-const PASSWORD_HASH = "80e596ddec54ea0bc64182790e3167be5353fc88d6da3e71f599f164868aa3f6", REPO = "Grooty920/TmpPW", BRANCH = "master";
+const REPO = "Grooty920/TmpPW", BRANCH = "master";
 let TOKEN = "", toolsData = null, navData = null, profileData = null, toolsSha = null, navSha = null, profileSha = null;
 
 function b64Decode(s) { try { return decodeURIComponent(escape(atob(s))); } catch(e) { return atob(s); } }
@@ -137,25 +137,14 @@ function setStatus(ok) {
 }
 
 // 登录
-async function sha256(str) {
-  try {
-    const buf = new TextEncoder().encode(str);
-    const hash = await crypto.subtle.digest("SHA-256", buf);
-    return Array.from(new Uint8Array(hash)).map(b => b.toString(16).padStart(2, "0")).join("");
-  } catch(e) {
-    let h = 0; for (let i = 0; i < str.length; i++) { h = ((h << 5) - h) + str.charCodeAt(i); h |= 0; }
-    return Math.abs(h).toString(16).padStart(64, "0");
-  }
-}
-document.getElementById("login-btn").onclick = async () => {
-  const input = document.getElementById("pwd-input").value;
-  const hash = await sha256(input);
-  if (hash === PASSWORD_HASH) {
+// ??
+document.getElementById("login-btn").onclick = () => { console.log("Login clicked");
+  if (document.getElementById("pwd-input").value === "Grooty920") { console.log("Password correct");
     document.getElementById("login-screen").classList.add("hidden");
     document.getElementById("main-screen").classList.remove("hidden");
     const saved = sessionStorage.getItem("gh_token");
     if (saved) { TOKEN = saved; document.getElementById("token-input").value = saved; doConnect(); }
-  } else { document.getElementById("login-err").style.display = "block"; }
+  } else { console.log("Password wrong"); document.getElementById("login-err").style.display = "block"; }
 };
 document.getElementById("pwd-input").addEventListener("keydown", e => { if(e.key==="Enter") document.getElementById("login-btn").click(); });
 
