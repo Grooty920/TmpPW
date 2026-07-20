@@ -1339,79 +1339,30 @@ async function renderPosts() {
   });
   catKeys = Object.keys(cats).sort();
   tagKeys = Object.keys(tags).sort();
-let html = `<div class="card mt-4"><h3 style="font-size:15px;margin-bottom:12px">🏷️ 文章分类与标签</h3>
-      <div class="flex gap-4 flex-wrap mb-3">
-        <div class="flex-1" style="min-width:200px">
-          <p class="text-xs text-muted mb-2">分类</p>
-          <div class="flex flex-wrap gap-2">
-            ${catKeys.length > 0 ? catKeys.map(function(cat) { return "<span class=\"btn btn-outline btn-xs\" style=\"cursor:default;background:rgba(199,62,58,0.08);border-color:rgba(199,62,58,0.2);color:#c73e3a\">" + cat + " (" + cats[cat] + ")</span>"; }).join(" ") : "<span class=\"text-xs text-muted\">暂无分类</span>"}
-          </div>
-        </div>
-        <div class="flex-1" style="min-width:200px">
-          <p class="text-xs text-muted mb-2">标签</p>
-          <div class="flex flex-wrap gap-2">
-            ${tagKeys.length > 0 ? tagKeys.map(function(t) { return "<span class=\"btn btn-outline btn-xs\" style=\"cursor:default\">#" + t + " (" + tags[t] + ")</span>"; }).join(" ") : "<span class=\"text-xs text-muted\">暂无标签</span>"}
-          </div>
-        </div>
-      </div>
-      <p class="text-xs text-muted">分类在新建文章时填写，支持任意分类名</p>
-    </div>`;
-        if (files.length === 0) { html += "<p class='text-sm text-muted'>暂无文章</p>"; }
-    else {
-      html += "<div class=\"search-bar\"><input id=\"post-search\" type=\"text\" placeholder=\"搜索文章标题...\" oninput=\"filterPosts()\"><select id=\"post-cat-filter\" onchange=\"filterPosts()\"><option value=\"\">全部分类</option></select></div><div style=\"display:flex;align-items:center;gap:8px;margin-bottom:8px\"><input type='checkbox' id='select-all' onchange='toggleSelectAll()' style='width:16px;height:16px;cursor:pointer'> <label for='select-all' style='font-size:12px;color:#6b5f45;cursor:pointer'>全选</label></div><div id='batch-bar' class='hidden' style='display:none;padding:8px 12px;background:rgba(199,62,58,0.06);border:1px solid rgba(199,62,58,0.15);border-radius:4px;margin-bottom:8px;font-size:12px;color:#6b5f45;align-items:center;gap:8px'></div><div style='display:grid;gap:8px'>";
-      for (const f of files) {
-        if (f.name.endsWith(".mdx") || f.name.endsWith(".md")) {
-          try {
-            var c = postContents[f.name] || b64Decode(f.content);
-            var parts = c.split("---");
-            var frontmatter = {};
-            if (parts.length >= 3) {
-              var fmLines = parts[1].split("\n");
-              fmLines.forEach(function(line) {
-                line = line.trim();
-                if (!line) return;
-                var m = line.match(/^\s*(\w+):\s*["'](.+)["']\s*$/);
-                if (m) { frontmatter[m[1]] = m[2]; return; }
-                var m2 = line.match(/^\s*(\w+):\s*(\S+)\s*$/);
-                if (m2) { frontmatter[m2[1]] = m2[2]; return; }
-                var m3 = line.match(/^\s*(\w+):\s*(\[.*\])\s*$/);
-                if (m3) { frontmatter[m3[1]] = m3[2]; }
-              });
-            }
-            var title = frontmatter.title || f.name.replace(/\.(mdx|md)$/, "");
-            var date = frontmatter.date || "";
-            var category = frontmatter.category || "";
-            var desc = frontmatter.description || "";
-            if (date) {
-              try { var d = new Date(date); date = d.getFullYear() + "-" + String(d.getMonth()+1).padStart(2,"0") + "-" + String(d.getDate()).padStart(2,"0"); } catch(e) {}
-            }
-            html += `<div class="card" style="padding:12px 16px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px" data-title="${esc(title)}" data-category="${esc(category)}">
-              <div style="display:flex;align-items:center;gap:8px;flex:1;min-width:200px">
-                <input type="checkbox" class="post-select" data-name="${esc(f.name)}" onchange="updateBatchBar()" style="width:16px;height:16px;cursor:pointer;flex-shrink:0">
-                <div style="flex:1">
-                  <div style="font-size:13px;font-weight:500;color:#1c1c1c">📄 ${esc(title)}</div>
-                  <div style="font-size:11px;color:#6b5f45;margin-top:2px">${esc(f.name)}${date ? " · <span style='color:#4a6741'>" + esc(date) + "</span>" : ""}${category ? " · <span style='background:rgba(199,62,58,0.08);padding:1px 6px;border-radius:2px;font-size:10px;color:#c73e3a'>" + esc(category) + "</span>" : ""}</div>
-                  ${desc ? "<div style='font-size:11px;color:#6b5f45;margin-top:2px;opacity:0.7'>" + esc(desc.substring(0, 60)) + (desc.length > 60 ? "..." : "") + "</div>" : ""}
-                </div>
-              </div>
-              <div class="flex gap-2" style="flex-shrink:0">
-                <button onclick="editPost('${esc(f.name)}')" class="btn btn-outline btn-xs">✏️ 编辑</button>
-                <button onclick="previewPost('${esc(f.name)}')" class="btn btn-outline btn-xs">👁️ 预览</button>
-                <button onclick="duplicatePost('${esc(f.name)}')" class="btn btn-outline btn-xs">📋 复制</button>
-                <button onclick="togglePostDraft('${esc(f.name)}')" class="btn btn-outline btn-xs">📄 草稿</button>
-                <button onclick="deletePost('${esc(f.name)}')" class="btn btn-outline btn-xs" style="color:#c73e3a">🗑️ 删除</button>
-              </div>
-            </div>`;
-          } catch(e) {
-            html += `<div class="card" style="padding:12px 16px;display:flex;justify-content:space-between;align-items:center">
-              <span class="text-sm">📄 ${esc(f.name)}</span>
-              <span class="text-xs text-muted">解析失败</span>
-            </div>`;
-          }
-        }
+  // Pagination
+  var pageSize = 10;
+  var currentPage = 1;
+  var totalPages = Math.ceil(files.filter(function(f) { return f.name.endsWith(".mdx") || f.name.endsWith(".md"); }).length / pageSize) || 1;
+  function showPage(page) {
+    currentPage = Math.max(1, Math.min(page, totalPages));
+    var start = (currentPage - 1) * pageSize;
+    var end = start + pageSize;
+    var pageFiles = [];
+    var count = 0;
+    for (var pi = 0; pi < files.length; pi++) {
+      if (files[pi].name.endsWith(".mdx") || files[pi].name.endsWith(".md")) {
+        if (count >= start && count < end) pageFiles.push(files[pi]);
+        count++;
       }
-      html += "</div>";
-    }    // 分类管理
+    }
+    renderPostsPage(pageFiles, currentPage, totalPages);
+  }
+  // Initial render
+  showPage(1);
+let html = `<div class="card mt-4"><h3>📝 文章列表</h3></div>`;
+  el.innerHTML = html;
+  showPage(1);
+// 分类管理
     html += `<div class="card mt-4"><h3 style="font-size:15px;margin-bottom:12px">🏷️ 文章分类管理</h3>
       <p class="text-sm text-muted mb-2">当前文章分类：${[...new Set(files.filter(f=>f.name.endsWith(".mdx")).map(f=>f.name))].map(f=>"随笔").join(", ")}</p>
       <p class="text-xs text-muted">分类在新建文章时填写，支持任意分类名</p>
@@ -1424,6 +1375,78 @@ let html = `<div class="card mt-4"><h3 style="font-size:15px;margin-bottom:12px"
 // ===== Markdown 渲染 =====
 
 // ===== 批量操作 =====
+
+
+function renderPostsPage(pageFiles, currentPage, totalPages) {
+  var el = document.getElementById("tab-posts");
+  if (!el) return;
+  var html = "";
+  if (pageFiles.length === 0) {
+    html = "<p class='text-sm text-muted'>暂无文章</p>";
+  } else {
+    html += "<div style='display:flex;align-items:center;gap:8px;margin-bottom:8px'><div class=\"search-bar\"><input id=\"post-search\" type=\"text\" placeholder=\"搜索文章标题...\" oninput=\"filterPosts()\"><select id=\"post-cat-filter\" onchange=\"filterPosts()\"><option value=\"\">全部分类</option></select></div><div style=\"display:flex;align-items:center;gap:8px;margin-bottom:8px\"><input type='checkbox' id='select-all' onchange='toggleSelectAll()' style='width:16px;height:16px;cursor:pointer'> <label for='select-all' style='font-size:12px;color:#6b5f45;cursor:pointer'>全选</label></div><div id='batch-bar' class='hidden' style='display:none;padding:8px 12px;background:rgba(199,62,58,0.06);border:1px solid rgba(199,62,58,0.15);border-radius:4px;margin-bottom:8px;font-size:12px;color:#6b5f45;align-items:center;gap:8px'></div><div style='display:grid;gap:8px'>";
+    for (var fi = 0; fi < pageFiles.length; fi++) {
+      var f = pageFiles[fi];
+      try {
+        var content = postContents[f.name] || "";
+        if (!content && f.download_url) {
+          // Try to fetch on demand
+        }
+        var parts = content.split("---");
+        var frontmatter = {};
+        if (parts.length >= 3) {
+          var fmLines = parts[1].split("\n");
+          fmLines.forEach(function(line) {
+            line = line.trim();
+            if (!line) return;
+            var m = line.match(/^\s*(\w+):\s*["'](.+)["']\s*$/);
+            if (m) { frontmatter[m[1]] = m[2]; return; }
+            var m2 = line.match(/^\s*(\w+):\s*(\S+)\s*$/);
+            if (m2) { frontmatter[m2[1]] = m2[2]; return; }
+            var m3 = line.match(/^\s*(\w+):\s*(\[.*\])\s*$/);
+            if (m3) { frontmatter[m3[1]] = m3[2]; }
+          });
+        }
+        var title = frontmatter.title || f.name.replace(/\.(mdx|md)$/, "");
+        var date = frontmatter.date || "";
+        var category = frontmatter.category || "";
+        var desc = frontmatter.description || "";
+        var isSticky = frontmatter.sticky === "true";
+        if (date) {
+          try { var d = new Date(date); date = d.getFullYear() + "-" + String(d.getMonth()+1).padStart(2,"0") + "-" + String(d.getDate()).padStart(2,"0"); } catch(e) {}
+        }
+        html += "<div class=\"card\" style=\"padding:12px 16px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px\" data-title=\"" + esc(title) + "\" data-category=\"" + esc(category) + "\">" +
+          "<div style=\"display:flex;align-items:center;gap:8px;flex:1;min-width:200px\">" +
+          "<input type='checkbox' class='post-select' data-name=\"" + esc(f.name) + "\" onchange='updateBatchBar()' style='width:16px;height:16px;cursor:pointer;flex-shrink:0'>" +
+          "<div style=\"flex:1\">" +
+          "<div style=\"font-size:13px;font-weight:500;color:#1c1c1c\">" + (isSticky ? "📌 " : "📄 ") + esc(title) + "</div>" +
+          "<div style=\"font-size:11px;color:#6b5f45;margin-top:2px\">" + esc(f.name) + (date ? " &middot; <span style='color:#4a6741'>" + esc(date) + "</span>" : "") + (category ? " &middot; <span style='background:rgba(199,62,58,0.08);padding:1px 6px;border-radius:2px;font-size:10px;color:#c73e3a'>" + esc(category) + "</span>" : "") + "</div>" +
+          (desc ? "<div style='font-size:11px;color:#6b5f45;margin-top:2px;opacity:0.7'>" + esc(desc.substring(0, 60)) + (desc.length > 60 ? "..." : "") + "</div>" : "") +
+          "</div></div>" +
+          "<div class='flex gap-2' style='flex-shrink:0'>" +
+          "<button onclick=\"editPost('" + esc(f.name) + "')\" class='btn btn-outline btn-xs'>✏️ 编辑</button>" +
+          "<button onclick=\"previewPost('" + esc(f.name) + "')\" class='btn btn-outline btn-xs'>👁️ 预览</button>" +
+          "<button onclick=\"duplicatePost('" + esc(f.name) + "')\" class='btn btn-outline btn-xs'>📋 复制</button>" +
+          "<button onclick=\"togglePostDraft('" + esc(f.name) + "')\" class='btn btn-outline btn-xs'>📄 草稿</button>" +
+          "<button onclick=\"deletePost('" + esc(f.name) + "')\" class='btn btn-outline btn-xs' style='color:#c73e3a'>🗑️ 删除</button>" +
+          "</div></div>";
+      } catch(e) {
+        html += "<div class=\"card\" style=\"padding:12px 16px;display:flex;justify-content:space-between;align-items:center\">" +
+          "<span class='text-sm'>📄 " + esc(f.name) + "</span>" +
+          "<span class='text-xs text-muted'>解析失败</span></div>";
+      }
+    }
+    html += "</div>";
+    // Pagination controls
+    html += "<div style='display:flex;align-items:center;justify-content:center;gap:8px;margin-top:16px;padding:12px'>";
+    html += "<button onclick='showPage(" + (currentPage - 1) + ")' class='btn btn-outline btn-xs'" + (currentPage <= 1 ? " disabled style='opacity:0.4'" : "") + ">‹ 上一页</button>";
+    html += "<span class='text-xs text-muted' style='margin:0 8px'>第 " + currentPage + " / " + totalPages + " 页</span>";
+    html += "<button onclick='showPage(" + (currentPage + 1) + ")' class='btn btn-outline btn-xs'" + (currentPage >= totalPages ? " disabled style='opacity:0.4'" : "") + ">下一页 ›</button>";
+    html += "</div>";
+  }
+  html += "<div class='card mt-4'><h3 style='font-size:15px;margin-bottom:12px'>🏷️ 文章分类</h3><p class='text-xs text-muted'>分类在新建文章时填写，支持任意分类名</p></div>";
+  el.innerHTML = html;
+}
 function toggleSelectAll() {
   var cb = document.getElementById("select-all");
   if (!cb) return;
@@ -1593,7 +1616,22 @@ function showNewPost() {
     </div>
     <div class="mb-2"><label>封面图URL (可选，可先上传再粘贴)</label><input id="np-cover" placeholder=\"https://... 或 /uploads/xxx.jpg\"></div>
     <div class="mb-2"><label>正文 (Markdown)</label><textarea id="np-body" rows="8" placeholder=\"在此输入文章内容...\"></textarea></div>
-    <button onclick="publishPost()" class="btn btn-primary btn-sm">📤 发布文章</button>
+    <div class="editor-toolbar" style="margin-top:4px">
+      <button onclick="insertMd('**','**')" class="btn btn-outline btn-xs" title="加粗"><b>B</b></button>
+      <button onclick="insertMd('*','*')" class="btn btn-outline btn-xs" title="斜体"><i>I</i></button>
+      <button onclick="insertMd('## ','')" class="btn btn-outline btn-xs" title="标题">H2</button>
+      <button onclick="insertMd('### ','')" class="btn btn-outline btn-xs" title="小标题">H3</button>
+      <button onclick="insertMd('> ','')" class="btn btn-outline btn-xs" title="引用">❝</button>
+      <button onclick="insertMd('[','](url)')" class="btn btn-outline btn-xs" title="链接">🔗</button>
+      <button onclick="insertMd('![](','?w=800)')" class="btn btn-outline btn-xs" title="图片">🖼️</button>
+      <button onclick="insertMd('\`\`\`\n','\n\`\`\`')" class="btn btn-outline btn-xs" title="代码块">{ }</button>
+      <button onclick="insertMd('- ','')" class="btn btn-outline btn-xs" title="列表">•</button>
+      <button onclick="insertMd('---\n','')" class="btn btn-outline btn-xs" title="分隔线">—</button>
+    </div>
+    <div class="flex gap-2 mt-2">
+      <button onclick="togglePreview()" class="btn btn-outline btn-sm">👁️ 预览</button>
+      <button onclick="publishPost()" class="btn btn-primary btn-sm">📤 发布文章</button>
+    </div>
     <div id="np-msg" class="text-xs mt-2 text-muted"></div>`;
 }
 
