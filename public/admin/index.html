@@ -7,288 +7,927 @@
 <style>
 @import url("https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;500;600;700&display=swap");
 @import url("https://fonts.googleapis.com/css2?family=Ma+Shan+Zheng&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap");
+
+:root {
+  --accent: #c73e3a;
+  --accent-light: rgba(199,62,58,0.08);
+  --accent-dark: #a8322e;
+  --bg: #f5f0e8;
+  --bg-card: rgba(255,253,248,0.85);
+  --bg-card-solid: #fffdf8;
+  --text: #1c1c1c;
+  --text-muted: #8a7e6a;
+  --text-light: #b0a694;
+  --border: rgba(180,165,130,0.2);
+  --border-hover: rgba(199,62,58,0.3);
+  --shadow: 0 1px 3px rgba(28,28,18,0.06), 0 1px 2px rgba(0,0,0,0.02);
+  --shadow-lg: 0 8px 32px rgba(28,28,18,0.08);
+  --radius: 10px;
+  --radius-sm: 6px;
+  --sidebar-width: 220px;
+  --header-height: 56px;
+  --transition: all 0.25s cubic-bezier(0.4,0,0.2,1);
+}
+
 *{margin:0;padding:0;box-sizing:border-box}
-body{font-family:"Noto Serif SC","LXGW WenKai",serif;background:#f7f3e8;color:#1c1c1c;min-height:100vh;transition:background 0.3s}
-::selection{background:#c73e3a;color:#f7f3e8}
-::-webkit-scrollbar{width:4px}
+html{scroll-behavior:smooth}
+body{
+  font-family:"Noto Serif SC","LXGW WenKai",serif;
+  background:var(--bg);
+  color:var(--text);
+  min-height:100vh;
+  overflow-x:hidden;
+}
+::selection{background:var(--accent);color:#fff}
+::-webkit-scrollbar{width:5px}
 ::-webkit-scrollbar-track{background:transparent}
-::-webkit-scrollbar-thumb{background:#c73e3a;border-radius:2px}
-.card{background:rgba(254,252,245,0.6);backdrop-filter:blur(12px) saturate(1.1);-webkit-backdrop-filter:blur(12px) saturate(1.1);border:1px solid rgba(212,196,148,0.3);padding:20px;box-shadow:0 1px 3px rgba(28,28,18,0.06),0 1px 2px rgba(0,0,0,0.02),inset 0 1px 0 rgba(255,255,255,0.15);border-radius:8px;transition:all 0.3s ease}
-.card:hover{border-color:#c73e3a;box-shadow:0 8px 32px rgba(28,28,18,0.06),0 2px 8px rgba(0,0,0,0.04)}
-.btn{display:inline-flex;align-items:center;gap:6px;padding:10px 20px;border:none;font-size:13px;font-family:inherit;cursor:pointer;letter-spacing:0.05em;transition:all 0.3s ease;position:relative;overflow:hidden;border-radius:4px;font-weight:500}
-.btn:hover{transform:translateY(-2px);box-shadow:0 4px 20px rgba(199,62,58,0.15)}
-.btn-primary{background:#c73e3a;color:#f7f3e8;border:1px solid #c73e3a}
-.btn-primary:hover{box-shadow:0 4px 24px rgba(199,62,58,0.2)}
-.btn-ok{background:#4a6741;color:#f7f3e8;border:1px solid #4a6741}
-.btn-outline{background:rgba(254,252,245,0.6);backdrop-filter:blur(8px);border:1px solid rgba(212,196,148,0.3);color:#1c1c1c}
-.btn-outline:hover{border-color:#c73e3a;color:#c73e3a}
+::-webkit-scrollbar-thumb{background:var(--text-light);border-radius:3px}
+::-webkit-scrollbar-thumb:hover{background:var(--text-muted)}
+
+/* ===== LOGIN PAGE ===== */
+.login-wrapper{
+  min-height:100vh;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  padding:20px;
+  background:linear-gradient(135deg, #f5f0e8 0%, #ede6d8 50%, #f0e8dc 100%);
+  position:relative;
+  overflow:hidden;
+}
+.login-wrapper::before{
+  content:'';
+  position:absolute;
+  top:-50%;
+  left:-50%;
+  width:200%;
+  height:200%;
+  background:radial-gradient(circle at 30% 40%, rgba(199,62,58,0.03) 0%, transparent 60%),
+              radial-gradient(circle at 70% 60%, rgba(74,103,65,0.03) 0%, transparent 50%);
+  animation:loginBg 20s ease-in-out infinite alternate;
+}
+@keyframes loginBg{
+  0%{transform:translate(0,0) rotate(0deg)}
+  100%{transform:translate(-5%,-5%) rotate(3deg)}
+}
+.login-card{
+  position:relative;
+  z-index:1;
+  background:var(--bg-card-solid);
+  backdrop-filter:blur(20px);
+  -webkit-backdrop-filter:blur(20px);
+  border:1px solid var(--border);
+  border-radius:16px;
+  padding:48px 40px 40px;
+  width:100%;
+  max-width:400px;
+  box-shadow:0 20px 60px rgba(28,28,18,0.08),0 8px 20px rgba(0,0,0,0.03);
+  text-align:center;
+  animation:loginFade 0.5s ease-out;
+}
+@keyframes loginFade{
+  from{opacity:0;transform:translateY(20px)}
+  to{opacity:1;transform:translateY(0)}
+}
+.login-logo{
+  font-size:42px;
+  margin-bottom:12px;
+  display:block;
+}
+.login-card h1{
+  font-family:"Ma Shan Zheng","Noto Serif SC",cursive;
+  font-size:24px;
+  letter-spacing:0.1em;
+  color:var(--text);
+  margin-bottom:4px;
+}
+.login-card p{
+  font-size:13px;
+  color:var(--text-muted);
+  margin-bottom:28px;
+}
+.login-card input{
+  width:100%;
+  padding:12px 16px;
+  border:1.5px solid var(--border);
+  background:var(--bg);
+  font-size:14px;
+  font-family:inherit;
+  outline:none;
+  border-radius:var(--radius-sm);
+  color:var(--text);
+  text-align:center;
+  transition:var(--transition);
+  letter-spacing:0.1em;
+}
+.login-card input:focus{
+  border-color:var(--accent);
+  box-shadow:0 0 0 3px var(--accent-light);
+}
+.login-card .btn-primary{
+  width:100%;
+  margin-top:16px;
+  padding:12px 24px;
+  background:var(--accent);
+  color:#fff;
+  border:none;
+  border-radius:var(--radius-sm);
+  font-size:14px;
+  font-family:inherit;
+  font-weight:500;
+  cursor:pointer;
+  letter-spacing:0.1em;
+  transition:var(--transition);
+}
+.login-card .btn-primary:hover{
+  background:var(--accent-dark);
+  transform:translateY(-1px);
+  box-shadow:0 4px 20px rgba(199,62,58,0.25);
+}
+.login-card .btn-primary:active{
+  transform:translateY(0);
+}
+.login-err{
+  margin-top:12px;
+  padding:8px 12px;
+  background:#fef2f2;
+  color:var(--accent);
+  border:1px solid rgba(199,62,58,0.2);
+  border-radius:var(--radius-sm);
+  font-size:13px;
+  display:none;
+}
+
+/* ===== MAIN LAYOUT ===== */
+#main-screen{
+  display:none;
+  min-height:100vh;
+}
+#main-screen:not(.hidden){
+  display:block;
+}
+.main-wrapper{
+  display:flex;
+  min-height:100vh;
+}
+
+/* ===== HEADER ===== */
+.admin-header{
+  position:fixed;
+  top:0;
+  left:0;
+  right:0;
+  height:var(--header-height);
+  background:var(--bg-card-solid);
+  backdrop-filter:blur(16px);
+  -webkit-backdrop-filter:blur(16px);
+  border-bottom:1px solid var(--border);
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  padding:0 24px;
+  z-index:1000;
+}
+.admin-header-left{
+  display:flex;
+  align-items:center;
+  gap:16px;
+}
+.admin-title{
+  font-family:"Ma Shan Zheng","Noto Serif SC",cursive;
+  font-size:20px;
+  letter-spacing:0.15em;
+  color:var(--text);
+}
+.admin-header-right{
+  display:flex;
+  align-items:center;
+  gap:16px;
+}
+.status-indicator{
+  display:flex;
+  align-items:center;
+  gap:8px;
+  font-size:12px;
+  color:var(--text-muted);
+}
+.status-dot{
+  width:8px;
+  height:8px;
+  border-radius:50%;
+  background:#d4c494;
+  display:inline-block;
+  transition:var(--transition);
+}
+.admin-version{
+  font-size:10px;
+  color:var(--text-light);
+  background:rgba(180,165,130,0.1);
+  padding:3px 10px;
+  border-radius:20px;
+  letter-spacing:0.05em;
+}
+#sidebar-toggle{
+  display:none;
+  background:none;
+  border:none;
+  font-size:20px;
+  cursor:pointer;
+  color:var(--text-muted);
+  padding:4px;
+  border-radius:var(--radius-sm);
+  transition:var(--transition);
+}
+#sidebar-toggle:hover{
+  background:var(--accent-light);
+  color:var(--accent);
+}
+
+/* ===== SIDEBAR ===== */
+.sidebar{
+  position:fixed;
+  top:var(--header-height);
+  left:0;
+  bottom:0;
+  width:var(--sidebar-width);
+  background:var(--bg-card);
+  backdrop-filter:blur(12px);
+  -webkit-backdrop-filter:blur(12px);
+  border-right:1px solid var(--border);
+  display:flex;
+  flex-direction:column;
+  z-index:999;
+  transition:transform 0.3s ease;
+  overflow-y:auto;
+  overflow-x:hidden;
+}
+.sidebar-nav{
+  flex:1;
+  padding:12px 10px;
+  display:flex;
+  flex-direction:column;
+  gap:2px;
+}
+.sidebar-section-label{
+  font-size:10px;
+  color:var(--text-light);
+  letter-spacing:0.1em;
+  padding:16px 14px 6px;
+  text-transform:uppercase;
+  font-weight:500;
+}
+.sidebar-btn{
+  display:flex;
+  align-items:center;
+  gap:12px;
+  width:100%;
+  padding:10px 14px;
+  border:none;
+  background:transparent;
+  font-size:13px;
+  font-family:inherit;
+  color:var(--text-muted);
+  cursor:pointer;
+  border-radius:var(--radius-sm);
+  transition:var(--transition);
+  text-align:left;
+  position:relative;
+}
+.sidebar-btn:hover{
+  background:var(--accent-light);
+  color:var(--text);
+}
+.sidebar-btn.active{
+  background:var(--accent-light);
+  color:var(--accent);
+  font-weight:500;
+}
+.sidebar-btn.active::before{
+  content:'';
+  position:absolute;
+  left:-2px;
+  top:50%;
+  transform:translateY(-50%);
+  width:3px;
+  height:20px;
+  background:var(--accent);
+  border-radius:0 3px 3px 0;
+}
+.sidebar-icon{
+  font-size:16px;
+  width:24px;
+  text-align:center;
+  flex-shrink:0;
+}
+.sidebar-footer{
+  padding:12px 10px;
+  border-top:1px solid var(--border);
+}
+.sidebar-footer a{
+  display:flex;
+  align-items:center;
+  gap:12px;
+  padding:10px 14px;
+  text-decoration:none;
+  font-size:12px;
+  color:var(--text-muted);
+  border-radius:var(--radius-sm);
+  transition:var(--transition);
+  font-family:inherit;
+}
+.sidebar-footer a:hover{
+  background:var(--accent-light);
+  color:var(--accent);
+}
+
+/* ===== CONTENT ===== */
+.admin-content{
+  margin-left:var(--sidebar-width);
+  margin-top:var(--header-height);
+  flex:1;
+  padding:28px 32px;
+  min-height:calc(100vh - var(--header-height));
+  max-width:1200px;
+}
+.tab-content{
+  display:block;
+  animation:tabFade 0.3s ease-out;
+}
+.tab-content.hidden{
+  display:none;
+}
+@keyframes tabFade{
+  from{opacity:0;transform:translateY(8px)}
+  to{opacity:1;transform:translateY(0)}
+}
+
+/* ===== TOKEN BAR ===== */
+#token-bar{
+  background:var(--bg-card-solid);
+  border:1px solid var(--border);
+  border-radius:var(--radius);
+  padding:20px 24px;
+  margin-bottom:24px;
+  box-shadow:var(--shadow);
+}
+#token-bar .flex{
+  display:flex;
+  gap:12px;
+  align-items:center;
+  flex-wrap:wrap;
+}
+#token-bar input{
+  flex:1;
+  min-width:200px;
+  padding:10px 14px;
+  border:1.5px solid var(--border);
+  background:var(--bg);
+  font-size:13px;
+  font-family:inherit;
+  outline:none;
+  border-radius:var(--radius-sm);
+  color:var(--text);
+  transition:var(--transition);
+}
+#token-bar input:focus{
+  border-color:var(--accent);
+  box-shadow:0 0 0 3px var(--accent-light);
+}
+#token-bar a{
+  font-size:12px;
+  color:var(--accent);
+  text-decoration:none;
+  transition:var(--transition);
+  white-space:nowrap;
+}
+#token-bar a:hover{
+  text-decoration:underline;
+}
+
+/* ===== CARDS ===== */
+.card{
+  background:var(--bg-card-solid);
+  border:1px solid var(--border);
+  border-radius:var(--radius);
+  padding:24px;
+  box-shadow:var(--shadow);
+  transition:var(--transition);
+}
+.card:hover{
+  border-color:var(--border-hover);
+  box-shadow:var(--shadow-lg);
+}
+.card h3{
+  font-family:"Ma Shan Zheng","Noto Serif SC",cursive;
+  font-size:16px;
+  letter-spacing:0.05em;
+  margin-bottom:12px;
+  color:var(--text);
+}
+.card p{
+  font-size:13px;
+  color:var(--text-muted);
+  line-height:1.7;
+}
+
+/* ===== BUTTONS ===== */
+.btn{
+  display:inline-flex;
+  align-items:center;
+  gap:6px;
+  padding:9px 18px;
+  border:none;
+  font-size:13px;
+  font-family:inherit;
+  cursor:pointer;
+  letter-spacing:0.03em;
+  transition:var(--transition);
+  border-radius:var(--radius-sm);
+  font-weight:500;
+  white-space:nowrap;
+}
+.btn:hover{
+  transform:translateY(-1px);
+}
+.btn:active{
+  transform:translateY(0);
+}
+.btn-primary{
+  background:var(--accent);
+  color:#fff;
+  border:1px solid var(--accent);
+}
+.btn-primary:hover{
+  background:var(--accent-dark);
+  box-shadow:0 4px 20px rgba(199,62,58,0.2);
+}
+.btn-ok{
+  background:#4a6741;
+  color:#fff;
+  border:1px solid #4a6741;
+}
+.btn-ok:hover{
+  background:#3d5a35;
+  box-shadow:0 4px 20px rgba(74,103,65,0.2);
+}
+.btn-outline{
+  background:transparent;
+  border:1px solid var(--border);
+  color:var(--text-muted);
+}
+.btn-outline:hover{
+  border-color:var(--accent);
+  color:var(--accent);
+  background:var(--accent-light);
+}
 .btn-sm{padding:6px 14px;font-size:12px}
 .btn-xs{padding:4px 10px;font-size:11px}
-input,textarea,select{width:100%;padding:8px 12px;border:1px solid rgba(212,196,148,0.3);background:rgba(254,252,245,0.4);font-size:13px;font-family:inherit;outline:none;transition:border-color 0.3s ease,box-shadow 0.3s ease;border-radius:4px;color:#1c1c1c}
-input:focus,textarea:focus,select:focus{border-color:#c73e3a;box-shadow:0 0 0 2px rgba(199,62,58,0.1)}
-textarea{resize:vertical;min-height:80px}
-label{display:block;font-size:12px;color:#6b5f45;margin-bottom:4px;letter-spacing:0.05em}
+.btn-danger{
+  background:#dc2626;
+  color:#fff;
+  border:1px solid #dc2626;
+}
+.btn-danger:hover{
+  background:#b91c1c;
+}
+
+/* ===== FORM ELEMENTS ===== */
+input,textarea,select{
+  width:100%;
+  padding:10px 14px;
+  border:1.5px solid var(--border);
+  background:var(--bg);
+  font-size:13px;
+  font-family:inherit;
+  outline:none;
+  transition:var(--transition);
+  border-radius:var(--radius-sm);
+  color:var(--text);
+}
+input:focus,textarea:focus,select:focus{
+  border-color:var(--accent);
+  box-shadow:0 0 0 3px var(--accent-light);
+}
+textarea{resize:vertical;min-height:80px;line-height:1.7}
+label{
+  display:block;
+  font-size:12px;
+  color:var(--text-muted);
+  margin-bottom:4px;
+  letter-spacing:0.03em;
+  font-weight:500;
+}
+
+/* ===== UTILITY ===== */
 .hidden{display:none!important}
-.flex{display:flex;gap:8px}
+.flex{display:flex;gap:10px}
 .flex-1{flex:1}
 .items-center{align-items:center}
 .justify-between{justify-content:space-between}
 .flex-wrap{flex-wrap:wrap}
+.flex-col{flex-direction:column}
+.gap-2{gap:8px}
+.gap-3{gap:12px}
+.gap-4{gap:16px}
 .mb-2{margin-bottom:8px}
 .mb-3{margin-bottom:12px}
 .mb-4{margin-bottom:16px}
+.mb-6{margin-bottom:24px}
 .mt-2{margin-top:8px}
 .mt-3{margin-top:12px}
+.mt-4{margin-top:16px}
 .text-sm{font-size:13px}
 .text-xs{font-size:12px}
-.text-muted{color:#6b5f45}
-.text-accent{color:#c73e3a}
+.text-muted{color:var(--text-muted)}
+.text-accent{color:var(--accent)}
 .w-full{width:100%}
-.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:8px}
-.msg{padding:10px 16px;font-size:13px;margin-bottom:12px;border-radius:4px;border:1px solid}
-.msg-ok{background:#e8f0e4;color:#4a6741;border-color:#4a6741}
-.msg-err{background:#f5e4e4;color:#c73e3a;border-color:#c73e3a}
-.upload-zone{border:2px dashed rgba(212,196,148,0.5);padding:30px;text-align:center;cursor:pointer;transition:all 0.3s;background:rgba(247,243,232,0.3);border-radius:8px}
-.upload-zone:hover,.upload-zone.dragover{border-color:#c73e3a;background:rgba(254,252,245,0.6)}
-.upload-zone p{font-size:13px;color:#6b5f45}
-.upload-zone .icon{font-size:32px;margin-bottom:8px}
-.drag-item{cursor:grab;transition:all 0.15s;user-select:none}
-.drag-item:hover{border-color:#c73e3a!important}
-.drag-item.dragging{opacity:0.4;border-color:#c73e3a!important}
-.drag-item.drag-over{border-color:#c73e3a!important;border-style:dashed!important;background:#f5e4e4!important}
-.drag-handle{cursor:grab;font-size:16px;color:rgba(212,196,148,0.5);margin-right:8px;flex-shrink:0}
-.drag-handle:hover{color:#c73e3a}
-.tab-btn{border-radius:4px;transition:all 0.3s ease}
-.tab-btn:hover{transform:translateY(-1px)}
-h1{font-family:"Ma Shan Zheng","Noto Serif SC",cursive;letter-spacing:0.1em}
-h3{font-family:"Ma Shan Zheng","Noto Serif SC",cursive;letter-spacing:0.05em}
-/* 侧边栏布局 */
-.admin-header {
-  display: flex; align-items: center; justify-content: space-between;
-  padding: 12px 20px; background: rgba(254,252,245,0.8);
-  backdrop-filter: blur(12px); border-bottom: 1px solid rgba(212,196,148,0.2);
-  position: sticky; top: 0; z-index: 100;
-}
-.admin-header-left { display: flex; align-items: center; gap: 12px; }
-.admin-title { font-family: 'Ma Shan Zheng','Noto Serif SC',cursive; font-size: 18px; color: #1c1c1c; letter-spacing: 0.1em; }
-.admin-header-right { display: flex; align-items: center; gap: 12px; }
-.status-dot { width: 8px; height: 8px; border-radius: 50%; background: #d4c494; display: inline-block; }
-.status-text { font-size: 12px; color: #6b5f45; }
-.admin-version { font-size: 10px; color: #d4c494; background: rgba(212,196,148,0.15); padding: 2px 8px; border-radius: 3px; }
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.grid-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px}
 
-.admin-body { display: flex; gap: 0; min-height: calc(100vh - 56px); }
-
-.sidebar {
-  width: 200px; flex-shrink: 0;
-  background: rgba(254,252,245,0.4);
-  border-right: 1px solid rgba(212,196,148,0.15);
-  padding: 12px 0;
-  display: flex; flex-direction: column;
-  justify-content: space-between;
-  position: sticky; top: 56px; height: calc(100vh - 56px);
-  overflow-y: auto;
-  transition: transform 0.3s ease, width 0.3s ease;
+/* ===== MESSAGES ===== */
+.msg{
+  padding:12px 18px;
+  font-size:13px;
+  border-radius:var(--radius-sm);
+  border:1px solid;
+  margin-bottom:16px;
+  animation:msgFade 0.3s ease-out;
 }
-.sidebar-nav { display: flex; flex-direction: column; gap: 2px; padding: 0 8px; }
-.sidebar-btn {
-  display: flex; align-items: center; gap: 10px;
-  padding: 10px 14px; border: none; background: transparent;
-  font-size: 13px; font-family: inherit; color: #6b5f45;
-  cursor: pointer; border-radius: 6px;
-  transition: all 0.2s ease; text-align: left; width: 100%;
+@keyframes msgFade{
+  from{opacity:0;transform:translateY(-8px)}
+  to{opacity:1;transform:translateY(0)}
 }
-.sidebar-btn:hover { background: rgba(199,62,58,0.06); color: #1c1c1c; }
-.sidebar-btn.active { background: rgba(199,62,58,0.1); color: #c73e3a; font-weight: 500; }
-.sidebar-icon { font-size: 16px; width: 24px; text-align: center; flex-shrink: 0; }
-.sidebar-footer { padding: 8px; border-top: 1px solid rgba(212,196,148,0.15); margin-top: 8px; }
+.msg-ok{background:#f0f7ee;color:#4a6741;border-color:rgba(74,103,65,0.2)}
+.msg-err{background:#fef2f2;color:var(--accent);border-color:rgba(199,62,58,0.2)}
 
-.admin-content {
-  flex: 1; padding: 24px; overflow-y: auto;
-  min-height: calc(100vh - 56px);
+/* ===== DASHBOARD STATS ===== */
+.dashboard-grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fit, minmax(200px, 1fr));
+  gap:16px;
+  margin-bottom:28px;
+}
+.stat-card{
+  padding:24px 20px;
+  text-align:center;
+  position:relative;
+  overflow:hidden;
+}
+.stat-card::after{
+  content:'';
+  position:absolute;
+  top:0;
+  left:0;
+  right:0;
+  height:3px;
+  background:var(--accent);
+  opacity:0.3;
+}
+.stat-card .stat-icon{font-size:28px;margin-bottom:10px}
+.stat-card .stat-number{
+  font-size:30px;
+  font-weight:600;
+  color:var(--accent);
+  font-family:"Ma Shan Zheng",cursive;
+  line-height:1.2;
+}
+.stat-card .stat-label{
+  font-size:12px;
+  color:var(--text-muted);
+  margin-top:4px;
 }
 
-/* 响应式 - 移动端侧边栏折叠 */
-@media (max-width: 768px) {
-  .sidebar { position: fixed; left: 0; top: 56px; z-index: 99; transform: translateX(-100%); width: 240px; box-shadow: 4px 0 20px rgba(0,0,0,0.1); }
-  .sidebar.open { transform: translateX(0); }
-  .admin-content { padding: 16px; }
-  #sidebar-toggle { display: flex !important; }
+/* ===== POST CARDS ===== */
+.post-card{
+  padding:18px 20px;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  flex-wrap:wrap;
+  gap:12px;
+  margin-bottom:10px;
+  background:var(--bg-card-solid);
+  border:1px solid var(--border);
+  border-radius:var(--radius-sm);
+  transition:var(--transition);
 }
-#sidebar-toggle { display: none; }
+.post-card:hover{
+  border-color:var(--border-hover);
+  box-shadow:var(--shadow);
+}
+.post-card-info{flex:1;min-width:200px}
+.post-card-title{font-size:14px;font-weight:500;color:var(--text)}
+.post-card-meta{
+  font-size:11px;
+  color:var(--text-muted);
+  margin-top:4px;
+  display:flex;
+  gap:8px;
+  align-items:center;
+  flex-wrap:wrap;
+}
+.post-card-desc{font-size:11px;color:var(--text-muted);margin-top:2px;opacity:0.7}
+.post-card-actions{display:flex;gap:6px;flex-shrink:0}
+.post-cat-tag{
+  background:var(--accent-light);
+  padding:2px 8px;
+  border-radius:3px;
+  font-size:10px;
+  color:var(--accent);
+}
+.post-date-tag{color:#4a6741;font-size:11px}
 
-/* 仪表盘卡片 */
-.dashboard-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px; margin-bottom: 24px; }
-.stat-card { padding: 20px; text-align: center; }
-.stat-card .stat-number { font-size: 28px; font-weight: 600; color: #c73e3a; font-family: 'Ma Shan Zheng',cursive; }
-.stat-card .stat-label { font-size: 12px; color: #6b5f45; margin-top: 4px; }
-.stat-card .stat-icon { font-size: 24px; margin-bottom: 8px; }
+/* ===== SEARCH BAR ===== */
+.search-bar{
+  display:flex;
+  gap:10px;
+  margin-bottom:20px;
+  flex-wrap:wrap;
+}
+.search-bar input{flex:1;min-width:150px}
+.search-bar select{width:auto;min-width:110px}
 
-/* 文章卡片列表 */
-.post-card { padding: 16px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px; margin-bottom: 8px; }
-.post-card:hover { border-color: #c73e3a; }
-.post-card-info { flex: 1; min-width: 200px; }
-.post-card-title { font-size: 14px; font-weight: 500; color: #1c1c1c; }
-.post-card-meta { font-size: 11px; color: #6b5f45; margin-top: 4px; display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
-.post-card-desc { font-size: 11px; color: #6b5f45; margin-top: 2px; opacity: 0.7; }
-.post-card-actions { display: flex; gap: 6px; flex-shrink: 0; }
-.post-cat-tag { background: rgba(199,62,58,0.08); padding: 1px 6px; border-radius: 2px; font-size: 10px; color: #c73e3a; }
-.post-date-tag { color: #4a6741; }
+/* ===== EDITOR ===== */
+.editor-layout{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:20px;
+  min-height:500px;
+}
+.editor-pane{display:flex;flex-direction:column}
+.editor-pane textarea{
+  flex:1;
+  min-height:400px;
+  font-family:"LXGW WenKai","Courier New",monospace;
+  font-size:13px;
+  line-height:1.8;
+  padding:20px;
+  resize:vertical;
+}
+.preview-pane{
+  padding:20px;
+  border:1.5px solid var(--border);
+  background:var(--bg-card-solid);
+  border-radius:var(--radius-sm);
+  overflow-y:auto;
+  min-height:400px;
+  line-height:1.8;
+}
+.preview-pane h1{font-size:1.5em;font-family:"Ma Shan Zheng",cursive}
+.editor-toolbar{
+  display:flex;
+  gap:4px;
+  margin-bottom:10px;
+  flex-wrap:wrap;
+}
+.editor-toolbar button{font-size:12px;padding:4px 10px}
+@media (max-width:768px){.editor-layout{grid-template-columns:1fr}}
 
-/* 搜索栏 */
-.search-bar { display: flex; gap: 8px; margin-bottom: 16px; flex-wrap: wrap; }
-.search-bar input { flex: 1; min-width: 150px; }
-.search-bar select { width: auto; min-width: 100px; }
+/* ===== FILE GRID ===== */
+.file-grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fill, minmax(150px, 1fr));
+  gap:14px;
+}
+.file-item{
+  text-align:center;
+  padding:16px 12px;
+  background:var(--bg-card-solid);
+  border:1px solid var(--border);
+  border-radius:var(--radius-sm);
+  transition:var(--transition);
+}
+.file-item:hover{
+  border-color:var(--border-hover);
+  box-shadow:var(--shadow);
+}
+.file-item img{
+  max-width:100%;
+  height:90px;
+  object-fit:cover;
+  margin-bottom:8px;
+  border-radius:var(--radius-sm);
+}
+.file-item .file-name{
+  font-size:10px;
+  word-break:break-all;
+  color:var(--text-muted);
+}
 
-/* 文章编辑器双栏 */
-.editor-layout { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; min-height: 500px; }
-.editor-pane { display: flex; flex-direction: column; }
-.editor-pane textarea { flex: 1; min-height: 400px; font-family: 'LXGW WenKai', monospace; font-size: 13px; line-height: 1.8; padding: 16px; border: 1px solid rgba(212,196,148,0.3); background: rgba(254,252,245,0.4); border-radius: 8px; resize: vertical; }
-.preview-pane { padding: 16px; border: 1px solid rgba(212,196,148,0.3); background: rgba(254,252,245,0.4); border-radius: 8px; overflow-y: auto; min-height: 400px; }
-.preview-pane h1 { font-size: 1.5em; }
-.editor-toolbar { display: flex; gap: 4px; margin-bottom: 8px; flex-wrap: wrap; }
-.editor-toolbar button { font-size: 12px; padding: 4px 10px; }
-@media (max-width: 768px) { .editor-layout { grid-template-columns: 1fr; } }
+/* ===== UPLOAD ZONE ===== */
+.upload-zone{
+  border:2px dashed var(--border);
+  padding:40px 20px;
+  text-align:center;
+  cursor:pointer;
+  transition:var(--transition);
+  background:var(--bg);
+  border-radius:var(--radius);
+}
+.upload-zone:hover,.upload-zone.dragover{
+  border-color:var(--accent);
+  background:var(--accent-light);
+}
+.upload-zone .icon{font-size:36px;margin-bottom:12px}
+.upload-zone p{font-size:13px;color:var(--text-muted)}
 
-/* 文件网格 */
-.file-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 12px; }
-.file-item { text-align: center; padding: 12px; background: #f7f3e8; border: 1px solid #e8e0cc; border-radius: 6px; transition: all 0.2s; }
-.file-item:hover { border-color: #c73e3a; }
-.file-item img { max-width: 100%; height: 80px; object-fit: cover; margin-bottom: 6px; border-radius: 4px; }
-.file-item .file-name { font-size: 10px; word-break: break-all; color: #6b5f45; }
+/* ===== DRAG ITEMS ===== */
+.drag-item{
+  cursor:grab;
+  transition:all 0.15s;
+  user-select:none;
+  padding:12px 16px;
+  background:var(--bg-card-solid);
+  border:1px solid var(--border);
+  border-radius:var(--radius-sm);
+  margin-bottom:6px;
+  display:flex;
+  align-items:center;
+  gap:8px;
+}
+.drag-item:hover{border-color:var(--border-hover)!important}
+.drag-item.dragging{opacity:0.4}
+.drag-item.drag-over{
+  border-color:var(--accent)!important;
+  border-style:dashed!important;
+  background:var(--accent-light)!important;
+}
+.drag-handle{
+  cursor:grab;
+  font-size:16px;
+  color:var(--text-light);
+  flex-shrink:0;
+}
+.drag-handle:hover{color:var(--accent)}
 
-/* 颜色选择器行 */
-.color-row { display: flex; gap: 8px; align-items: center; }
-.color-row input[type="text"] { flex: 1; font-family: monospace; }
-.color-picker { width: 40px; height: 40px; padding: 2px; border: 1px solid #e8e0cc; border-radius: 4px; cursor: pointer; }
+/* ===== COLOR PICKER ===== */
+.color-row{
+  display:flex;
+  gap:10px;
+  align-items:center;
+}
+.color-row input[type="text"]{flex:1;font-family:monospace;font-size:12px}
+.color-picker{
+  width:42px;
+  height:42px;
+  padding:2px;
+  border:1.5px solid var(--border);
+  border-radius:var(--radius-sm);
+  cursor:pointer;
+}
+
+/* ===== RESPONSIVE ===== */
+@media (max-width:768px){
+  .sidebar{transform:translateX(-100%)}
+  .sidebar.open{transform:translateX(0);box-shadow:8px 0 30px rgba(0,0,0,0.1)}
+  #sidebar-toggle{display:flex}
+  .admin-content{margin-left:0;padding:20px 16px}
+  .admin-header{padding:0 16px}
+  .admin-header-right .status-indicator{display:none}
+  .dashboard-grid{grid-template-columns:repeat(2,1fr)}
+  .grid-2,.grid-3{grid-template-columns:1fr}
+  .stat-card{padding:16px 14px}
+  .stat-card .stat-number{font-size:24px}
+}
+@media (max-width:480px){
+  .dashboard-grid{grid-template-columns:1fr}
+  .login-card{padding:32px 24px}
+  .admin-content{padding:16px 12px}
+}
 </style>
 </head>
 <body>
 
 <div id="app">
-  <!-- 登录 -->
-  <div id="login-screen" class="card" style="max-width:360px;margin:40vh auto 0;text-align:center;padding:40px">
-    <h1 style="font-size:20px;margin-bottom:6px;letter-spacing:0.1em">🔐 后台管理</h1>
-    <p style="font-size:13px;color:#6b5f45;margin-bottom:24px">小杨王子 · 水墨博客</p>
-    <input id="pwd-input" type="password" placeholder="管理密码" style="text-align:center">
-    <button id="login-btn" class="btn btn-primary w-full mt-3">进入</button>
-    <div id="login-err" class="msg msg-err hidden mt-2" style="display:none">密码错误</div>
+  <!-- ===== LOGIN ===== -->
+  <div id="login-screen" class="login-wrapper">
+    <div class="login-card">
+      <span class="login-logo">🏮</span>
+      <h1>后台管理</h1>
+      <p>小杨王子 · 水墨博客</p>
+      <input id="pwd-input" type="password" placeholder="管理密码" autocomplete="off">
+      <button id="login-btn" class="btn-primary">进入后台</button>
+      <div id="login-err" class="login-err">密码错误，请重试</div>
+    </div>
   </div>
 
-  <!-- 主界面 -->
-  <div id="main-screen" class="hidden" style="max-width:960px;margin:0 auto;padding:0">
-    <!-- 顶栏 -->
-    <div class="admin-header">
-      <div class="admin-header-left">
-        <button id="sidebar-toggle" class="btn btn-outline btn-sm" onclick="toggleSidebar()">☰</button>
-        <h1 class="admin-title">水墨后台</h1>
-      </div>
-      <div class="admin-header-right">
-        <span id="status-dot" class="status-dot"></span>
-        <span id="status-text" class="status-text">未连接</span>
-        <span class="admin-version">v2.0</span>
-      </div>
-    </div>
+  <!-- ===== MAIN ===== -->
+  <div id="main-screen" class="hidden">
+    <div class="main-wrapper">
+      <!-- Header -->
+      <header class="admin-header">
+        <div class="admin-header-left">
+          <button id="sidebar-toggle" onclick="toggleSidebar()">☰</button>
+          <span class="admin-title">水墨后台</span>
+        </div>
+        <div class="admin-header-right">
+          <div class="status-indicator">
+            <span id="status-dot" class="status-dot"></span>
+            <span id="status-text" class="status-text">未连接</span>
+          </div>
+          <span class="admin-version">v2.0</span>
+        </div>
+      </header>
 
-    <div id="token-bar" class="card" style="margin:16px">
-      <div class="flex gap-3 items-center flex-wrap">
-        <input id="token-input" type="password" placeholder="GitHub Personal Access Token (ghp_...)" style="flex:1;min-width:200px">
-        <button id="token-btn" class="btn btn-primary">连接</button>
-        <a href="https://github.com/settings/tokens" target="_blank" class="text-xs text-accent" style="text-decoration:none">生成 Token</a>
-      </div>
-      <div id="token-err" class="text-xs text-accent mt-2 hidden" style="display:none"></div>
-    </div>
-
-    <div id="global-msg" style="margin:0 16px"></div>
-
-    <!-- 主体：侧边栏 + 内容区 -->
-    <div class="admin-body">
-      <!-- 侧边栏 -->
+      <!-- Sidebar -->
       <aside id="sidebar" class="sidebar">
         <nav class="sidebar-nav">
+          <div class="sidebar-section-label">概览</div>
           <button class="sidebar-btn active" data-tab="dashboard" onclick="switchTab('dashboard')">
             <span class="sidebar-icon">📊</span> 仪表盘
           </button>
+
+          <div class="sidebar-section-label">内容</div>
           <button class="sidebar-btn" data-tab="posts" onclick="switchTab('posts')">
-            <span class="sidebar-icon">📝</span> 文章
+            <span class="sidebar-icon">📝</span> 文章管理
           </button>
           <button class="sidebar-btn" data-tab="editor" onclick="switchTab('editor')">
             <span class="sidebar-icon">✏️</span> 写文章
           </button>
+          <button class="sidebar-btn" data-tab="tags" onclick="switchTab('tags')">
+            <span class="sidebar-icon">🏷️</span> 标签管理
+          </button>
+          <button class="sidebar-btn" data-tab="categories" onclick="switchTab('categories')">
+            <span class="sidebar-icon">📂</span> 分类管理
+          </button>
+          <button class="sidebar-btn" data-tab="recycle" onclick="switchTab('recycle')">
+            <span class="sidebar-icon">🗑️</span> 回收站
+          </button>
+
+          <div class="sidebar-section-label">设置</div>
           <button class="sidebar-btn" data-tab="tools" onclick="switchTab('tools')">
-            <span class="sidebar-icon">🔧</span> 工具
+            <span class="sidebar-icon">🔧</span> 工具管理
           </button>
           <button class="sidebar-btn" data-tab="nav" onclick="switchTab('nav')">
-            <span class="sidebar-icon">🧭</span> 导航
+            <span class="sidebar-icon">🧭</span> 导航栏
           </button>
           <button class="sidebar-btn" data-tab="profile" onclick="switchTab('profile')">
-            <span class="sidebar-icon">👤</span> 简介
-          </button>
-          <button class="sidebar-btn" data-tab="upload" onclick="switchTab('upload')">
-            <span class="sidebar-icon">📤</span> 上传
+            <span class="sidebar-icon">👤</span> 简介管理
           </button>
           <button class="sidebar-btn" data-tab="site" onclick="switchTab('site')">
-            <span class="sidebar-icon">⚙️</span> 站点
+            <span class="sidebar-icon">⚙️</span> 站点设置
+          </button>
+          <button class="sidebar-btn" data-tab="themes" onclick="switchTab('themes')">
+            <span class="sidebar-icon">🎨</span> 主题配色
+          </button>
+
+          <div class="sidebar-section-label">其他</div>
+          <button class="sidebar-btn" data-tab="upload" onclick="switchTab('upload')">
+            <span class="sidebar-icon">📤</span> 文件上传
+          </button>
+          <button class="sidebar-btn" data-tab="medialib" onclick="switchTab('medialib')">
+            <span class="sidebar-icon">🖼️</span> 媒体库
+          </button>
+          <button class="sidebar-btn" data-tab="friendlinks" onclick="switchTab('friendlinks')">
+            <span class="sidebar-icon">🔗</span> 友情链接
+          </button>
+          <button class="sidebar-btn" data-tab="analytics" onclick="switchTab('analytics')">
+            <span class="sidebar-icon">📈</span> 统计分析
+          </button>
+          <button class="sidebar-btn" data-tab="backup" onclick="switchTab('backup')">
+            <span class="sidebar-icon">💾</span> 数据备份
           </button>
         </nav>
         <div class="sidebar-footer">
-          <a href="/" target="_blank" class="sidebar-btn" style="text-decoration:none;display:flex;align-items:center;gap:8px;padding:10px 16px;font-size:12px;color:#6b5f45;border:none;background:none;width:100%;cursor:pointer">
+          <a href="/" target="_blank">
             <span>🏠</span> 查看博客
           </a>
         </div>
       </aside>
 
-      <!-- 内容区 -->
+      <!-- Content -->
       <main class="admin-content">
+        <div id="token-bar" class="card">
+          <div class="flex">
+            <input id="token-input" type="password" placeholder="GitHub Personal Access Token (ghp_...)" style="flex:1;min-width:200px">
+            <button id="token-btn" class="btn btn-primary">连接</button>
+            <a href="https://github.com/settings/tokens" target="_blank" style="font-size:12px;color:var(--accent);text-decoration:none;white-space:nowrap">生成 Token</a>
+          </div>
+          <div id="token-err" class="text-xs text-accent mt-2 hidden" style="display:none"></div>
+        </div>
+
+        <div id="global-msg"></div>
+
         <div id="tab-dashboard" class="tab-content"></div>
         <div id="tab-posts" class="tab-content hidden"></div>
         <div id="tab-editor" class="tab-content hidden"></div>
-        <div id="tab-about" class="tab-content hidden"></div>
         <div id="tab-tags" class="tab-content hidden"></div>
         <div id="tab-categories" class="tab-content hidden"></div>
+        <div id="tab-recycle" class="tab-content hidden"></div>
         <div id="tab-tools" class="tab-content hidden"></div>
         <div id="tab-nav" class="tab-content hidden"></div>
         <div id="tab-profile" class="tab-content hidden"></div>
         <div id="tab-social" class="tab-content hidden"></div>
-        <div id="tab-upload" class="tab-content hidden"></div>
         <div id="tab-site" class="tab-content hidden"></div>
-        <div id="tab-recycle" class="tab-content hidden"></div>
-        <div id="tab-friendlinks" class="tab-content hidden"></div>
-        <div id="tab-custompages" class="tab-content hidden"></div>
-        <div id="tab-medialib" class="tab-content hidden"></div>
-        <div id="tab-analytics" class="tab-content hidden"></div>
         <div id="tab-themes" class="tab-content hidden"></div>
+        <div id="tab-upload" class="tab-content hidden"></div>
+        <div id="tab-medialib" class="tab-content hidden"></div>
+        <div id="tab-friendlinks" class="tab-content hidden"></div>
+        <div id="tab-analytics" class="tab-content hidden"></div>
         <div id="tab-backup" class="tab-content hidden"></div>
       </main>
     </div>
-  </div>
-
-    <div id="token-bar" class="card mb-4">
-      <div class="flex gap-3 items-center flex-wrap">
-        <input id="token-input" type="password" placeholder="GitHub Personal Access Token (ghp_...)" style="flex:1;min-width:200px">
-        <button id="token-btn" class="btn btn-primary">连接</button>
-        <a href="https://github.com/settings/tokens" target="_blank" class="text-xs text-accent" style="text-decoration:none">生成 Token</a>
-      </div>
-      <div id="token-err" class="text-xs text-accent mt-2 hidden" style="display:none"></div>
-    </div>
-
-    <div id="global-msg" class="hidden"></div>
-
-    <!-- 标签页 -->
-    <div class="flex gap-2 mb-4 flex-wrap">
-      <button class="tab-btn btn btn-primary btn-sm" data-tab="tools">🔧 工具</button>
-      <button class="tab-btn btn btn-outline btn-sm" data-tab="nav">🧭 导航</button>
-      <button class="tab-btn btn btn-outline btn-sm" data-tab="profile">👤 简介</button>
-      <button class="tab-btn btn btn-outline btn-sm" data-tab="posts">📝 文章</button>
-      <button class="tab-btn btn btn-outline btn-sm" data-tab="upload">📤 上传</button>
-      <button class="tab-btn btn btn-outline btn-sm" data-tab="site">⚙️ 站点</button>
-    </div>
-
-    <div id="tab-tools" class="tab-content"></div>
-    <div id="tab-nav" class="tab-content hidden"></div>
-    <div id="tab-profile" class="tab-content hidden"></div>
-    <div id="tab-posts" class="tab-content hidden"></div>
-    <div id="tab-upload" class="tab-content hidden"></div>
-    <div id="tab-site" class="tab-content hidden"></div>
   </div>
 </div>
 
@@ -317,6 +956,8 @@ document.getElementById("login-btn").onclick = () => { console.log("Login clicke
   if (document.getElementById("pwd-input").value === "Grooty920") { console.log("Password correct");
     document.getElementById("login-screen").classList.add("hidden");
     document.getElementById("main-screen").classList.remove("hidden");
+    const saved = sessionStorage.getItem("gh_token");
+    if (saved) { TOKEN = saved; document.getElementById("token-input").value = saved; doConnect(); }
   } else { console.log("Password wrong"); document.getElementById("login-err").style.display = "block"; }
 };
 document.getElementById("pwd-input").addEventListener("keydown", e => { if(e.key==="Enter") document.getElementById("login-btn").click(); });
