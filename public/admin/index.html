@@ -309,6 +309,61 @@ function renderNav() {
   makeDraggable("nav-list", navData.items, () => renderNav());
 }
 
+
+// ===== 简介管理 =====
+function renderProfile() {
+  var p = profileData || {};
+  var el = document.getElementById("tab-profile");
+  if (!el) return;
+  var html = `<div class="card mb-3">
+      <h3 style="font-size:15px;margin-bottom:12px">👤 个人简介</h3>
+      <div class="mb-3">
+        <label>名称</label>
+        <input value="${esc(p.name || "")}" onchange="profileData.name=this.value" class="w-full">
+      </div>
+      <div class="mb-3">
+        <label>头像 URL</label>
+        <input value="${esc(p.avatar || "")}" onchange="profileData.avatar=this.value" class="w-full">
+        ${p.avatar ? "<img src='" + esc(p.avatar) + "' style='width:60px;height:60px;border-radius:50%;margin-top:8px;object-fit:cover'>" : ""}
+      </div>
+      <div class="mb-3">
+        <label>简介</label>
+        <textarea onchange="profileData.bio=this.value" rows="3" class="w-full">${esc(p.bio || "")}</textarea>
+      </div>
+      <div class="mb-3">
+        <label>副标题</label>
+        <input value="${esc(p.subBio || "")}" onchange="profileData.subBio=this.value" class="w-full">
+      </div>
+      <div class="mb-3">
+        <label>签名</label>
+        <input value="${esc(p.signature || "")}" onchange="profileData.signature=this.value" class="w-full">
+      </div>
+      <div class="mb-3">
+        <label>邮箱</label>
+        <input value="${esc(p.email || "")}" onchange="profileData.email=this.value" class="w-full">
+      </div>
+      <div class="mb-3">
+        <label>GitHub</label>
+        <input value="${esc(p.github || "")}" onchange="profileData.github=this.value" class="w-full">
+      </div>
+      <div class="mb-3">
+        <label>页脚</label>
+        <textarea onchange="profileData.footer=this.value" rows="2" class="w-full">${esc(p.footer || "")}</textarea>
+      </div>
+      <button onclick="saveProfile()" class="btn btn-ok btn-sm">💾 保存简介</button>
+    </div>`;
+  el.innerHTML = html;
+}
+
+async function saveProfile() {
+  try {
+    const r = await ghPut("src/data/profile.json", profileData, profileSha);
+    profileSha = r.content.sha;
+    showMsg("✅ 简介已保存", "ok");
+  } catch(e) {
+    showMsg("❌ " + e.message, "err");
+  }
+}
 // ===== ???? =====
 async function renderPosts() {
   try {
