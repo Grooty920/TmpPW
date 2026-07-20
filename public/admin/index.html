@@ -62,6 +62,104 @@ label{display:block;font-size:12px;color:#6b5f45;margin-bottom:4px;letter-spacin
 .tab-btn:hover{transform:translateY(-1px)}
 h1{font-family:"Ma Shan Zheng","Noto Serif SC",cursive;letter-spacing:0.1em}
 h3{font-family:"Ma Shan Zheng","Noto Serif SC",cursive;letter-spacing:0.05em}
+/* 侧边栏布局 */
+.admin-header {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 12px 20px; background: rgba(254,252,245,0.8);
+  backdrop-filter: blur(12px); border-bottom: 1px solid rgba(212,196,148,0.2);
+  position: sticky; top: 0; z-index: 100;
+}
+.admin-header-left { display: flex; align-items: center; gap: 12px; }
+.admin-title { font-family: 'Ma Shan Zheng','Noto Serif SC',cursive; font-size: 18px; color: #1c1c1c; letter-spacing: 0.1em; }
+.admin-header-right { display: flex; align-items: center; gap: 12px; }
+.status-dot { width: 8px; height: 8px; border-radius: 50%; background: #d4c494; display: inline-block; }
+.status-text { font-size: 12px; color: #6b5f45; }
+.admin-version { font-size: 10px; color: #d4c494; background: rgba(212,196,148,0.15); padding: 2px 8px; border-radius: 3px; }
+
+.admin-body { display: flex; gap: 0; min-height: calc(100vh - 56px); }
+
+.sidebar {
+  width: 200px; flex-shrink: 0;
+  background: rgba(254,252,245,0.4);
+  border-right: 1px solid rgba(212,196,148,0.15);
+  padding: 12px 0;
+  display: flex; flex-direction: column;
+  justify-content: space-between;
+  position: sticky; top: 56px; height: calc(100vh - 56px);
+  overflow-y: auto;
+  transition: transform 0.3s ease, width 0.3s ease;
+}
+.sidebar-nav { display: flex; flex-direction: column; gap: 2px; padding: 0 8px; }
+.sidebar-btn {
+  display: flex; align-items: center; gap: 10px;
+  padding: 10px 14px; border: none; background: transparent;
+  font-size: 13px; font-family: inherit; color: #6b5f45;
+  cursor: pointer; border-radius: 6px;
+  transition: all 0.2s ease; text-align: left; width: 100%;
+}
+.sidebar-btn:hover { background: rgba(199,62,58,0.06); color: #1c1c1c; }
+.sidebar-btn.active { background: rgba(199,62,58,0.1); color: #c73e3a; font-weight: 500; }
+.sidebar-icon { font-size: 16px; width: 24px; text-align: center; flex-shrink: 0; }
+.sidebar-footer { padding: 8px; border-top: 1px solid rgba(212,196,148,0.15); margin-top: 8px; }
+
+.admin-content {
+  flex: 1; padding: 24px; overflow-y: auto;
+  min-height: calc(100vh - 56px);
+}
+
+/* 响应式 - 移动端侧边栏折叠 */
+@media (max-width: 768px) {
+  .sidebar { position: fixed; left: 0; top: 56px; z-index: 99; transform: translateX(-100%); width: 240px; box-shadow: 4px 0 20px rgba(0,0,0,0.1); }
+  .sidebar.open { transform: translateX(0); }
+  .admin-content { padding: 16px; }
+  #sidebar-toggle { display: flex !important; }
+}
+#sidebar-toggle { display: none; }
+
+/* 仪表盘卡片 */
+.dashboard-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px; margin-bottom: 24px; }
+.stat-card { padding: 20px; text-align: center; }
+.stat-card .stat-number { font-size: 28px; font-weight: 600; color: #c73e3a; font-family: 'Ma Shan Zheng',cursive; }
+.stat-card .stat-label { font-size: 12px; color: #6b5f45; margin-top: 4px; }
+.stat-card .stat-icon { font-size: 24px; margin-bottom: 8px; }
+
+/* 文章卡片列表 */
+.post-card { padding: 16px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px; margin-bottom: 8px; }
+.post-card:hover { border-color: #c73e3a; }
+.post-card-info { flex: 1; min-width: 200px; }
+.post-card-title { font-size: 14px; font-weight: 500; color: #1c1c1c; }
+.post-card-meta { font-size: 11px; color: #6b5f45; margin-top: 4px; display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+.post-card-desc { font-size: 11px; color: #6b5f45; margin-top: 2px; opacity: 0.7; }
+.post-card-actions { display: flex; gap: 6px; flex-shrink: 0; }
+.post-cat-tag { background: rgba(199,62,58,0.08); padding: 1px 6px; border-radius: 2px; font-size: 10px; color: #c73e3a; }
+.post-date-tag { color: #4a6741; }
+
+/* 搜索栏 */
+.search-bar { display: flex; gap: 8px; margin-bottom: 16px; flex-wrap: wrap; }
+.search-bar input { flex: 1; min-width: 150px; }
+.search-bar select { width: auto; min-width: 100px; }
+
+/* 文章编辑器双栏 */
+.editor-layout { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; min-height: 500px; }
+.editor-pane { display: flex; flex-direction: column; }
+.editor-pane textarea { flex: 1; min-height: 400px; font-family: 'LXGW WenKai', monospace; font-size: 13px; line-height: 1.8; padding: 16px; border: 1px solid rgba(212,196,148,0.3); background: rgba(254,252,245,0.4); border-radius: 8px; resize: vertical; }
+.preview-pane { padding: 16px; border: 1px solid rgba(212,196,148,0.3); background: rgba(254,252,245,0.4); border-radius: 8px; overflow-y: auto; min-height: 400px; }
+.preview-pane h1 { font-size: 1.5em; }
+.editor-toolbar { display: flex; gap: 4px; margin-bottom: 8px; flex-wrap: wrap; }
+.editor-toolbar button { font-size: 12px; padding: 4px 10px; }
+@media (max-width: 768px) { .editor-layout { grid-template-columns: 1fr; } }
+
+/* 文件网格 */
+.file-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 12px; }
+.file-item { text-align: center; padding: 12px; background: #f7f3e8; border: 1px solid #e8e0cc; border-radius: 6px; transition: all 0.2s; }
+.file-item:hover { border-color: #c73e3a; }
+.file-item img { max-width: 100%; height: 80px; object-fit: cover; margin-bottom: 6px; border-radius: 4px; }
+.file-item .file-name { font-size: 10px; word-break: break-all; color: #6b5f45; }
+
+/* 颜色选择器行 */
+.color-row { display: flex; gap: 8px; align-items: center; }
+.color-row input[type="text"] { flex: 1; font-family: monospace; }
+.color-picker { width: 40px; height: 40px; padding: 2px; border: 1px solid #e8e0cc; border-radius: 4px; cursor: pointer; }
 </style>
 </head>
 <body>
@@ -107,6 +205,7 @@ h3{font-family:"Ma Shan Zheng","Noto Serif SC",cursive;letter-spacing:0.05em}
       <button class="tab-btn btn btn-outline btn-sm" data-tab="profile">👤 简介</button>
       <button class="tab-btn btn btn-outline btn-sm" data-tab="posts">📝 文章</button>
       <button class="tab-btn btn btn-outline btn-sm" data-tab="upload">📤 上传</button>
+      <button class="tab-btn btn btn-outline btn-sm" data-tab="site">⚙️ 站点</button>
     </div>
 
     <div id="tab-tools" class="tab-content"></div>
@@ -114,6 +213,7 @@ h3{font-family:"Ma Shan Zheng","Noto Serif SC",cursive;letter-spacing:0.05em}
     <div id="tab-profile" class="tab-content hidden"></div>
     <div id="tab-posts" class="tab-content hidden"></div>
     <div id="tab-upload" class="tab-content hidden"></div>
+    <div id="tab-site" class="tab-content hidden"></div>
   </div>
 </div>
 
@@ -137,7 +237,7 @@ function setStatus(ok) {
 }
 
 // 登录
-// ??
+// 登录
 document.getElementById("login-btn").onclick = () => { console.log("Login clicked");
   if (document.getElementById("pwd-input").value === "Grooty920") { console.log("Password correct");
     document.getElementById("login-screen").classList.add("hidden");
@@ -175,6 +275,7 @@ document.querySelectorAll(".tab-btn").forEach(btn => {
     document.querySelectorAll(".tab-content").forEach(t => t.classList.add("hidden"));
     document.getElementById("tab-" + btn.dataset.tab).classList.remove("hidden");
     if (btn.dataset.tab === "upload") renderUpload();
+    if (btn.dataset.tab === "site") renderSite();
   };
 });
 
@@ -364,46 +465,79 @@ async function saveProfile() {
     showMsg("❌ " + e.message, "err");
   }
 }
-// ===== ???? =====
+// ===== 预览文章 =====
 async function renderPosts() {
   try {
     let el = document.getElementById("tab-posts");
     const r = await fetch("https://api.github.com/repos/"+REPO+"/contents/src/content/posts?ref="+BRANCH, {
       headers: { "Authorization": "Bearer " + TOKEN, "Accept": "application/vnd.github.v3+json" }
     });
-    if (!r.ok) { el.innerHTML = "<p class='text-sm text-accent'>????</p>"; return; }
+    if (!r.ok) { el.innerHTML = "<p class='text-sm text-accent'>加载失败</p>"; return; }
     const files = await r.json();
-  let html = `<div class="card mt-4"><h3 style="font-size:15px;margin-bottom:12px">??? ???????</h3>
+  let html = `<div class="card mt-4"><h3 style="font-size:15px;margin-bottom:12px">🏷️ 文章分类与标签</h3>
       <div class="flex gap-4 flex-wrap mb-3">
         <div class="flex-1" style="min-width:200px">
-          <p class="text-xs text-muted mb-2">????</p>
+          <p class="text-xs text-muted mb-2">分类</p>
           <div class="flex flex-wrap gap-2">
             ${(()=>{var cats={};files.filter(f=>f.name.endsWith(".mdx")).forEach(f=>{try{var c=atob(f.content.replace(/\\n/g,""));var m=c.match(/category:\s*["'"]([^"']+)["'"]/);if(m)cats[m[1]]=(cats[m[1]]||0)+1}catch(e){}});return Object.keys(cats).sort().map(cat=>"<span class=\"btn btn-outline btn-xs\" style=\"cursor:default;background:rgba(199,62,58,0.08);border-color:rgba(199,62,58,0.2);color:#c73e3a\">"+cat+" ("+cats[cat]+")</span>").join(" ")})()}
           </div>
         </div>
         <div class="flex-1" style="min-width:200px">
-          <p class="text-xs text-muted mb-2">????</p>
+          <p class="text-xs text-muted mb-2">标签</p>
           <div class="flex flex-wrap gap-2">
             ${(()=>{var tagMap={};files.filter(f=>f.name.endsWith(".mdx")).forEach(f=>{try{var c=atob(f.content.replace(/\\n/g,""));var r=c.match(/tags:\s*\[([^\]]+)\]/);if(r){r[1].split(",").forEach(t=>{var tag=t.trim().replace(/["'"]/g,"");if(tag)tagMap[tag]=(tagMap[tag]||0)+1})}}catch(e){}});return Object.keys(tagMap).sort().map(t=>"<span class=\"btn btn-outline btn-xs\" style=\"cursor:default\">#"+t+" ("+tagMap[t]+")</span>").join(" ")})()}
           </div>
         </div>
       </div>
-      <p class="text-xs text-muted">???????????????????????</p>
+      <p class="text-xs text-muted">分类在新建文章时填写，支持任意分类名</p>
     </div>`;
-    if (files.length === 0) { html += "<p class='text-sm text-muted'>暂无文章</p>"; }
+        if (files.length === 0) { html += "<p class='text-sm text-muted'>暂无文章</p>"; }
     else {
       html += "<div style='display:grid;gap:8px'>";
       for (const f of files) {
         if (f.name.endsWith(".mdx") || f.name.endsWith(".md")) {
-          html += `<div class="card" style="padding:12px 16px;display:flex;justify-content:space-between;align-items:center">
-            <span class="text-sm">📄 ${esc(f.name)}</span>
-            <a href="https://github.com/${REPO}/edit/${BRANCH}/src/content/posts/${f.name}" target="_blank" class="btn btn-outline btn-xs">编辑</a>
-          </div>`;
+          try {
+            var c = atob(f.content.replace(/\n/g, ""));
+            var parts = c.split("---");
+            var frontmatter = {};
+            if (parts.length >= 3) {
+              var fmLines = parts[1].split("\n");
+              fmLines.forEach(function(line) {
+                var m = line.match(/^\s*(\w+):\s*["'](.+)["']\s*$/);
+                if (m) frontmatter[m[1]] = m[2];
+                var m2 = line.match(/^\s*(\w+):\s*(\S+)\s*$/);
+                if (m2) frontmatter[m2[1]] = m2[2];
+              });
+            }
+            var title = frontmatter.title || f.name.replace(/\.(mdx|md)$/, "");
+            var date = frontmatter.date || "";
+            var category = frontmatter.category || "";
+            var desc = frontmatter.description || "";
+            if (date) {
+              try { var d = new Date(date); date = d.getFullYear() + "-" + String(d.getMonth()+1).padStart(2,"0") + "-" + String(d.getDate()).padStart(2,"0"); } catch(e) {}
+            }
+            html += `<div class="card" style="padding:12px 16px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px">
+              <div style="flex:1;min-width:200px">
+                <div style="font-size:13px;font-weight:500;color:#1c1c1c">📄 ${esc(title)}</div>
+                <div style="font-size:11px;color:#6b5f45;margin-top:2px">${esc(f.name)}${date ? " · <span style='color:#4a6741'>" + esc(date) + "</span>" : ""}${category ? " · <span style='background:rgba(199,62,58,0.08);padding:1px 6px;border-radius:2px;font-size:10px;color:#c73e3a'>" + esc(category) + "</span>" : ""}</div>
+                ${desc ? "<div style='font-size:11px;color:#6b5f45;margin-top:2px;opacity:0.7'>" + esc(desc.substring(0, 60)) + (desc.length > 60 ? "..." : "") + "</div>" : ""}
+              </div>
+              <div class="flex gap-2" style="flex-shrink:0">
+                <button onclick="editPost('${esc(f.name)}')" class="btn btn-outline btn-xs">✏️ 编辑</button>
+                <button onclick="previewPost('${esc(f.name)}')" class="btn btn-outline btn-xs">👁️ 预览</button>
+                <button onclick="deletePost('${esc(f.name)}')" class="btn btn-outline btn-xs" style="color:#c73e3a">🗑️ 删除</button>
+              </div>
+            </div>`;
+          } catch(e) {
+            html += `<div class="card" style="padding:12px 16px;display:flex;justify-content:space-between;align-items:center">
+              <span class="text-sm">📄 ${esc(f.name)}</span>
+              <span class="text-xs text-muted">解析失败</span>
+            </div>`;
+          }
         }
       }
       html += "</div>";
-    }
-    // 分类管理
+    }    // 分类管理
     html += `<div class="card mt-4"><h3 style="font-size:15px;margin-bottom:12px">🏷️ 文章分类管理</h3>
       <p class="text-sm text-muted mb-2">当前文章分类：${[...new Set(files.filter(f=>f.name.endsWith(".mdx")).map(f=>f.name))].map(f=>"随笔").join(", ")}</p>
       <p class="text-xs text-muted">分类在新建文章时填写，支持任意分类名</p>
@@ -413,7 +547,7 @@ async function renderPosts() {
 }
 
 
-// ===== ?? Markdown ?? =====
+// ===== Markdown 渲染 =====
 function mdRender(text) {
   var t = text
     .replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;")
@@ -433,46 +567,46 @@ function mdRender(text) {
   return t;
 }
 
-// ===== ???? =====
+// ===== 删除文章 =====
 async function previewPost(name) {
   try {
     var r = await fetch("https://api.github.com/repos/"+REPO+"/contents/src/content/posts/"+name+"?ref="+BRANCH, {
       headers: { "Authorization": "Bearer " + TOKEN, "Accept": "application/vnd.github.v3+json" }
     });
-    if (!r.ok) throw new Error("????");
+    if (!r.ok) throw new Error("获取失败");
     var d = await r.json();
     var c = atob(d.content.replace(/\n/g, ""));
     var parts = c.split("---");
     var body = parts[2] || parts[1] || c;
     var w = window.open("", "_blank", "width=800,height=600");
-    if (!w) { alert("???????"); return; }
+    if (!w) { alert("弹窗被拦截"); return; }
     var style = "body{font-family:Noto Serif SC,LXGW WenKai,serif;background:#f7f3e8;color:#1c1c1c;padding:40px;max-width:720px;margin:0 auto;line-height:1.8}img{max-width:100%;border-radius:4px}code{background:#f0e8cc;padding:1px 4px;border-radius:2px}blockquote{border-left:3px solid #c73e3a;padding:0.5em 1em;margin:1em 0;background:#fefcf5;color:#6b5f45}h1,h2,h3{font-family:Ma Shan Zheng,Noto Serif SC,cursive;letter-spacing:0.05em}";
-    w.document.write("<!doctype html><html><head><meta charset=utf-8><title>??</title><style>"+style+"</style></head><body>");
+    w.document.write("<!doctype html><html><head><meta charset=utf-8><title>预览</title><style>"+style+"</style></head><body>")
     w.document.write(mdRender(body));
     w.document.write("</body></html>");
     w.document.close();
-  } catch(e) { alert("????: " + e.message); }
+  } catch(e) { alert("错误: " + e.message); }
 }
 
-// ===== ???? =====
+// ===== 文章管理 =====
 async function deletePost(name) {
-  if (!confirm("????? " + name + " ??????????")) return;
-  if (!confirm("??????? " + name + "?")) return;
+  if (!confirm("确定删除 " + name + " ? 此操作不可撤销")) return;
+  if (!confirm("再次确认删除 " + name + "?")) return;
   try {
     var r = await fetch("https://api.github.com/repos/"+REPO+"/contents/src/content/posts/"+name+"?ref="+BRANCH, {
       headers: { "Authorization": "Bearer " + TOKEN, "Accept": "application/vnd.github.v3+json" }
     });
-    if (!r.ok) throw new Error("????????");
+    if (!r.ok) throw new Error("获取文章信息失败");
     var d = await r.json();
     var del = await fetch("https://api.github.com/repos/"+REPO+"/contents/src/content/posts/"+name, {
       method: "DELETE",
       headers: { "Authorization": "Bearer " + TOKEN, "Content-Type": "application/json" },
-      body: JSON.stringify({ message: "??: " + name, sha: d.sha, branch: BRANCH })
+      body: JSON.stringify({ message: "删除: " + name, sha: d.sha, branch: BRANCH })
     });
-    if (!del.ok) throw new Error("???? " + del.status);
-    showMsg("???: " + name, "ok");
+    if (!del.ok) throw new Error("删除失败 " + del.status);
+    showMsg("已删除: " + name, "ok");
     renderPosts();
-  } catch(e) { showMsg("????: " + e.message, "err"); }
+  } catch(e) { showMsg("错误: " + e.message, "err"); }
 }
 
 function showNewPost() {
@@ -499,7 +633,7 @@ function togglePreview() {
   var el = document.getElementById("np-preview");
   var body = document.getElementById("np-body").value;
   if (el.classList.contains("hidden")) {
-    el.innerHTML = body ? mdRender(body) : "<p class=\"text-muted\">????</p>";
+    el.innerHTML = body ? mdRender(body) : "<p class=\"text-muted\">无内容</p>";
     el.classList.remove("hidden");
     el.style.display = "block";
   } else {
@@ -512,7 +646,7 @@ function previewMd() {
   var el = document.getElementById("np-preview");
   var body = document.getElementById("np-body").value;
   if (el.classList.contains("hidden")) {
-    el.innerHTML = body ? mdRender(body) : "<p class=\"text-muted\">????</p>";
+    el.innerHTML = body ? mdRender(body) : "<p class=\"text-muted\">无内容</p>";
     el.classList.remove("hidden");
   } else {
     el.classList.add("hidden");
@@ -537,7 +671,7 @@ function updateWordCount() {
     var text = ta.value.trim();
     var chars = text.length;
     var words = text ? text.split(/\s+/).length : 0;
-    el.textContent = "??: " + chars + " | ??: " + words;
+    el.textContent = "字符: " + chars + " | 字数: " + words;
   }
 }
 
@@ -566,6 +700,81 @@ async function publishPost() {
   } catch(e) { msg.textContent = "❌ " + e.message; msg.style.color = "#c73e3a"; }
 }
 
+
+async function editPost(name) {
+  try {
+    var r = await fetch("https://api.github.com/repos/"+REPO+"/contents/src/content/posts/"+name+"?ref="+BRANCH, {
+      headers: { "Authorization": "Bearer " + TOKEN, "Accept": "application/vnd.github.v3+json" }
+    });
+    if (!r.ok) throw new Error("获取失败");
+    var d = await r.json();
+    var content = atob(d.content.replace(/\n/g, ""));
+    var parts = content.split("---");
+    var fm = parts[1] || "";
+    var body = parts[2] || parts[1] || content;
+    var title = "", desc = "", cat = "随笔", tags = [], cover = "";
+    fm.split("\n").forEach(function(line) {
+      var m = line.match(/^title:\s*["'](.+)["']\s*$/);
+      if (m) title = m[1];
+      var m2 = line.match(/^description:\s*["'](.+)["']\s*$/);
+      if (m2) desc = m2[1];
+      var m3 = line.match(/^category:\s*["'](.+)["']\s*$/);
+      if (m3) cat = m3[1];
+      var m4 = line.match(/^tags:\s*\[([^\]]+)\]\s*$/);
+      if (m4) tags = m4[1].split(",").map(function(t) { return t.trim().replace(/["']/g,""); });
+      var m5 = line.match(/^coverImage:\s*["'](.+)["']\s*$/);
+      if (m5) cover = m5[1];
+    });
+    var slug = name.replace(/\.(mdx|md)$/, "");
+    var el = document.getElementById("new-post-form");
+    el.classList.remove("hidden");
+    el.innerHTML = "<h3 style='font-size:15px;margin-bottom:12px'>✏️ 编辑文章: " + esc(name) + "</h3>" +
+      "<div class='grid-2 mb-2'><div><label>文件名</label><input id='np-slug' value='" + esc(slug) + "' style='font-family:monospace'></div>" +
+      "<div><label>标题</label><input id='np-title' value='" + esc(title) + "'></div></div>" +
+      "<div class='mb-2'><label>描述</label><input id='np-desc' value='" + esc(desc) + "'></div>" +
+      "<div class='grid-2 mb-2'><div><label>分类</label><input id='np-cat' value='" + esc(cat) + "'></div>" +
+      "<div><label>标签 (逗号分隔)</label><input id='np-tags' value='" + esc(tags.join(", ")) + "'></div></div>" +
+      "<div class='mb-2'><label>封面图URL</label><input id='np-cover' value='" + esc(cover) + "'></div>" +
+      "<div class='mb-2'><label>正文 (Markdown)</label><textarea id='np-body' rows='12'>" + esc(body) + "</textarea></div>" +
+      "<div class='flex gap-2'>" +
+      "<button onclick=\"updatePost('" + esc(name) + "','" + d.sha + "')\" class='btn btn-primary btn-sm'>💾 更新文章</button>" +
+      "<button onclick='togglePreview()' class='btn btn-outline btn-sm'>👁️ 预览</button>" +
+      "<button onclick=\"document.getElementById('new-post-form').classList.add('hidden')\" class='btn btn-outline btn-sm'>取消</button>" +
+      "</div><div id='np-msg' class='text-xs mt-2 text-muted'></div>";
+  } catch(e) { showMsg("❌ " + e.message, "err"); }
+}
+
+async function updatePost(name, sha) {
+  var slug = document.getElementById("np-slug").value.trim();
+  var title = document.getElementById("np-title").value.trim();
+  var desc = document.getElementById("np-desc").value.trim();
+  var cat = document.getElementById("np-cat").value.trim();
+  var tags = document.getElementById("np-tags").value.split(",").map(function(t) { return t.trim(); });
+  var cover = document.getElementById("np-cover").value.trim();
+  var body = document.getElementById("np-body").value;
+  var msg = document.getElementById("np-msg");
+  if (!slug || !title || !desc) { msg.textContent = "请填写文件名、标题和描述"; msg.style.color = "#c73e3a"; return; }
+  try {
+    var r = await fetch("https://api.github.com/repos/"+REPO+"/contents/src/content/posts/"+name+"?ref="+BRANCH, {
+      headers: { "Authorization": "Bearer " + TOKEN, "Accept": "application/vnd.github.v3+json" }
+    });
+    var oldData = await r.json();
+    var oldContent = atob(oldData.content.replace(/\n/g, ""));
+    var oldParts = oldContent.split("---");
+    var oldFm = oldParts[1] || "";
+    var dateMatch = oldFm.match(/date:\s*["']([^"']+)["']/);
+    var date = dateMatch ? dateMatch[1] : new Date().toISOString().split("T")[0];
+    var fm = "---\ntitle: \"" + title + "\"\ndescription: \"" + desc + "\"\ndate: " + date + "\ncategory: \"" + cat + "\"\ntags: " + JSON.stringify(tags) + "\n" + (cover ? "coverImage: \"" + cover + "\"\n" : "") + "readingTime: 5\n---\n";
+    var putR = await fetch("https://api.github.com/repos/"+REPO+"/contents/src/content/posts/"+slug+".mdx", {
+      method: "PUT",
+      headers: { "Authorization": "Bearer " + TOKEN, "Content-Type": "application/json" },
+      body: JSON.stringify({ message: "更新文章: " + title, content: b64Encode(fm + body), sha: sha, branch: BRANCH })
+    });
+    if (!putR.ok) throw new Error("更新失败 " + putR.status);
+    msg.textContent = "✅ 文章已更新！"; msg.style.color = "#4a6741";
+    setTimeout(function() { renderPosts(); document.getElementById("new-post-form").classList.add("hidden"); }, 1000);
+  } catch(e) { msg.textContent = "❌ " + e.message; msg.style.color = "#c73e3a"; }
+}
 // ===== 文件上传 =====
 function renderUpload() {
   document.getElementById("tab-upload").innerHTML = `
@@ -649,6 +858,116 @@ async function listUploadedFiles() {
   } catch(e) { el.innerHTML = "<p class='text-sm text-muted'>加载失败</p>"; }
 }
 function copyUrl(name) { const url="/uploads/"+name; try { navigator.clipboard.writeText(url); } catch(e) {} showMsg("✅ 已复制: " + url, "ok"); }
+// ===== 站点设置 =====
+let siteData = null, siteSha = null;
+const SITE_PATH = "src/data/site.json";
+
+async function renderSite() {
+  var el = document.getElementById("tab-site");
+  if (!el) { 
+    setTimeout(() => renderSite(), 100);
+    return;
+  }
+  try {
+    var r = await fetch("https://api.github.com/repos/"+REPO+"/contents/"+SITE_PATH+"?ref="+BRANCH, {
+      headers: { "Authorization": "Bearer " + TOKEN, "Accept": "application/vnd.github.v3+json" }
+    });
+    if (!r.ok) {
+      // 文件不存在，使用默认值
+      siteData = { title: "小杨王子", description: "水墨博客", heroText: "山海之间，自在如风", subBio: "寄蜉蝣于天地，渺沧海之一粟。以笔墨为舟，渡无涯之学海。", footer: "寄蜉蝣于天地，渺沧海之一粟", email: "Grooty920@gmail.com", github: "Grooty920" };
+      siteSha = null;
+    } else {
+      var d = await r.json();
+      siteData = JSON.parse(b64Decode(d.content));
+      siteSha = d.sha;
+    }
+    renderSiteForm();
+  } catch(e) { el.innerHTML = "<p class='text-sm text-accent'>加载失败: " + e.message + "</p>"; }
+}
+
+function renderSiteForm() {
+  var p = siteData || {};
+  var el = document.getElementById("tab-site");
+  el.innerHTML = `
+    <div class="card mb-3">
+      <h3 style="font-size:15px;margin-bottom:12px">⚙️ 站点设置</h3>
+      <div class="mb-3">
+        <label>站点标题</label>
+        <input id="site-title" value="${esc(p.title || "")}" class="w-full">
+      </div>
+      <div class="mb-3">
+        <label>站点描述</label>
+        <input id="site-desc" value="${esc(p.description || "")}" class="w-full">
+      </div>
+      <div class="mb-3">
+        <label>首页打字机文本</label>
+        <input id="site-hero" value="${esc(p.heroText || "")}" class="w-full">
+      </div>
+      <div class="mb-3">
+        <label>副标题</label>
+        <textarea id="site-subbio" rows="2" class="w-full">${esc(p.subBio || "")}</textarea>
+      </div>
+      <div class="mb-3">
+        <label>页脚寄语</label>
+        <input id="site-footer" value="${esc(p.footer || "")}" class="w-full">
+      </div>
+      <div class="mb-3">
+        <label>邮箱</label>
+        <input id="site-email" value="${esc(p.email || "")}" class="w-full">
+      </div>
+      <div class="mb-3">
+        <label>GitHub</label>
+        <input id="site-github" value="${esc(p.github || "")}" class="w-full">
+      </div>
+      <button onclick="saveSite()" class="btn btn-ok btn-sm">💾 保存站点设置</button>
+    </div>
+    <div class="card">
+      <h3 style="font-size:15px;margin-bottom:12px">🎨 主题色设置</h3>
+      <div class="mb-3">
+        <label>主色调 (accent)</label>
+        <div class="flex gap-2">
+          <input id="site-accent" value="${esc(p.accentColor || "#c73e3a")}" class="flex-1" style="font-family:monospace">
+          <input type="color" id="site-accent-picker" value="${esc(p.accentColor || "#c73e3a")}" style="width:40px;height:40px;padding:2px;border:1px solid #e8e0cc;border-radius:4px;cursor:pointer" onchange="document.getElementById('site-accent').value=this.value">
+        </div>
+      </div>
+      <div class="mb-3">
+        <label>背景色</label>
+        <div class="flex gap-2">
+          <input id="site-bg" value="${esc(p.bgColor || "#f7f3e8")}" class="flex-1" style="font-family:monospace">
+          <input type="color" id="site-bg-picker" value="${esc(p.bgColor || "#f7f3e8")}" style="width:40px;height:40px;padding:2px;border:1px solid #e8e0cc;border-radius:4px;cursor:pointer" onchange="document.getElementById('site-bg').value=this.value">
+        </div>
+      </div>
+      <div class="mb-3">
+        <label>文字主色</label>
+        <div class="flex gap-2">
+          <input id="site-text" value="${esc(p.textColor || "#1c1c1c")}" class="flex-1" style="font-family:monospace">
+          <input type="color" id="site-text-picker" value="${esc(p.textColor || "#1c1c1c")}" style="width:40px;height:40px;padding:2px;border:1px solid #e8e0cc;border-radius:4px;cursor:pointer" onchange="document.getElementById('site-text').value=this.value">
+        </div>
+      </div>
+      <button onclick="saveSite()" class="btn btn-ok btn-sm">💾 保存主题色</button>
+    </div>`;
+}
+
+async function saveSite() {
+  try {
+    var data = {
+      title: document.getElementById("site-title").value,
+      description: document.getElementById("site-desc").value,
+      heroText: document.getElementById("site-hero").value,
+      subBio: document.getElementById("site-subbio").value,
+      footer: document.getElementById("site-footer").value,
+      email: document.getElementById("site-email").value,
+      github: document.getElementById("site-github").value,
+      accentColor: document.getElementById("site-accent").value,
+      bgColor: document.getElementById("site-bg").value,
+      textColor: document.getElementById("site-text").value
+    };
+    const r = await ghPut(SITE_PATH, data, siteSha);
+    siteSha = r.content.sha;
+    showMsg("✅ 站点设置已保存", "ok");
+  } catch(e) { showMsg("❌ " + e.message, "err"); }
+}
+
 </script>
 </body>
 </html>
