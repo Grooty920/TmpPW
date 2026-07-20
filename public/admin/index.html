@@ -1913,7 +1913,7 @@ sk.forEach(function(tag){var info=m[tag];h+="<div class=\"card\" style=\"padding
 h+="</div></div>";e.innerHTML=h}catch(ex){e.innerHTML="<p>"+ex.message+"</p>"}}
 function addTag(){var n=document.getElementById("new-tag-name").value.trim();if(!n){showMsg("请输入标签名","err");return}
 showMsg("✅ "+n+" 已添加","ok");document.getElementById("new-tag-name").value="";renderTags()}
-function renameTag(o){var n=prompt("新名称",o);if(!n||n===o)return;showMsg("分类已重命名 "+o+" 为 "+n","ok")}
+function renameTag(o){var n=prompt("新名称",o);if(!n||n===o)return;showMsg("分类已重命名 "+o+" 为 "+n,"ok")}
 function deleteTag(t,c){if(c>0){if(!confirm("标签 "+t+" 有 "+c+" 篇文章，确定删除？"))return}else{if(!confirm("确定删除 "+t+"?"))return};showMsg("已删除 "+t,"ok");renderTags()}
 
 // CATEGORIES CRUD
@@ -1930,7 +1930,7 @@ sk.forEach(function(cat){var info=m[cat];h+="<div class=\"card\" style=\"padding
 h+="</div></div>";e.innerHTML=h}catch(ex){e.innerHTML="<p>"+ex.message+"</p>"}}
 function addCategory(){var n=document.getElementById("new-cat-name").value.trim();if(!n){showMsg("请输入标签名","err");return}
 showMsg("✅ "+n+" 已添加","ok");document.getElementById("new-cat-name").value="";renderCategories()}
-function renameCategory(o){var n=prompt("新名称",o);if(!n||n===o)return;showMsg("分类已重命名 "+o+" 为 "+n","ok")}
+function renameCategory(o){var n=prompt("新名称",o);if(!n||n===o)return;showMsg("分类已重命名 "+o+" 为 "+n,"ok")}
 function deleteCategory(c){if(!confirm("确定删除 "+c+"?"))return;showMsg("已删除 "+c,"ok");renderCategories()}
 
 // FRIEND LINKS
