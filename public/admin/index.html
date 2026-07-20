@@ -795,6 +795,11 @@ label{
   .login-card{padding:32px 24px}
   .admin-content{padding:16px 12px}
 }
+
+/* ===== LOADING SPINNER ===== */
+.loading-spinner{display:inline-block;width:20px;height:20px;border:2px solid var(--border);border-top:2px solid var(--accent);border-radius:50%;animation:spin .8s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.loading-overlay{display:flex;align-items:center;justify-content:center;gap:10px;padding:40px;color:var(--text-muted);font-size:13px}
 </style>
 </head>
 <body>
@@ -918,7 +923,7 @@ label{
         <div id="tab-tools" class="tab-content hidden"></div>
         <div id="tab-nav" class="tab-content hidden"></div>
         <div id="tab-profile" class="tab-content hidden"></div>
-        <div id="tab-social" class="tab-content hidden"></div>
+        
         <div id="tab-site" class="tab-content hidden"></div>
         <div id="tab-themes" class="tab-content hidden"></div>
         <div id="tab-upload" class="tab-content hidden"></div>
@@ -939,6 +944,14 @@ let TOKEN = "", toolsData = null, navData = null, profileData = null, toolsSha =
 function b64Decode(s) { try { return decodeURIComponent(escape(atob(s))); } catch(e) { return atob(s); } }
 function b64Encode(s) { return btoa(unescape(encodeURIComponent(s))); }
 function esc(s) { return String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;").replace(/'/g,"&#39;"); }
+
+// Global error handler
+window.onerror = function(msg, url, line, col, error) {
+  var el = document.getElementById("global-msg");
+  if (el) { el.className = "msg msg-err"; el.textContent = "脚本错误: " + msg + " (行 " + line + ")"; el.classList.remove("hidden"); }
+  console.error("Global error:", msg, error);
+  return false;
+};
 
 function showMsg(msg, type) {
   const el = document.getElementById("global-msg");
@@ -1582,6 +1595,21 @@ function showNewPost() {
     <div class="mb-2"><label>正文 (Markdown)</label><textarea id="np-body" rows="8" placeholder=\"在此输入文章内容...\"></textarea></div>
     <button onclick="publishPost()" class="btn btn-primary btn-sm">📤 发布文章</button>
     <div id="np-msg" class="text-xs mt-2 text-muted"></div>`;
+}
+
+
+// Auto-preview on input
+function autoPreview() {
+  var el = document.getElementById("np-preview");
+  if (el && !el.classList.contains("hidden")) {
+    var body = document.getElementById("np-body").value;
+    el.innerHTML = body ? mdRender(body) : "<p class='text-muted'>无内容</p>";
+  }
+  var wc = document.getElementById("word-count");
+  if (wc) {
+    var ta = document.getElementById("np-body");
+    wc.textContent = (ta ? ta.value.length : 0) + " 字";
+  }
 }
 
 function togglePreview() {
