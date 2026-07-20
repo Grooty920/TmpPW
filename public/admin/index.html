@@ -1,4 +1,4 @@
-﻿<!doctype html>
+<!doctype html>
 <html lang="zh-CN">
 <head>
 <meta charset="utf-8">
@@ -214,9 +214,6 @@ h3{font-family:"Ma Shan Zheng","Noto Serif SC",cursive;letter-spacing:0.05em}
           <button class="sidebar-btn" data-tab="editor" onclick="switchTab('editor')">
             <span class="sidebar-icon">✏️</span> 写文章
           </button>
-          <button class="sidebar-btn" data-tab="about"><span class="sidebar-icon">📄</span> 关于</button>
-          <button class="sidebar-btn" data-tab="tags"><span class="sidebar-icon">🏷️</span> 标签</button>
-          <button class="sidebar-btn" data-tab="categories"><span class="sidebar-icon">📂</span> 分类</button>
           <button class="sidebar-btn" data-tab="tools" onclick="switchTab('tools')">
             <span class="sidebar-icon">🔧</span> 工具
           </button>
@@ -231,27 +228,6 @@ h3{font-family:"Ma Shan Zheng","Noto Serif SC",cursive;letter-spacing:0.05em}
           </button>
           <button class="sidebar-btn" data-tab="site" onclick="switchTab('site')">
             <span class="sidebar-icon">⚙️</span> 站点
-          </button>
-                  <button class="sidebar-btn" data-tab="recycle">
-            <span class="sidebar-icon">🗑️</span> 回收站
-          </button>
-          <button class="sidebar-btn" data-tab="friendlinks">
-            <span class="sidebar-icon">🔗</span> 友链
-          </button>
-          <button class="sidebar-btn" data-tab="custompages">
-            <span class="sidebar-icon">📄</span> 自定义页
-          </button>
-          <button class="sidebar-btn" data-tab="medialib">
-            <span class="sidebar-icon">🖼️</span> 媒体库
-          </button>
-          <button class="sidebar-btn" data-tab="analytics">
-            <span class="sidebar-icon">📊</span> 统计
-          </button>
-          <button class="sidebar-btn" data-tab="themes">
-            <span class="sidebar-icon">🎨</span> 主题
-          </button>
-          <button class="sidebar-btn" data-tab="backup">
-            <span class="sidebar-icon">💾</span> 备份
           </button>
         </nav>
         <div class="sidebar-footer">
@@ -286,7 +262,202 @@ h3{font-family:"Ma Shan Zheng","Noto Serif SC",cursive;letter-spacing:0.05em}
     </div>
   </div>
 
-    <div class="stat-number">${posts.length}</div><div class="stat-label">文章总数</div></div>
+    <div id="token-bar" class="card mb-4">
+      <div class="flex gap-3 items-center flex-wrap">
+        <input id="token-input" type="password" placeholder="GitHub Personal Access Token (ghp_...)" style="flex:1;min-width:200px">
+        <button id="token-btn" class="btn btn-primary">连接</button>
+        <a href="https://github.com/settings/tokens" target="_blank" class="text-xs text-accent" style="text-decoration:none">生成 Token</a>
+      </div>
+      <div id="token-err" class="text-xs text-accent mt-2 hidden" style="display:none"></div>
+    </div>
+
+    <div id="global-msg" class="hidden"></div>
+
+    <!-- 标签页 -->
+    <div class="flex gap-2 mb-4 flex-wrap">
+      <button class="tab-btn btn btn-primary btn-sm" data-tab="tools">🔧 工具</button>
+      <button class="tab-btn btn btn-outline btn-sm" data-tab="nav">🧭 导航</button>
+      <button class="tab-btn btn btn-outline btn-sm" data-tab="profile">👤 简介</button>
+      <button class="tab-btn btn btn-outline btn-sm" data-tab="posts">📝 文章</button>
+      <button class="tab-btn btn btn-outline btn-sm" data-tab="upload">📤 上传</button>
+      <button class="tab-btn btn btn-outline btn-sm" data-tab="site">⚙️ 站点</button>
+    </div>
+
+    <div id="tab-tools" class="tab-content"></div>
+    <div id="tab-nav" class="tab-content hidden"></div>
+    <div id="tab-profile" class="tab-content hidden"></div>
+    <div id="tab-posts" class="tab-content hidden"></div>
+    <div id="tab-upload" class="tab-content hidden"></div>
+    <div id="tab-site" class="tab-content hidden"></div>
+  </div>
+</div>
+
+<script>
+const REPO = "Grooty920/TmpPW", BRANCH = "master";
+let TOKEN = "", toolsData = null, navData = null, profileData = null, toolsSha = null, navSha = null, profileSha = null;
+
+function b64Decode(s) { try { return decodeURIComponent(escape(atob(s))); } catch(e) { return atob(s); } }
+function b64Encode(s) { return btoa(unescape(encodeURIComponent(s))); }
+function esc(s) { return String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;").replace(/'/g,"&#39;"); }
+
+function showMsg(msg, type) {
+  const el = document.getElementById("global-msg");
+  el.className = "msg " + (type === "ok" ? "msg-ok" : "msg-err") + " hidden";
+  el.textContent = msg; el.classList.remove("hidden");
+  if (type === "ok") setTimeout(() => el.classList.add("hidden"), 4000);
+}
+function setStatus(ok) {
+  document.getElementById("status-dot").style.background = ok ? "#4a6741" : "#d4c494";
+  document.getElementById("status-text").textContent = ok ? "已连接" : "未连接";
+}
+
+// 登录
+// 登录
+document.getElementById("login-btn").onclick = () => { console.log("Login clicked");
+  if (document.getElementById("pwd-input").value === "Grooty920") { console.log("Password correct");
+    document.getElementById("login-screen").classList.add("hidden");
+    document.getElementById("main-screen").classList.remove("hidden");
+    const saved = sessionStorage.getItem("gh_token");
+    if (saved) { TOKEN = saved; document.getElementById("token-input").value = saved; doConnect(); }
+  } else { console.log("Password wrong"); document.getElementById("login-err").style.display = "block"; }
+};
+document.getElementById("pwd-input").addEventListener("keydown", e => { if(e.key==="Enter") document.getElementById("login-btn").click(); });
+
+document.getElementById("token-btn").onclick = doConnect;
+document.getElementById("token-input").addEventListener("keydown", e => { if(e.key==="Enter") doConnect(); });
+
+async function doConnect() {
+  const input = document.getElementById("token-input"), err = document.getElementById("token-err");
+  const token = input.value || sessionStorage.getItem("gh_token");
+  if (!token) { err.textContent = "请输入 Token"; err.classList.remove("hidden"); return; }
+  try {
+    const r = await fetch("https://api.github.com/user", { headers: { "Authorization": "Bearer " + token } });
+    if (!r.ok) throw new Error("Token 无效");
+    TOKEN = token; sessionStorage.setItem("gh_token", token);
+    document.getElementById("token-bar").classList.add("hidden");
+    setStatus(true);
+    const scopes = r.headers.get("X-OAuth-Scopes");
+    if (scopes && !scopes.includes("repo")) showMsg("⚠️ Token 缺少 repo 权限，保存会失败", "err");
+    showMsg("✅ 已连接：" + (await r.json()).login, "ok");
+    loadAll();
+  } catch(e) { err.textContent = e.message; err.classList.remove("hidden"); }
+}
+
+// 侧边栏切换
+function switchTab(tab) {
+  document.querySelectorAll(".sidebar-btn").forEach(b => b.classList.remove("active"));
+  document.querySelectorAll(".tab-content").forEach(t => t.classList.add("hidden"));
+  var activeBtn = document.querySelector(".sidebar-btn[data-tab=\"" + tab + "\"]");
+  if (activeBtn) activeBtn.classList.add("active");
+  var contentEl = document.getElementById("tab-" + tab);
+  if (contentEl) contentEl.classList.remove("hidden");
+  document.getElementById("sidebar").classList.remove("open");
+  switch(tab) {
+    case "dashboard": renderDashboard(); break;
+    case "posts": renderPosts(); break;
+    case "editor": showNewPost(); break;
+    case "tools": renderTools(); break;
+    case "nav": renderNav(); break;
+    case "profile": renderProfile(); break;
+    case "upload": renderUpload(); break;
+    case "site": renderSite(); break;
+    case "recycle": renderRecycle(); break;
+    case "friendlinks": renderFriendLinks(); break;
+    case "custompages": renderCustomPages(); break;
+    case "medialib": renderMediaLib(); break;
+    case "analytics": renderAnalytics(); break;
+    case "themes": renderThemes(); break;
+    case "backup": renderBackup(); break;
+  }
+}
+
+function toggleSidebar() {
+  document.getElementById("sidebar").classList.toggle("open");
+}
+
+// GitHub API
+async function ghGet(path) {
+  const r = await fetch("https://api.github.com/repos/"+REPO+"/contents/"+path+"?ref="+BRANCH, {
+    headers: { "Authorization": "Bearer " + TOKEN, "Accept": "application/vnd.github.v3+json" }
+  });
+  if (!r.ok) throw new Error(path + " " + r.status);
+  const d = await r.json();
+  return { content: JSON.parse(b64Decode(d.content)), sha: d.sha };
+}
+async function ghPut(path, content, sha) {
+  const r = await fetch("https://api.github.com/repos/"+REPO+"/contents/"+path, {
+    method: "PUT",
+    headers: { "Authorization": "Bearer " + TOKEN, "Content-Type": "application/json" },
+    body: JSON.stringify({ message: "admin: " + path, content: b64Encode(JSON.stringify(content, null, 2)), sha: sha, branch: BRANCH })
+  });
+  if (!r.ok) { const t = await r.text(); try { const j=JSON.parse(t); throw new Error(j.message); } catch(e) { throw new Error("保存失败 " + r.status); } }
+  return await r.json();
+}
+
+async function loadAll() {
+  ["tools","nav","profile","posts"].forEach(id => document.getElementById("tab-"+id).innerHTML = "<p class='text-sm text-muted' style='padding:20px'>⏳ 加载中...</p>");
+  try {
+    const t = await ghGet("src/data/tools.json"); toolsData = t.content; toolsSha = t.sha;
+    const n = await ghGet("src/data/navigation.json"); navData = n.content; navSha = n.sha;
+    const p = await ghGet("src/data/profile.json"); profileData = p.content; profileSha = p.sha;
+    renderTools(); renderNav(); renderProfile(); renderPosts();
+    showMsg("✅ 数据加载成功", "ok");
+  } catch(e) { showMsg("❌ " + e.message, "err"); }
+}
+
+
+// ===== 仪表盘 =====
+async function renderDashboard() {
+  var el = document.getElementById("tab-dashboard");
+  if (!el) return;
+  try {
+    var r = await fetch("https://api.github.com/repos/"+REPO+"/contents/src/content/posts?ref="+BRANCH, {
+      headers: { "Authorization": "Bearer " + TOKEN, "Accept": "application/vnd.github.v3+json" }
+    });
+    var files = r.ok ? await r.json() : [];
+    var posts = files.filter(function(f) { return f.name.endsWith(".mdx") || f.name.endsWith(".md"); });
+    var cats = {}, tags = {};
+    posts.forEach(function(f) {
+      try {
+        var c = b64Decode(f.content);
+        var parts = c.split("---");
+        if (parts.length >= 3) {
+          var fm = parts[1];
+          var m = fm.match(/category:\s*["']([^"']+)["']/);
+          if (m) cats[m[1]] = (cats[m[1]] || 0) + 1;
+          var t = fm.match(/tags:\s*\[([^\]]+)\]/);
+          if (t) t[1].split(",").forEach(function(tag) {
+            var tg = tag.trim().replace(/["']/g, "");
+            if (tg) tags[tg] = (tags[tg] || 0) + 1;
+          });
+        }
+      } catch(e) {}
+    });
+    var uploadR = await fetch("https://api.github.com/repos/"+REPO+"/contents/public/uploads?ref="+BRANCH, {
+      headers: { "Authorization": "Bearer " + TOKEN, "Accept": "application/vnd.github.v3+json" }
+    });
+    var uploadFiles = uploadR.ok ? (await uploadR.json()).length : 0;
+    var recentPosts = posts.slice(-5).reverse();
+    var recentHtml = "";
+    recentPosts.forEach(function(f) {
+      try {
+        var c = b64Decode(f.content);
+        var parts = c.split("---");
+        var title = "", date = "";
+        if (parts.length >= 3) {
+          var fm = parts[1];
+          var tm = fm.match(/title:\s*["']([^"']+)["']/);
+          if (tm) title = tm[1];
+          var dm = fm.match(/date:\s*["']?([^"'\s]+)["']?/);
+          if (dm) date = dm[1];
+        }
+        recentHtml += "<div class='post-card card'><div class='post-card-info'><div class='post-card-title'>" + (title || esc(f.name)) + "</div><div class='post-card-meta'>" + esc(f.name) + (date ? " <span class='post-date-tag'>" + date + "</span>" : "") + "</div></div></div>";
+      } catch(e) {}
+    });
+    if (!recentHtml) recentHtml = "<p class='text-sm text-muted'>暂无文章</p>";
+    el.innerHTML = `
+      <div class="dashboard-grid">
+        <div class="stat-card card"><div class="stat-icon">📄</div><div class="stat-number">${posts.length}</div><div class="stat-label">文章总数</div></div>
         <div class="stat-card card"><div class="stat-icon">📂</div><div class="stat-number">${Object.keys(cats).length}</div><div class="stat-label">分类</div></div>
         <div class="stat-card card"><div class="stat-icon">🏷️</div><div class="stat-number">${Object.keys(tags).length}</div><div class="stat-label">标签</div></div>
         <div class="stat-card card"><div class="stat-icon">📤</div><div class="stat-number">${uploadFiles}</div><div class="stat-label">文件</div></div>
@@ -950,87 +1121,6 @@ async function listUploadedFiles() {
     html += "</div>"; el.innerHTML = html;
   } catch(e) { el.innerHTML = "<p class='text-sm text-muted'>加载失败</p>"; }
 }
-
-
-// ===== 关于页面管理 =====
-async function renderAbout() {
-  var el = document.getElementById("tab-about");
-  if (!el) { setTimeout(() => renderAbout(), 100); return; }
-  try {
-    var r = await fetch("https://api.github.com/repos/"+REPO+"/contents/src/data/about.json?ref="+BRANCH, {
-      headers: { "Authorization": "Bearer " + TOKEN, "Accept": "application/vnd.github.v3+json" }
-    });
-    var data = { name: "小杨王子", bio: "寄蜉蝣于天地，渺沧海之一粟。\n好读书，不求甚解；每有会意，便欣然忘食。\n此间所录，皆沿途之风景与思考。愿与君共赏。", aboutTitle: "关于这个博客", aboutContent: "小杨王子 —— 墨水的墨，言语的言。\n以笔墨为舟，渡无涯之学海。好读书，不求甚解；每有会意，便欣然忘食。\n博客使用 Astro + Tailwind CSS 构建，部署在 Cloudflare Pages 中。\n主题灵感来源于中国传统水墨画，融入现代 Web 技术，营造一种纸上得来终觉浅，绝知此事要躬行的意境。", techStack: ["Astro 5", "Tailwind CSS 3", "MDX", "TypeScript", "Cloudflare Pages", "霞鹜文楷", "马山正体"], quote: "山水有相逢，来日皆可期" };
-    var sha = null;
-    if (r.ok) { var d = await r.json(); data = JSON.parse(b64Decode(d.content)); sha = d.sha; }
-    el.innerHTML = '<div class="card mb-3"><h3 style="font-size:15px;margin-bottom:12px">📄 关于页面</h3>' +
-      '<div class="mb-3"><label>博主名称</label><input id="ab-name" value="' + esc(data.name || "") + '" class="w-full"></div>' +
-      '<div class="mb-3"><label>个人简介 (支持换行)</label><textarea id="ab-bio" rows="4" class="w-full">' + esc(data.bio || "") + '</textarea></div>' +
-      '<div class="mb-3"><label>关于博客标题</label><input id="ab-title" value="' + esc(data.aboutTitle || "") + '" class="w-full"></div>' +
-      '<div class="mb-3"><label>关于博客内容 (支持换行)</label><textarea id="ab-content" rows="6" class="w-full">' + esc(data.aboutContent || "") + '</textarea></div>' +
-      '<div class="mb-3"><label>技术栈 (逗号分隔)</label><input id="ab-tech" value="' + esc((data.techStack || []).join(", ")) + '" class="w-full"></div>' +
-      '<div class="mb-3"><label>寄语</label><input id="ab-quote" value="' + esc(data.quote || "") + '" class="w-full"></div>' +
-      '<button onclick="saveAbout()" class="btn btn-ok btn-sm">💾 保存关于页面</button></div>';
-    window.aboutSha = sha;
-  } catch(e) { el.innerHTML = "<p class='text-sm text-accent'>加载失败: " + e.message + "</p>"; }
-}
-
-async function saveAbout() {
-  try {
-    var data = {
-      name: document.getElementById("ab-name").value,
-      bio: document.getElementById("ab-bio").value,
-      aboutTitle: document.getElementById("ab-title").value,
-      aboutContent: document.getElementById("ab-content").value,
-      techStack: document.getElementById("ab-tech").value.split(",").map(function(t) { return t.trim(); }).filter(function(t) { return t; }),
-      quote: document.getElementById("ab-quote").value
-    };
-    var r = await ghPut("src/data/about.json", data, window.aboutSha);
-    window.aboutSha = r.content.sha;
-    showMsg("✅ 关于页面已保存", "ok");
-  } catch(e) { showMsg("❌ " + e.message, "err"); }
-}
-
-// ===== 标签管理 =====
-async function renderSocial() {
-  var el = document.getElementById("tab-social");
-  if (!el) { setTimeout(() => renderSocial(), 100); return; }
-  try {
-    var r = await fetch("https://api.github.com/repos/"+REPO+"/contents/src/data/social.json?ref="+BRANCH, {
-      headers: { "Authorization": "Bearer " + TOKEN, "Accept": "application/vnd.github.v3+json" }
-    });
-    var data = { email: "Grooty920@gmail.com", github: "Grooty920", weibo: "", zhihu: "", twitter: "", bilibili: "" };
-    var sha = null;
-    if (r.ok) { var d = await r.json(); data = JSON.parse(b64Decode(d.content)); sha = d.sha; }
-    el.innerHTML = '<div class="card mb-3"><h3 style="font-size:15px;margin-bottom:12px">🔗 社交链接</h3>' +
-      '<div class="mb-3"><label>📧 邮箱</label><input id="soc-email" value="' + esc(data.email || "") + '" class="w-full" placeholder="your@email.com"></div>' +
-      '<div class="mb-3"><label>🐙 GitHub</label><input id="soc-github" value="' + esc(data.github || "") + '" class="w-full" placeholder="username"></div>' +
-      '<div class="mb-3"><label>💬 微博</label><input id="soc-weibo" value="' + esc(data.weibo || "") + '" class="w-full" placeholder="微博ID"></div>' +
-      '<div class="mb-3"><label>📺 知乎</label><input id="soc-zhihu" value="' + esc(data.zhihu || "") + '" class="w-full" placeholder="知乎ID"></div>' +
-      '<div class="mb-3"><label>🐦 Twitter</label><input id="soc-twitter" value="' + esc(data.twitter || "") + '" class="w-full" placeholder="twitter_handle"></div>' +
-      '<div class="mb-3"><label>📺 Bilibili</label><input id="soc-bili" value="' + esc(data.bilibili || "") + '" class="w-full" placeholder="bilibili_uid"></div>' +
-      '<button onclick="saveSocial()" class="btn btn-ok btn-sm">💾 保存社交链接</button></div>';
-    window.socialSha = sha;
-  } catch(e) { el.innerHTML = "<p class='text-sm text-accent'>加载失败: " + e.message + "</p>"; }
-}
-
-async function saveSocial() {
-  try {
-    var data = {
-      email: document.getElementById("soc-email").value,
-      github: document.getElementById("soc-github").value,
-      weibo: document.getElementById("soc-weibo").value,
-      zhihu: document.getElementById("soc-zhihu").value,
-      twitter: document.getElementById("soc-twitter").value,
-      bilibili: document.getElementById("soc-bili").value
-    };
-    var r = await ghPut("src/data/social.json", data, window.socialSha);
-    window.socialSha = r.content.sha;
-    showMsg("✅ 社交链接已保存", "ok");
-  } catch(e) { showMsg("❌ " + e.message, "err"); }
-}
-
-
 function copyUrl(name) { const url="/uploads/"+name; try { navigator.clipboard.writeText(url); } catch(e) {} showMsg("✅ 已复制: " + url, "ok"); }
 // ===== 站点设置 =====
 let siteData = null, siteSha = null;
@@ -1143,7 +1233,7 @@ async function saveSite() {
 }
 
 
-// === RECYCLE BIN ===
+RECYCLE BIN ===
 let recycleBin=[];
 async function renderRecycle(){var e=document.getElementById("tab-recycle");if(!e){setTimeout(function(){renderRecycle()},100);return}
 try{var r=await fetch("https://api.github.com/repos/"+REPO+"/contents/src/data/recycle.json?ref="+BRANCH,{headers:{"Authorization":"Bearer "+TOKEN,"Accept":"application/vnd.github.v3+json"}})
@@ -1291,6 +1381,7 @@ async function exportConfig(){try{var configs={};var cfgs=["src/data/tools.json"
 for(var i=0;i<cfgs.length;i++){try{var r=await fetch("https://api.github.com/repos/"+REPO+"/contents/"+cfgs[i]+"?ref="+BRANCH,{headers:{"Authorization":"Bearer "+TOKEN,"Accept":"application/vnd.github.v3+json"}});if(r.ok){var d=await r.json();configs[cfgs[i]]=JSON.parse(b64Decode(d.content))}}catch(ex){}}
 var blob=new Blob([JSON.stringify(configs,null,2)],{type:"application/json"});var url=URL.createObjectURL(blob);var a=document.createElement("a");a.href=url;a.download="config-backup-"+new Date().toISOString().split("T")[0]+".json";a.click();URL.revokeObjectURL(url);showMsg("?????","ok")}catch(ex){showMsg(ex.message,"err")}}
 async function exportAll(){try{await exportPosts();await exportConfig();showMsg("?????","ok")}catch(ex){showMsg(ex.message,"err")}}
+
 </script>
 </body>
 </html>
