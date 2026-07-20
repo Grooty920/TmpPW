@@ -1105,7 +1105,30 @@ async function renderDashboard() {
         }
         recentHtml += "<div class='post-card card'><div class='post-card-info'><div class='post-card-title'>" + (title || esc(f.name)) + "</div><div class='post-card-meta'>" + esc(f.name) + (date ? " <span class='post-date-tag'>" + date + "</span>" : "") + "</div></div></div>";
       } catch(e) {}
-    };
+    }
+
+    if (!recentHtml) recentHtml = "<p class='text-sm text-muted'>暂无文章</p>";
+    el.innerHTML = `
+      <div class="dashboard-grid">
+        <div class="stat-card card"><div class="stat-icon">📄</div><div class="stat-number">${posts.length}</div><div class="stat-label">文章总数</div></div>
+        <div class="stat-card card"><div class="stat-icon">📂</div><div class="stat-number">${Object.keys(cats).length}</div><div class="stat-label">分类</div></div>
+        <div class="stat-card card"><div class="stat-icon">🏷️</div><div class="stat-number">${Object.keys(tags).length}</div><div class="stat-label">标签</div></div>
+        <div class="stat-card card"><div class="stat-icon">📤</div><div class="stat-number">${uploadFiles}</div><div class="stat-label">文件</div></div>
+      </div>
+      <div class="card mb-4"><h3 style="font-size:15px;margin-bottom:12px">📈 最近发布</h3>${recentHtml}</div>
+      <div class="card"><h3 style="font-size:15px;margin-bottom:12px">⚡ 快捷操作</h3>
+        <div class="flex gap-2 flex-wrap">
+          <button onclick="switchTab('editor')" class="btn btn-primary btn-sm">✏️ 写文章</button>
+          <button onclick="switchTab('upload')" class="btn btn-outline btn-sm">📤 上传文件</button>
+          <button onclick="switchTab('tools')" class="btn btn-outline btn-sm">🔧 管理工具</button>
+          <button onclick="switchTab('site')" class="btn btn-outline btn-sm">⚙️ 站点设置</button>
+        </div>
+      </div>`;
+  } catch(e) { el.innerHTML = "<p class='text-sm text-accent'>加载失败: " + e.message + "</p>"; }
+}
+
+function makeDraggable(listId, dataArray, onReorder) {
+  const container = document.getElementById(listId);
   container.addEventListener("dragend", e => {
     const el = e.target.closest(".drag-item");
     if (el) el.classList.remove("dragging");
