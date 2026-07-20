@@ -1,4 +1,4 @@
-<!doctype html>
+﻿<!doctype html>
 <html lang="zh-CN">
 <head>
 <meta charset="utf-8">
@@ -305,7 +305,20 @@ function renderNav() {
       </div>
     </div>`;
   });
-  html += `<div class="card mt-4"><h3 style="font-size:15px;margin-bottom:12px">??? ???????</h3>
+  document.getElementById("tab-nav").innerHTML = html;
+  makeDraggable("nav-list", navData.items, () => renderNav());
+}
+
+// ===== ???? =====
+async function renderPosts() {
+  try {
+    let el = document.getElementById("tab-posts");
+    const r = await fetch("https://api.github.com/repos/"+REPO+"/contents/src/content/posts?ref="+BRANCH, {
+      headers: { "Authorization": "Bearer " + TOKEN, "Accept": "application/vnd.github.v3+json" }
+    });
+    if (!r.ok) { el.innerHTML = "<p class='text-sm text-accent'>????</p>"; return; }
+    const files = await r.json();
+  let html = `<div class="card mt-4"><h3 style="font-size:15px;margin-bottom:12px">??? ???????</h3>
       <div class="flex gap-4 flex-wrap mb-3">
         <div class="flex-1" style="min-width:200px">
           <p class="text-xs text-muted mb-2">????</p>
@@ -345,27 +358,23 @@ function renderNav() {
 }
 
 
-
 // ===== ?? Markdown ?? =====
 function mdRender(text) {
   var t = text
     .replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;")
-    .replace(/^### (.+)$/gm, "<h3 style="margin:1em 0 0.5em;font-size:1.1em;color:#1c1c1c">$1</h3>")
-    .replace(/^## (.+)$/gm, "<h2 style="margin:1em 0 0.5em;font-size:1.3em;color:#1c1c1c">$1</h2>")
-    .replace(/^# (.+)$/gm, "<h1 style="margin:1em 0 0.5em;font-size:1.5em;color:#1c1c1c">$1</h1>")
-    .replace(/**(.+?)**/g, "<strong>$1</strong>")
-    .replace(/*(.+?)*/g, "<em>$1</em>")
-    .replace(/`(.+?)`/g, "<code style="background:#f0e8cc;padding:1px 4px;border-radius:2px;font-size:0.9em">$1</code>")
-    .replace(/![([^]]*)](([^)]+))/g, "<img src="$2" alt="$1" style="max-width:100%;border-radius:4px;margin:0.5em 0">")
-    .replace(/[([^]]+)](([^)]+))/g, "<a href="$2" target="_blank" style="color:#c73e3a">$1</a>")
-    .replace(/^> (.+)$/gm, "<blockquote style="border-left:3px solid #c73e3a;padding:0.5em 1em;margin:0.5em 0;background:#fefcf5;color:#6b5f45">$1</blockquote>")
-    .replace(/^- (.+)$/gm, "<li style="margin:0.25em 0;color:#1c1c1c">$1</li>");
-  t = "<p style="line-height:1.8;color:#1c1c1c">" + t + "</p>";
-  t = t.replace(/
-
-/g, "</p><p style="line-height:1.8;color:#1c1c1c">");
-  t = t.replace(/
-/g, "<br>");
+    .replace(/^### (.+)$/gm, "<h3 style='margin:1em 0 0.5em;font-size:1.1em;color:#1c1c1c'>$1</h3>")
+    .replace(/^## (.+)$/gm, "<h2 style='margin:1em 0 0.5em;font-size:1.3em;color:#1c1c1c'>$1</h2>")
+    .replace(/^# (.+)$/gm, "<h1 style='margin:1em 0 0.5em;font-size:1.5em;color:#1c1c1c'>$1</h1>")
+    .replace(/\*\*(.+?)\*\*/g, "<strong>$1</strong>")
+    .replace(/\*(.+?)\*/g, "<em>$1</em>")
+    .replace(/`(.+?)`/g, "<code style='background:#f0e8cc;padding:1px 4px;border-radius:2px;font-size:0.9em'>$1</code>")
+    .replace(/!\[([^\]]*)\]\(([^)]+)\)/g, "<img src='$2' alt='$1' style='max-width:100%;border-radius:4px;margin:0.5em 0'>")
+    .replace(/\[([^\]]+)\]\(([^)]+)\)/g, "<a href='$2' target='_blank' style='color:#c73e3a'>$1</a>")
+    .replace(/^> (.+)$/gm, "<blockquote style='border-left:3px solid #c73e3a;padding:0.5em 1em;margin:0.5em 0;background:#fefcf5;color:#6b5f45'>$1</blockquote>")
+    .replace(/^- (.+)$/gm, "<li style='margin:0.25em 0;color:#1c1c1c'>$1</li>");
+  t = "<p style='line-height:1.8;color:#1c1c1c'>" + t + "</p>";
+  t = t.replace(/\n\n/g, "</p><p style='line-height:1.8;color:#1c1c1c'>");
+  t = t.replace(/\n/g, "<br>");
   return t;
 }
 
@@ -377,8 +386,7 @@ async function previewPost(name) {
     });
     if (!r.ok) throw new Error("????");
     var d = await r.json();
-    var c = atob(d.content.replace(/
-/g, ""));
+    var c = atob(d.content.replace(/\n/g, ""));
     var parts = c.split("---");
     var body = parts[2] || parts[1] || c;
     var w = window.open("", "_blank", "width=800,height=600");
